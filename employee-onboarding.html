@@ -79,7 +79,7 @@
                 "values": [[firstName, lastName, email, position]]
             };
 
-            fetch(`https://sheets.googleapis.com/v4/spreadsheets/1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ/values/A1:append?valueInputOption=RAW&key=AIzaSyBRNJR2YC9sa0S9sF69DK1zEuYDkecWcyk`, {
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ/values/A1:append?valueInputOption=RAW&key=AIzaSyA60qadwBjj1X_pX7G5GUPSYPqldzSg9Ss`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -88,7 +88,10 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Failed to submit data');
+                    return response.json().then(errData => {
+                        console.error('Error details:', errData);
+                        throw new Error('Failed to submit data');
+                    });
                 }
                 return response.json();
             })
