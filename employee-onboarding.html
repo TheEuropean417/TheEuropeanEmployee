@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Onboarding with OAuth Debugging</title>
+    <title>Employee Onboarding with OAuth & Google Sheets</title>
     <style>
         /* Basic styling */
         body {
@@ -76,13 +76,20 @@
 <body>
     <div class="form-container">
         <h1>New Employee Onboarding</h1>
-        <form id="onboardingForm">
+
+        <!-- Sign in button -->
+        <button id="signInButton" class="btn">Sign In with Google</button>
+
+        <!-- Onboarding form -->
+        <form id="onboardingForm" style="display: none;">
             <input type="text" id="firstName" placeholder="First Name" required><br>
             <input type="text" id="lastName" placeholder="Last Name" required><br>
             <input type="email" id="email" placeholder="Email" required><br>
             <input type="text" id="position" placeholder="Position" required><br>
             <button type="submit" class="btn">Submit</button>
         </form>
+
+        <!-- Status messages -->
         <p id="oauth-status">Not authenticated</p>
         <p id="successMessage" style="color: green; display: none;">Form submitted successfully!</p>
         <p id="errorMessage" style="color: red; display: none;">There was an error submitting the form. See details below.</p>
@@ -92,18 +99,22 @@
     </div>
 
     <script>
-        let accessToken;
+        let accessToken; // This will hold the access token after authentication
 
+        // Initialize Google API client
         function authenticate() {
             return gapi.auth2.getAuthInstance()
                 .signIn({ scope: 'https://www.googleapis.com/auth/spreadsheets' })
                 .then(function () {
                     document.getElementById('oauth-status').innerText = 'Authenticated';
                     accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
-                    console.log("Sign-in successful");
+                    console.log("Sign-in successful. Access token:", accessToken);
+
+                    // Show the form once authenticated
+                    document.getElementById('onboardingForm').style.display = 'block';
+                    document.getElementById('signInButton').style.display = 'none';
                 }, function (err) {
-                    document.getElementById('oauth-status').innerText = 'Authentication failed';
-                    showError('Authentication failed. ' + JSON.stringify(err, null, 2));
+                    showError('Authentication failed: ' + JSON.stringify(err, null, 2));
                     console.error("Error signing in", err);
                 });
         }
@@ -112,7 +123,6 @@
             return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/sheets/v4/rest")
                 .then(function () {
                     console.log("GAPI client loaded for API");
-                    authenticate();
                 }, function (err) {
                     showError('Failed to load GAPI client: ' + JSON.stringify(err, null, 2));
                     console.error("Error loading GAPI client for API", err);
@@ -133,12 +143,19 @@
             debugOutput.innerHTML = `Success: ${successMsg}`;
         }
 
+        // Initialize Google OAuth 2.0 client
         gapi.load("client:auth2", function () {
             gapi.auth2.init({
-                client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com" // Your OAuth Client ID
+                client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com" // Your OAuth Client ID from the JSON file
+            }).then(function () {
+                document.getElementById('signInButton').addEventListener('click', authenticate);
+            }).catch(function (error) {
+                showError('OAuth client initialization failed: ' + JSON.stringify(error, null, 2));
+                console.error('Error initializing OAuth client:', error);
             });
         });
 
+        // Submit the form to Google Sheets
         document.getElementById('onboardingForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
