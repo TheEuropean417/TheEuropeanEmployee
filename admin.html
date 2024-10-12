@@ -117,7 +117,7 @@
             loadIdentityServices();
         };
 
-        // Skip the first row in the sheet data (assumed to be headers)
+        // Properly filter out the first row (headers) from the sheet data
         function filterData(data) {
             return data.slice(1); // Skip the first row (index 0)
         }
@@ -154,8 +154,8 @@
                         <strong>Position:</strong> ${hire[3]}
                     `;
 
-                    // Fix: Toggle details immediately on first click
-                    hireItem.addEventListener('click', () => {
+                    // Toggle details immediately on first click
+                    hireItem.addEventListener('click', function() {
                         hireDetails.style.display = hireDetails.style.display === 'none' ? 'block' : 'none';
                     });
 
@@ -203,8 +203,8 @@
                         <strong>Position:</strong> ${employee[3]}
                     `;
 
-                    // Fix: Toggle details immediately on first click
-                    employeeItem.addEventListener('click', () => {
+                    // Toggle details immediately on first click
+                    employeeItem.addEventListener('click', function() {
                         employeeDetails.style.display = employeeDetails.style.display === 'none' ? 'block' : 'none';
                     });
 
