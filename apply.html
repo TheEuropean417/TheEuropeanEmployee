@@ -47,6 +47,8 @@
             background-color: #f1f1f1;
             border-radius: 5px;
             white-space: pre-wrap; /* Preserve formatting */
+            max-height: 300px;
+            overflow-y: auto;  /* Scroll if too much content */
         }
 
         /* Styling for the file input */
@@ -124,7 +126,7 @@
             document.getElementById('debug-output').textContent = 'Sending application...';
 
             // Send form data to the Google Apps Script Web App
-            fetch('https://script.google.com/macros/s/AKfycbxTjrarfXrSgwH_fakkCewBYRilDKXvGbqv9lrXdO6EPNSOZDWD1hJaaPiZDA_QLblX/exec', {
+            fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
                 method: 'POST',
                 body: formData
             })
@@ -133,9 +135,9 @@
                 console.log('Response from server:', data);  // Log the server response
 
                 if (data.result === 'success') {
-                    document.getElementById('debug-output').textContent = 'Application sent successfully!';
+                    document.getElementById('debug-output').textContent = 'Application sent successfully! Logs:\n' + data.logs.join('\n');
                 } else {
-                    document.getElementById('debug-output').textContent = 'Failed to send application. Server response: ' + JSON.stringify(data);
+                    document.getElementById('debug-output').textContent = 'Failed to send application. Logs:\n' + data.logs.join('\n');
                 }
             })
             .catch(error => {
