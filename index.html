@@ -25,6 +25,8 @@
             padding: 50px;
             border-radius: 15px;
             box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+            max-width: 500px; /* Limit the container width for better centering */
+            width: 100%;
         }
 
         /* Logo styling */
@@ -43,9 +45,11 @@
 
         /* Button Styles */
         .btn {
-            display: inline-block;
+            display: block; /* Makes each button take up full width within the container */
+            width: 100%;
+            max-width: 300px; /* Ensures the buttons don’t stretch too far */
+            margin: 15px auto; /* Centers the buttons horizontally */
             padding: 20px 40px;
-            margin: 15px 0;
             color: #fff;
             text-decoration: none;
             font-size: 1.2rem;
@@ -65,16 +69,6 @@
             transform: translateY(-5px);
         }
 
-        /* Button Admin Specific */
-        .btn.admin {
-            background: rgb(82, 113, 255); /* Same blue for admin button */
-        }
-
-        /* Button for New Employees */
-        .btn.new-employees {
-            background: rgb(82, 113, 255); /* Same blue for New Employees button */
-        }
-
         /* Responsive design */
         @media screen and (max-width: 768px) {
             h1 {
@@ -83,6 +77,7 @@
             .btn {
                 padding: 15px 30px;
                 font-size: 1rem;
+                max-width: 100%;
             }
             .logo {
                 max-width: 200px;
@@ -100,10 +95,10 @@
         
         <!-- Heading -->
         <h1>Welcome to The European</h1>
-        <h1>  Employee Portal</h1>
+        <h1>Employee Portal</h1>
 
         <!-- Buttons -->
-        <a href="/admin" class="btn admin">The European Administration</a><br>
+        <a href="/admin" class="btn admin">The European Administration</a>
         <a href="/new-employees" class="btn new-employees">New Employee Onboarding</a>
     </div>
 </body>
