@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The European - Home</title>
+    <style>
+        /* Body and Background */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521573830910-8bda3ff26a97') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+        }
+
+        /* Main container for buttons */
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 20px 40px;
+            margin: 15px 0;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(90deg, #00dbde 0%, #fc00ff 100%);
+            box-shadow: 0 15px 25px rgba(0, 223, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .btn:hover {
+            box-shadow: 0 20px 40px rgba(255, 105, 180, 0.8);
+            transform: translateY(-5px);
+        }
+
+        /* Button Admin Specific */
+        .btn.admin {
+            background: linear-gradient(90deg, #12c2e9 0%, #c471ed 50%, #f7797d 100%);
+        }
+
+        /* Button for New Employees */
+        .btn.new-employees {
+            background: linear-gradient(90deg, #f09819 0%, #ff5858 100%);
+        }
+
+        /* Responsive design */
+        @media screen and (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .btn {
+                padding: 15px 30px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to The European Café</h1>
+        <a href="/admin" class="btn admin">The European Admin</a><br>
+        <a href="/new-employees" class="btn new-employees">New Employees</a>
+    </div>
+</body>
+</html>
