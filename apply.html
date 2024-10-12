@@ -112,12 +112,6 @@
     </div>
 
     <script>
-        // Attach the file upload functionality
-        document.querySelector('.file-input-label').addEventListener('click', function(event) {
-            event.preventDefault();  // Prevent any double triggering
-            document.getElementById('resume').click();  // Open file dialog
-        });
-
         document.getElementById('application-form').onsubmit = function(event) {
             event.preventDefault();  // Prevent default form submission
 
@@ -127,12 +121,14 @@
             document.getElementById('debug-output').textContent = 'Sending application...';
 
             // Send form data to the Google Apps Script Web App
-            fetch('https://script.google.com/macros/s/AKfycbxTjrarfXrSgwH_fakkCewBYRilDKXvGbqv9lrXdO6EPNSOZDWD1hJaaPiZDA_QLblX/exec
-', {
+            fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => {
+            .then(async response => {
+                if (!response.ok) {
+                    throw new Error('Server returned ' + response.status + ' : ' + response.statusText);
+                }
                 return response.json();  // Attempt to parse JSON response
             })
             .then(data => {
@@ -145,8 +141,8 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);  // Log any errors
-                document.getElementById('debug-output').textContent = 'An error occurred: ' + error;
+                console.error('Fetch error:', error);  // Log any errors
+                document.getElementById('debug-output').textContent = 'Fetch error: ' + error;
             });
         };
     </script>
