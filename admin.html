@@ -117,6 +117,11 @@
             loadIdentityServices();
         };
 
+        // Skip the first row in the sheet data (assumed to be headers)
+        function filterData(data) {
+            return data.slice(1); // Skip the first row (index 0)
+        }
+
         // Fetch New Hires list
         function fetchNewHires() {
             const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
@@ -132,7 +137,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                const newHires = data.values;
+                const newHires = filterData(data.values);
                 const newHiresList = document.getElementById('newHiresList');
                 newHiresList.innerHTML = ''; // Clear the list before populating
 
@@ -149,10 +154,10 @@
                         <strong>Position:</strong> ${hire[3]}
                     `;
 
-                    // Toggle details when employee name is clicked
-                    hireItem.onclick = () => {
+                    // Fix: Toggle details immediately on first click
+                    hireItem.addEventListener('click', () => {
                         hireDetails.style.display = hireDetails.style.display === 'none' ? 'block' : 'none';
-                    };
+                    });
 
                     hireItem.appendChild(hireDetails);
                     newHiresList.appendChild(hireItem);
@@ -181,7 +186,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                const employees = data.values;
+                const employees = filterData(data.values);
                 const employeeList = document.getElementById('existingEmployeesList');
                 employeeList.innerHTML = ''; // Clear the list before populating
 
@@ -198,10 +203,10 @@
                         <strong>Position:</strong> ${employee[3]}
                     `;
 
-                    // Toggle details when employee name is clicked
-                    employeeItem.onclick = () => {
+                    // Fix: Toggle details immediately on first click
+                    employeeItem.addEventListener('click', () => {
                         employeeDetails.style.display = employeeDetails.style.display === 'none' ? 'block' : 'none';
-                    };
+                    });
 
                     employeeItem.appendChild(employeeDetails);
                     employeeList.appendChild(employeeItem);
