@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Onboarding with OAuth</title>
+    <title>Employee Onboarding with OAuth Debugging</title>
     <style>
         /* Basic styling */
         body {
@@ -87,11 +87,11 @@
         <p id="successMessage" style="color: green; display: none;">Form submitted successfully!</p>
         <p id="errorMessage" style="color: red; display: none;">There was an error submitting the form. See details below.</p>
 
+        <!-- Debugging output section -->
         <div id="debugOutput" class="debug-output" style="display: none;"></div>
     </div>
 
     <script>
-        // Load Google API and initiate OAuth
         let accessToken;
 
         function authenticate() {
@@ -102,8 +102,9 @@
                     accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
                     console.log("Sign-in successful");
                 }, function (err) {
-                    console.error("Error signing in", err);
                     document.getElementById('oauth-status').innerText = 'Authentication failed';
+                    showError('Authentication failed. ' + JSON.stringify(err, null, 2));
+                    console.error("Error signing in", err);
                 });
         }
 
@@ -113,11 +114,25 @@
                     console.log("GAPI client loaded for API");
                     authenticate();
                 }, function (err) {
+                    showError('Failed to load GAPI client: ' + JSON.stringify(err, null, 2));
                     console.error("Error loading GAPI client for API", err);
                 });
         }
 
-        // Load Google API client library and initialize the auth process
+        // Show error messages in debug output
+        function showError(errorMsg) {
+            const debugOutput = document.getElementById('debugOutput');
+            debugOutput.style.display = 'block';
+            debugOutput.innerHTML = `Error: ${errorMsg}`;
+        }
+
+        // Show success messages in debug output
+        function showSuccess(successMsg) {
+            const debugOutput = document.getElementById('debugOutput');
+            debugOutput.style.display = 'block';
+            debugOutput.innerHTML = `Success: ${successMsg}`;
+        }
+
         gapi.load("client:auth2", function () {
             gapi.auth2.init({
                 client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com" // Your OAuth Client ID
@@ -152,19 +167,20 @@
             .then(response => {
                 if (!response.ok) {
                     return response.json().then(errData => {
-                        console.error('Error details:', errData);
+                        showError('Failed to submit data. API response: ' + JSON.stringify(errData, null, 2));
                         throw new Error('Failed to submit data');
                     });
                 }
                 return response.json();
             })
             .then(result => {
+                showSuccess('Data submitted successfully. API response: ' + JSON.stringify(result, null, 2));
                 document.getElementById('successMessage').style.display = 'block';
                 document.getElementById('errorMessage').style.display = 'none';
                 document.getElementById('onboardingForm').reset();
             })
             .catch(error => {
-                console.error('Error:', error);
+                showError('Error: ' + error.message);
                 document.getElementById('errorMessage').style.display = 'block';
             });
         });
