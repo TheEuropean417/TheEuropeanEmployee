@@ -94,12 +94,13 @@
         // Function to toggle the visibility of any section
         function toggleSection(sectionId) {
             const section = document.getElementById(sectionId);
-            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+            // Ensure proper initial state and toggle
+            section.style.display = section.style.display === 'none' || section.style.display === '' ? 'block' : 'none';
         }
 
         // Toggle the visibility of employee details
         function toggleEmployeeDetails(detailsElement) {
-            detailsElement.style.display = detailsElement.style.display === 'none' ? 'block' : 'none';
+            detailsElement.style.display = detailsElement.style.display === 'none' || detailsElement.style.display === '' ? 'block' : 'none';
         }
 
         function handleCredentialResponse(response) {
