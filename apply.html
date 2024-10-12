@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply for a Position at The European</title>
     <style>
-        /* Add your custom styles here */
         .form-container {
             max-width: 500px;
             margin: auto;
@@ -40,21 +39,35 @@
             background-color: #45a049;
         }
 
-        /* Resume Upload Area */
-        .resume-upload {
-            border: 2px dashed #ccc;
-            padding: 20px;
-            text-align: center;
+        /* Error and Debug Output Styling */
+        .debug-output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            white-space: pre-wrap; /* Preserve formatting */
+        }
+
+        /* Styling for the file input */
+        .file-input {
+            display: none; /* Hide the file input */
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
             cursor: pointer;
-            margin-bottom: 15px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .resume-upload p {
-            margin: 0;
-        }
-
-        .resume-upload input[type="file"] {
-            display: none;
+        .file-input-label:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -81,24 +94,34 @@
                 </select>
             </div>
 
-            <!-- Custom Resume Upload Button -->
-            <div class="resume-upload" onclick="document.getElementById('resume').click()">
-                <p>Click here to upload your resume or drag and drop</p>
-                <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" required>
+            <!-- File upload button with hidden input -->
+            <div class="form-group">
+                <label for="resume" class="file-input-label">Choose Resume</label>
+                <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" class="file-input" required>
             </div>
 
             <button type="submit" class="btn">SEND</button>
         </form>
+
+        <!-- Debug output section -->
+        <div id="debug-output" class="debug-output">
+            Debug output will appear here.
+        </div>
     </div>
 
     <script>
+        // Show the file dialog when clicking the label
+        document.querySelector('.file-input-label').addEventListener('click', function() {
+            document.getElementById('resume').click();
+        });
+
         document.getElementById('application-form').onsubmit = function(event) {
             event.preventDefault();  // Prevent default form submission
 
             const formData = new FormData(this);  // Collect form data
 
-            // Log the formData object for debugging
-            console.log('Form Data:', formData);
+            // Clear previous debug messages
+            document.getElementById('debug-output').textContent = 'Sending application...';
 
             // Send form data to the Google Apps Script Web App
             fetch('https://script.google.com/macros/s/AKfycbxTjrarfXrSgwH_fakkCewBYRilDKXvGbqv9lrXdO6EPNSOZDWD1hJaaPiZDA_QLblX/exec', {
@@ -110,14 +133,14 @@
                 console.log('Response from server:', data);  // Log the server response
 
                 if (data.result === 'success') {
-                    alert('Application sent successfully!');
+                    document.getElementById('debug-output').textContent = 'Application sent successfully!';
                 } else {
-                    alert('Failed to send application.');
+                    document.getElementById('debug-output').textContent = 'Failed to send application. Server response: ' + JSON.stringify(data);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);  // Log any errors
-                alert('An error occurred. Please try again.');
+                document.getElementById('debug-output').textContent = 'An error occurred: ' + error;
             });
         };
     </script>
