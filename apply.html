@@ -5,20 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply for a Position at The European</title>
     <style>
-        /* Same styling as before */
+        /* Add your custom styles here */
     </style>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function(){
-            emailjs.init("YOUR_USER_ID");  // Replace with your EmailJS user ID
-        })();
-    </script>
 </head>
 <body>
     <div class="form-container">
         <h1>Apply for a Position</h1>
 
-        <form id="application-form">
+        <form id="application-form" enctype="multipart/form-data">
             <div class="form-group">
                 <input type="text" name="name" placeholder="Full Name" required>
             </div>
@@ -39,7 +33,7 @@
 
             <div class="resume-upload" onclick="document.getElementById('resume').click()">
                 <p>Click here to upload your resume or drag and drop</p>
-                <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" style="display:none;" required>
+                <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" required>
             </div>
 
             <button type="submit" class="btn">SEND</button>
@@ -51,25 +45,21 @@
             event.preventDefault();
 
             const formData = new FormData(this);
-            const data = {
-                service_id: 'YOUR_SERVICE_ID',
-                template_id: 'YOUR_TEMPLATE_ID',
-                user_id: 'YOUR_USER_ID',
-                template_params: {
-                    'name': formData.get('name'),
-                    'email': formData.get('email'),
-                    'phone': formData.get('phone'),
-                    'position': formData.get('position'),
-                    'resume': formData.get('resume').name // You may need additional handling for file uploads
-                }
-            };
 
-            emailjs.send(data.service_id, data.template_id, data.template_params)
-                .then(function(response) {
+            // Send form data to the Google Apps Script Web App
+            fetch('https://script.google.com/macros/s/AKfycbxTjrarfXrSgwH_fakkCewBYRilDKXvGbqv9lrXdO6EPNSOZDWD1hJaaPiZDA_QLblX/exec', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
                     alert('Application sent successfully!');
-                }, function(error) {
+                } else {
                     alert('Failed to send application.');
-                });
+                }
+            })
+            .catch(error => console.error('Error:', error));
         };
     </script>
 </body>
