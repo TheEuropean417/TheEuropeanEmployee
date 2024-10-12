@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for a Position at The European</title>
+    <style>
+        /* Same styling as before */
+    </style>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            emailjs.init("YOUR_USER_ID");  // Replace with your EmailJS user ID
+        })();
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Apply for a Position</h1>
+
+        <form id="application-form">
+            <div class="form-group">
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="form-group">
+                <input type="tel" name="phone" placeholder="Phone Number" required>
+            </div>
+            <div class="form-group">
+                <select name="position" required>
+                    <option value="" disabled selected>Select Position</option>
+                    <option value="developer">Developer</option>
+                    <option value="designer">Designer</option>
+                    <option value="manager">Manager</option>
+                </select>
+            </div>
+
+            <div class="resume-upload" onclick="document.getElementById('resume').click()">
+                <p>Click here to upload your resume or drag and drop</p>
+                <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" style="display:none;" required>
+            </div>
+
+            <button type="submit" class="btn">SEND</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('application-form').onsubmit = function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const data = {
+                service_id: 'YOUR_SERVICE_ID',
+                template_id: 'YOUR_TEMPLATE_ID',
+                user_id: 'YOUR_USER_ID',
+                template_params: {
+                    'name': formData.get('name'),
+                    'email': formData.get('email'),
+                    'phone': formData.get('phone'),
+                    'position': formData.get('position'),
+                    'resume': formData.get('resume').name // You may need additional handling for file uploads
+                }
+            };
+
+            emailjs.send(data.service_id, data.template_id, data.template_params)
+                .then(function(response) {
+                    alert('Application sent successfully!');
+                }, function(error) {
+                    alert('Failed to send application.');
+                });
+        };
+    </script>
+</body>
+</html>
