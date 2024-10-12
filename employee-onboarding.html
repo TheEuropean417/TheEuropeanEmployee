@@ -53,6 +53,7 @@
 
         #oauth-status {
             margin-top: 20px;
+            color: red;
         }
 
         .debug-output {
@@ -101,63 +102,61 @@
     <script>
         let accessToken; // This will hold the access token after authentication
 
-        // Initialize Google API client
+        // Initialize Google API client and authenticate user
         function authenticate() {
-            return gapi.auth2.getAuthInstance()
+            console.log("Starting OAuth sign-in...");
+            gapi.auth2.getAuthInstance()
                 .signIn({ scope: 'https://www.googleapis.com/auth/spreadsheets' })
                 .then(function () {
-                    document.getElementById('oauth-status').innerText = 'Authenticated';
                     accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
                     console.log("Sign-in successful. Access token:", accessToken);
-
-                    // Show the form once authenticated
+                    document.getElementById('oauth-status').innerText = 'Authenticated';
                     document.getElementById('onboardingForm').style.display = 'block';
                     document.getElementById('signInButton').style.display = 'none';
-                }, function (err) {
-                    showError('Authentication failed: ' + JSON.stringify(err, null, 2));
-                    console.error("Error signing in", err);
+                }, function (error) {
+                    console.error("Error during OAuth sign-in:", error);
+                    document.getElementById('oauth-status').innerText = 'Authentication failed: ' + JSON.stringify(error, null, 2);
                 });
         }
 
         function loadClient() {
-            return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/sheets/v4/rest")
+            console.log("Loading Google API client...");
+            gapi.client.load("https://content.googleapis.com/discovery/v1/apis/sheets/v4/rest")
                 .then(function () {
-                    console.log("GAPI client loaded for API");
-                }, function (err) {
-                    showError('Failed to load GAPI client: ' + JSON.stringify(err, null, 2));
-                    console.error("Error loading GAPI client for API", err);
+                    console.log("Google API client loaded.");
+                }, function (error) {
+                    showError('Failed to load GAPI client: ' + JSON.stringify(error, null, 2));
+                    console.error("Error loading GAPI client for API:", error);
                 });
         }
 
-        // Show error messages in debug output
         function showError(errorMsg) {
             const debugOutput = document.getElementById('debugOutput');
             debugOutput.style.display = 'block';
             debugOutput.innerHTML = `Error: ${errorMsg}`;
         }
 
-        // Show success messages in debug output
-        function showSuccess(successMsg) {
-            const debugOutput = document.getElementById('debugOutput');
-            debugOutput.style.display = 'block';
-            debugOutput.innerHTML = `Success: ${successMsg}`;
-        }
-
-        // Initialize Google OAuth 2.0 client
         gapi.load("client:auth2", function () {
+            console.log("Initializing Google OAuth...");
             gapi.auth2.init({
-                client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com" // Your OAuth Client ID from the JSON file
+                client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com"
             }).then(function () {
+                console.log("OAuth client initialized.");
                 document.getElementById('signInButton').addEventListener('click', authenticate);
             }).catch(function (error) {
+                console.error("OAuth client initialization failed:", error);
                 showError('OAuth client initialization failed: ' + JSON.stringify(error, null, 2));
-                console.error('Error initializing OAuth client:', error);
             });
         });
 
         // Submit the form to Google Sheets
         document.getElementById('onboardingForm').addEventListener('submit', function (e) {
             e.preventDefault();
+
+            if (!accessToken) {
+                showError("Access token is missing. Please sign in first.");
+                return;
+            }
 
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
@@ -201,6 +200,12 @@
                 document.getElementById('errorMessage').style.display = 'block';
             });
         });
+
+        function showSuccess(successMsg) {
+            const debugOutput = document.getElementById('debugOutput');
+            debugOutput.style.display = 'block';
+            debugOutput.innerHTML = `Success: ${successMsg}`;
+        }
     </script>
 </body>
 </html>
