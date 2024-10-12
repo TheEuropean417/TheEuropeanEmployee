@@ -3,90 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Administration</title>
+    <title>Admin - Employee & New Hire Lists</title>
     <style>
+        /* Basic styling */
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
             padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            max-height: 600px;
+            overflow-y: auto; /* Scrollable */
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 20px;
         }
 
         .employee-list {
-            max-width: 600px;
-            margin: 0 auto;
+            margin: 20px 0;
         }
 
-        .employee {
-            background-color: white;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        .list-title {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .employee-item {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
             cursor: pointer;
         }
 
-        .employee-details {
-            display: none;
-            padding-top: 10px;
-            color: #666;
-        }
-
-        .employee:hover .employee-details {
-            display: block;
+        .employee-item:hover {
+            background-color: #f0f0f0;
         }
     </style>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-    <h1>Employee Administration</h1>
-    <div class="employee-list" id="employeeList"></div>
+    <div class="container">
+        <h1>Admin Panel</h1>
+
+        <!-- Section for New Hires -->
+        <h2 class="list-title">New Hires</h2>
+        <div id="newHiresList" class="employee-list"></div>
+
+        <!-- Section for Existing Employees -->
+        <h2 class="list-title">Existing Employees</h2>
+        <div id="existingEmployeesList" class="employee-list"></div>
+    </div>
 
     <script>
-        // Fetch employee data from Google Sheets
-        const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ'; // Google Sheet ID
-        const API_KEY = 'AIzaSyA60qadwBjj1X_pX7G5GUPSYPqldzSg9Ss'; // New API key
-        const range = 'Sheet1!A2:D'; // Assuming data starts from A2 to D (First Name, Last Name, Email, Position)
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+        let accessToken;
 
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
+        function handleCredentialResponse(response) {
+            accessToken = response.access_token;
+            fetchNewHires();      // Fetch New Hires list
+            fetchExistingEmployees(); // Fetch Existing Employees list
+        }
+
+        function loadIdentityServices() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com",
+                scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
+                callback: handleCredentialResponse
+            });
+
+            tokenClient.requestAccessToken();
+        }
+
+        window.onload = function() {
+            loadIdentityServices();
+        };
+
+        // Fetch New Hires list
+        function fetchNewHires() {
+            const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
+            const range = 'New_Hires'; // Fetch from New_Hires sheet
+
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${accessToken}`;
+
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`
                 }
-                return response.json();
             })
+            .then(response => response.json())
             .then(data => {
-                const employees = data.values || []; // Fetch employee data, handle empty case
-                const employeeListDiv = document.getElementById('employeeList');
+                const newHires = data.values;
+                const newHiresList = document.getElementById('newHiresList');
+                newHiresList.innerHTML = ''; // Clear the list before populating
 
-                if (employees.length === 0) {
-                    employeeListDiv.innerHTML = '<p>No employee data found.</p>';
-                    return;
-                }
-
-                // Create employee list
-                employees.forEach(employee => {
-                    const employeeDiv = document.createElement('div');
-                    employeeDiv.classList.add('employee');
-                    employeeDiv.innerHTML = `
-                        <strong>${employee[0]} ${employee[1]}</strong>
-                        <div class="employee-details">
-                            Email: ${employee[2]}<br>
-                            Position: ${employee[3]}
-                        </div>
-                    `;
-                    employeeListDiv.appendChild(employeeDiv);
+                // Loop through and create items for each new hire
+                newHires.forEach(hire => {
+                    const hireItem = document.createElement('div');
+                    hireItem.className = 'employee-item';
+                    hireItem.innerText = `${hire[0]} ${hire[1]}`; // Display First Name and Last Name
+                    newHiresList.appendChild(hireItem);
                 });
             })
             .catch(error => {
-                console.error('Error fetching employee data:', error);
-                const employeeListDiv = document.getElementById('employeeList');
-                employeeListDiv.innerHTML = '<p>There was an error fetching the employee data.</p>';
+                console.error('Error fetching new hires:', error);
             });
+        }
+
+        // Fetch Existing Employees list
+        function fetchExistingEmployees() {
+            const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
+            const range = 'Existing'; // Fetch from Existing sheet
+
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${accessToken}`;
+
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const employees = data.values;
+                const employeeList = document.getElementById('existingEmployeesList');
+                employeeList.innerHTML = ''; // Clear the list before populating
+
+                // Loop through and create items for each employee
+                employees.forEach(employee => {
+                    const employeeItem = document.createElement('div');
+                    employeeItem.className = 'employee-item';
+                    employeeItem.innerText = `${employee[0]} ${employee[1]}`; // Display First Name and Last Name
+                    employeeList.appendChild(employeeItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching existing employees:', error);
+            });
+        }
     </script>
 </body>
 </html>

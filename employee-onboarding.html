@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Onboarding with Google Identity Services</title>
+    <title>New Employee Onboarding</title>
     <style>
         /* Basic styling */
         body {
@@ -71,17 +71,14 @@
         }
     </style>
 
-    <!-- Include Google's Identity Services library -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="form-container">
         <h1>New Employee Onboarding</h1>
 
-        <!-- Sign in button -->
         <button id="signInButton" class="btn">Sign In with Google</button>
 
-        <!-- Onboarding form -->
         <form id="onboardingForm" style="display: none;">
             <input type="text" id="firstName" placeholder="First Name" required><br>
             <input type="text" id="lastName" placeholder="Last Name" required><br>
@@ -90,31 +87,24 @@
             <button type="submit" class="btn">Submit</button>
         </form>
 
-        <!-- Status messages -->
         <p id="oauth-status">Not authenticated</p>
         <p id="successMessage" style="color: green; display: none;">Form submitted successfully!</p>
         <p id="errorMessage" style="color: red; display: none;">There was an error submitting the form. See details below.</p>
 
-        <!-- Debugging output section -->
         <div id="debugOutput" class="debug-output" style="display: none;"></div>
     </div>
 
     <script>
-        let tokenClient; // This will hold the OAuth token client
-        let accessToken; // This will hold the access token after authentication
+        let accessToken;
 
         function handleCredentialResponse(response) {
-            // This function is called when the user successfully signs in
-            console.log("Credential response:", response);
-            accessToken = response.access_token; // Get access token from the response
+            accessToken = response.access_token;
             document.getElementById('oauth-status').innerText = 'Authenticated';
             document.getElementById('onboardingForm').style.display = 'block';
             document.getElementById('signInButton').style.display = 'none';
         }
 
         function loadIdentityServices() {
-            console.log("Initializing Google Identity Services...");
-
             tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com",
                 scope: 'https://www.googleapis.com/auth/spreadsheets',
@@ -122,17 +112,14 @@
             });
 
             document.getElementById('signInButton').addEventListener('click', function () {
-                console.log("Sign In with Google button clicked.");
-                tokenClient.requestAccessToken(); // Request access token on button click
+                tokenClient.requestAccessToken();
             });
         }
 
-        // Call this once the page is loaded
         window.onload = function() {
-            loadIdentityServices(); // Initialize GIS on page load
+            loadIdentityServices();
         };
 
-        // Submit the form to Google Sheets
         document.getElementById('onboardingForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -150,8 +137,8 @@
                 "values": [[firstName, lastName, email, position]]
             };
 
-            const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ'; // Google Sheet ID
-            const range = 'Sheet1'; // The target sheet to append data
+            const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
+            const range = 'New_Hires'; // New sheet name
 
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
 
@@ -163,19 +150,10 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(errData => {
-                        showError('Failed to submit data. API response: ' + JSON.stringify(errData, null, 2));
-                        throw new Error('Failed to submit data');
-                    });
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(result => {
-                showSuccess('Data submitted successfully. API response: ' + JSON.stringify(result, null, 2));
+                showSuccess('Data submitted successfully.');
                 document.getElementById('successMessage').style.display = 'block';
-                document.getElementById('errorMessage').style.display = 'none';
                 document.getElementById('onboardingForm').reset();
             })
             .catch(error => {
@@ -185,15 +163,13 @@
         });
 
         function showError(errorMsg) {
-            const debugOutput = document.getElementById('debugOutput');
-            debugOutput.style.display = 'block';
-            debugOutput.innerHTML = `Error: ${errorMsg}`;
+            document.getElementById('debugOutput').style.display = 'block';
+            document.getElementById('debugOutput').innerText = `Error: ${errorMsg}`;
         }
 
         function showSuccess(successMsg) {
-            const debugOutput = document.getElementById('debugOutput');
-            debugOutput.style.display = 'block';
-            debugOutput.innerHTML = `Success: ${successMsg}`;
+            document.getElementById('debugOutput').style.display = 'block';
+            document.getElementById('debugOutput').innerText = `Success: ${successMsg}`;
         }
     </script>
 </body>
