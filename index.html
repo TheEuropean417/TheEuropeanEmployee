@@ -9,22 +9,28 @@
         body, html {
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             height: 100%;
-            background: url('https://images.unsplash.com/photo-1521573830910-8bda3ff26a97') no-repeat center center/cover;
+            background-color: #faf5f8; /* Soft background color */
             display: flex;
             justify-content: center;
             align-items: center;
             background-size: cover;
         }
 
-        /* Main container for buttons */
+        /* Main container for content */
         .container {
             text-align: center;
             background: rgba(0, 0, 0, 0.6);
             padding: 50px;
             border-radius: 15px;
             box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Logo styling */
+        .logo {
+            max-width: 300px;
+            margin-bottom: 30px;
         }
 
         h1 {
@@ -47,25 +53,25 @@
             text-transform: uppercase;
             border: none;
             border-radius: 50px;
-            background: linear-gradient(90deg, #00dbde 0%, #fc00ff 100%);
-            box-shadow: 0 15px 25px rgba(0, 223, 255, 0.5);
+            background: linear-gradient(90deg, #df678c 0%, #ff8b9e 100%); /* Pink gradient based on the site’s color */
+            box-shadow: 0 15px 25px rgba(223, 103, 140, 0.5); /* Shadow matching the pink theme */
             cursor: pointer;
             transition: all 0.4s ease;
         }
 
         .btn:hover {
-            box-shadow: 0 20px 40px rgba(255, 105, 180, 0.8);
+            box-shadow: 0 20px 40px rgba(223, 103, 140, 0.8);
             transform: translateY(-5px);
         }
 
         /* Button Admin Specific */
         .btn.admin {
-            background: linear-gradient(90deg, #12c2e9 0%, #c471ed 50%, #f7797d 100%);
+            background: linear-gradient(90deg, #c76c8a 0%, #f88eaf 100%);
         }
 
         /* Button for New Employees */
         .btn.new-employees {
-            background: linear-gradient(90deg, #f09819 0%, #ff5858 100%);
+            background: linear-gradient(90deg, #e0759f 0%, #ff98b5 100%);
         }
 
         /* Responsive design */
@@ -77,12 +83,24 @@
                 padding: 15px 30px;
                 font-size: 1rem;
             }
+            .logo {
+                max-width: 200px;
+            }
         }
     </style>
+
+    <!-- Import Montserrat font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
+        <!-- Logo -->
+        <img src="https://b1767dc1b20523885e3a.cdn6.editmysite.com/uploads/b/b1767dc1b20523885e3a00d3d4c6a7fd82e9c90cefba70278cf527c59f580d89/Untitled%20design%20%281%29_1727046864.png?width=2400&optimize=medium" alt="The European Logo" class="logo">
+        
+        <!-- Heading -->
         <h1>Welcome to The European Café</h1>
+
+        <!-- Buttons -->
         <a href="/admin" class="btn admin">The European Admin</a><br>
         <a href="/new-employees" class="btn new-employees">New Employees</a>
     </div>
