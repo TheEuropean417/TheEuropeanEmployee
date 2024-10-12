@@ -11,7 +11,7 @@
             padding: 0;
             font-family: 'Montserrat', sans-serif;
             height: 100%;
-            background-color: #faf5f8; /* Soft background color to contrast with lavender */
+            background-color: #faf5f8; /* Soft background color */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -53,25 +53,26 @@
             text-transform: uppercase;
             border: none;
             border-radius: 50px;
-            background: linear-gradient(90deg, #df678c 0%, #ff8b9e 100%); /* Pink gradient to match site color */
-            box-shadow: 0 15px 25px rgba(223, 103, 140, 0.5); /* Pink shadow for harmony */
+            background: rgb(82, 113, 255); /* Blue button color */
+            box-shadow: 0 15px 30px rgba(82, 113, 255, 0.6), 0 0 20px rgba(82, 113, 255, 0.7), 0 0 40px rgba(82, 113, 255, 0.4); /* Multi-layer shadow for futuristic effect */
             cursor: pointer;
             transition: all 0.4s ease;
         }
 
+        /* Hover Effect for Buttons */
         .btn:hover {
-            box-shadow: 0 20px 40px rgba(223, 103, 140, 0.8); /* Intense hover effect */
+            box-shadow: 0 20px 40px rgba(82, 113, 255, 1), 0 0 30px rgba(82, 113, 255, 0.9), 0 0 60px rgba(82, 113, 255, 0.8); /* Strong glow effect on hover */
             transform: translateY(-5px);
         }
 
         /* Button Admin Specific */
         .btn.admin {
-            background: linear-gradient(90deg, #e292d8 0%, #f4a0e4 100%); /* Lighter pink-violet tones */
+            background: rgb(82, 113, 255); /* Same blue for admin button */
         }
 
         /* Button for New Employees */
         .btn.new-employees {
-            background: linear-gradient(90deg, #d48fe1 0%, #eaa3ed 100%); /* Lavender-gradient button to complement the container */
+            background: rgb(82, 113, 255); /* Same blue for New Employees button */
         }
 
         /* Responsive design */
@@ -98,7 +99,7 @@
         <img src="https://b1767dc1b20523885e3a.cdn6.editmysite.com/uploads/b/b1767dc1b20523885e3a00d3d4c6a7fd82e9c90cefba70278cf527c59f580d89/Untitled%20design%20%281%29_1727046864.png?width=2400&optimize=medium" alt="The European Logo" class="logo">
         
         <!-- Heading -->
-        <h1>Welcome to The European employee portal</h1>
+        <h1>Welcome to The European Café</h1>
 
         <!-- Buttons -->
         <a href="/admin" class="btn admin">The European Admin</a><br>
