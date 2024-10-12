@@ -50,6 +50,21 @@
         .btn:hover {
             background-color: rgb(60, 90, 220);
         }
+
+        /* Debugging output styles */
+        .debug-output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            color: #333;
+            text-align: left;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-width: 400px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -63,7 +78,10 @@
             <button type="submit" class="btn">Submit</button>
         </form>
         <p id="successMessage" style="color: green; display: none;">Form submitted successfully!</p>
-        <p id="errorMessage" style="color: red; display: none;">There was an error submitting the form. Check the console for details.</p>
+        <p id="errorMessage" style="color: red; display: none;">There was an error submitting the form. See details below.</p>
+        
+        <!-- Debugging output section -->
+        <div id="debugOutput" class="debug-output" style="display: none;"></div>
     </div>
 
     <script>
@@ -86,6 +104,10 @@
             const range = 'Sheet1'; // The target sheet to append data
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS&key=${API_KEY}`;
 
+            const debugOutput = document.getElementById('debugOutput');
+            debugOutput.style.display = 'none'; // Hide debug output initially
+            debugOutput.innerHTML = ''; // Clear previous debug info
+
             fetch(url, {
                 method: "POST",
                 headers: {
@@ -94,23 +116,30 @@
                 body: JSON.stringify(data)
             })
             .then(response => {
-                if (!response.ok) {
-                    return response.json().then(errData => {
-                        console.error('Error details:', errData);
+                // Display all response info
+                debugOutput.style.display = 'block';
+                debugOutput.innerHTML += `Response status: ${response.status}\n\n`;
+
+                return response.json().then(result => {
+                    debugOutput.innerHTML += `Response data: \n${JSON.stringify(result, null, 2)}\n\n`;
+
+                    if (!response.ok) {
                         throw new Error('Failed to submit data');
-                    });
-                }
-                return response.json();
+                    }
+                    return result;
+                });
             })
-            .then(data => {
+            .then(result => {
                 document.getElementById('successMessage').style.display = 'block';
                 document.getElementById('errorMessage').style.display = 'none';
                 document.getElementById('onboardingForm').reset();
             })
             .catch(error => {
                 console.error('Error:', error);
+
+                // Show error details on the page
                 document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('successMessage').style.display = 'none';
+                debugOutput.innerHTML += `Error: ${error.message}\n`;
             });
         });
     </script>
