@@ -50,6 +50,13 @@
         .employee-item:hover {
             background-color: #f0f0f0;
         }
+
+        /* Error message styling */
+        .error-message {
+            color: red;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
     </style>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -60,10 +67,15 @@
         <!-- Section for New Hires -->
         <h2 class="list-title">New Hires</h2>
         <div id="newHiresList" class="employee-list"></div>
+        <p id="newHiresError" class="error-message" style="display: none;">Error fetching new hires data.</p>
 
         <!-- Section for Existing Employees -->
         <h2 class="list-title">Existing Employees</h2>
         <div id="existingEmployeesList" class="employee-list"></div>
+        <p id="existingEmployeesError" class="error-message" style="display: none;">Error fetching existing employees data.</p>
+
+        <!-- Debug Output -->
+        <div id="debugOutput" class="error-message" style="display: none;"></div>
     </div>
 
     <script>
@@ -94,7 +106,7 @@
             const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
             const range = 'New_Hires'; // Fetch from New_Hires sheet
 
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${accessToken}`;
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}`;
 
             fetch(url, {
                 method: "GET",
@@ -102,11 +114,20 @@
                     "Authorization": `Bearer ${accessToken}`
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 const newHires = data.values;
                 const newHiresList = document.getElementById('newHiresList');
                 newHiresList.innerHTML = ''; // Clear the list before populating
+
+                if (!newHires) {
+                    throw new Error('No data found for new hires.');
+                }
 
                 // Loop through and create items for each new hire
                 newHires.forEach(hire => {
@@ -118,6 +139,9 @@
             })
             .catch(error => {
                 console.error('Error fetching new hires:', error);
+                document.getElementById('newHiresError').style.display = 'block';
+                document.getElementById('debugOutput').innerText = `Error: ${error.message}`;
+                document.getElementById('debugOutput').style.display = 'block';
             });
         }
 
@@ -126,7 +150,7 @@
             const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
             const range = 'Existing'; // Fetch from Existing sheet
 
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${accessToken}`;
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}`;
 
             fetch(url, {
                 method: "GET",
@@ -134,11 +158,20 @@
                     "Authorization": `Bearer ${accessToken}`
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 const employees = data.values;
                 const employeeList = document.getElementById('existingEmployeesList');
                 employeeList.innerHTML = ''; // Clear the list before populating
+
+                if (!employees) {
+                    throw new Error('No data found for existing employees.');
+                }
 
                 // Loop through and create items for each employee
                 employees.forEach(employee => {
@@ -150,6 +183,9 @@
             })
             .catch(error => {
                 console.error('Error fetching existing employees:', error);
+                document.getElementById('existingEmployeesError').style.display = 'block';
+                document.getElementById('debugOutput').innerText = `Error: ${error.message}`;
+                document.getElementById('debugOutput').style.display = 'block';
             });
         }
     </script>
