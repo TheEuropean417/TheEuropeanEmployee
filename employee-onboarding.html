@@ -100,12 +100,13 @@
     </div>
 
     <script>
+        let tokenClient; // This will hold the OAuth token client
         let accessToken; // This will hold the access token after authentication
 
         function handleCredentialResponse(response) {
             // This function is called when the user successfully signs in
             console.log("Credential response:", response);
-            accessToken = response.credential; // Get access token from the response
+            accessToken = response.access_token; // Get access token from the response
             document.getElementById('oauth-status').innerText = 'Authenticated';
             document.getElementById('onboardingForm').style.display = 'block';
             document.getElementById('signInButton').style.display = 'none';
@@ -114,14 +115,15 @@
         function loadIdentityServices() {
             console.log("Initializing Google Identity Services...");
 
-            google.accounts.oauth2.initTokenClient({
+            tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com",
                 scope: 'https://www.googleapis.com/auth/spreadsheets',
                 callback: handleCredentialResponse
             });
 
             document.getElementById('signInButton').addEventListener('click', function () {
-                google.accounts.oauth2.requestAccessToken(); // Request access token on button click
+                console.log("Sign In with Google button clicked.");
+                tokenClient.requestAccessToken(); // Request access token on button click
             });
         }
 
