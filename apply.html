@@ -71,6 +71,13 @@
         .file-input-label:hover {
             background-color: #45a049;
         }
+
+        /* Styling for showing the selected file name */
+        .file-name {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -100,6 +107,7 @@
             <div class="form-group">
                 <label for="resume" class="file-input-label">Choose Resume</label>
                 <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" class="file-input" required>
+                <span id="file-name" class="file-name">No file selected</span>
             </div>
 
             <button type="submit" class="btn">SEND</button>
@@ -112,10 +120,16 @@
     </div>
 
     <script>
-        // Attach the file upload functionality
-        document.querySelector('.file-input-label').addEventListener('click', function(event) {
-            event.preventDefault();  // Prevent any double triggering
-            document.getElementById('resume').click();  // Open file dialog
+        const fileInput = document.getElementById('resume');
+        const fileNameDisplay = document.getElementById('file-name');
+
+        // Show the selected file name when a file is chosen
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = 'Selected file: ' + fileInput.files[0].name;
+            } else {
+                fileNameDisplay.textContent = 'No file selected';
+            }
         });
 
         document.getElementById('application-form').onsubmit = function(event) {
