@@ -79,7 +79,14 @@
                 "values": [[firstName, lastName, email, position]]
             };
 
-            fetch(`https://sheets.googleapis.com/v4/spreadsheets/1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ/values/A1:append?valueInputOption=RAW&key=AIzaSyA60qadwBjj1X_pX7G5GUPSYPqldzSg9Ss`, {
+            // Append data to Google Sheets
+            const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ'; // Spreadsheet ID
+            const API_KEY = 'AIzaSyA60qadwBjj1X_pX7G5GUPSYPqldzSg9Ss'; // New API key
+
+            const range = 'Sheet1!A2:D'; // Specific sheet name and range (adjust if needed)
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}:append?valueInputOption=RAW&key=${API_KEY}`;
+
+            fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
