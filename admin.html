@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Employee & New Hire Lists</title>
+    <title>Admin - Expandable Employee & New Hire Lists</title>
     <style>
         /* Basic styling */
         body {
@@ -23,32 +23,42 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             width: 80%;
             max-width: 600px;
-            max-height: 600px;
-            overflow-y: auto; /* Scrollable */
         }
 
         h1 {
             text-align: center;
         }
 
-        .employee-list {
-            margin: 20px 0;
-        }
-
         .list-title {
             font-size: 1.5rem;
             margin: 20px 0;
-            text-align: left;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .employee-list {
+            margin: 0;
+            padding: 0;
+            display: none; /* Hidden by default */
         }
 
         .employee-item {
+            list-style: none;
             padding: 10px;
             border-bottom: 1px solid #ccc;
             cursor: pointer;
+            background-color: #f9f9f9;
         }
 
         .employee-item:hover {
             background-color: #f0f0f0;
+        }
+
+        .employee-details {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            display: none; /* Hidden by default */
         }
 
         /* Error message styling */
@@ -65,13 +75,13 @@
         <h1>Admin Panel</h1>
 
         <!-- Section for New Hires -->
-        <h2 class="list-title">New Hires</h2>
-        <div id="newHiresList" class="employee-list"></div>
+        <h2 class="list-title" onclick="toggleSection('newHiresList')">New Hires</h2>
+        <ul id="newHiresList" class="employee-list"></ul>
         <p id="newHiresError" class="error-message" style="display: none;">Error fetching new hires data.</p>
 
         <!-- Section for Existing Employees -->
-        <h2 class="list-title">Existing Employees</h2>
-        <div id="existingEmployeesList" class="employee-list"></div>
+        <h2 class="list-title" onclick="toggleSection('existingEmployeesList')">Existing Employees</h2>
+        <ul id="existingEmployeesList" class="employee-list"></ul>
         <p id="existingEmployeesError" class="error-message" style="display: none;">Error fetching existing employees data.</p>
 
         <!-- Debug Output -->
@@ -80,6 +90,12 @@
 
     <script>
         let accessToken;
+
+        // Toggle the visibility of each list when the section is clicked
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
 
         function handleCredentialResponse(response) {
             accessToken = response.access_token;
@@ -114,26 +130,31 @@
                     "Authorization": `Bearer ${accessToken}`
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 const newHires = data.values;
                 const newHiresList = document.getElementById('newHiresList');
                 newHiresList.innerHTML = ''; // Clear the list before populating
 
-                if (!newHires) {
-                    throw new Error('No data found for new hires.');
-                }
-
-                // Loop through and create items for each new hire
                 newHires.forEach(hire => {
-                    const hireItem = document.createElement('div');
+                    const hireItem = document.createElement('li');
                     hireItem.className = 'employee-item';
-                    hireItem.innerText = `${hire[0]} ${hire[1]}`; // Display First Name and Last Name
+                    hireItem.innerText = `${hire[0]} ${hire[1]}`; // Display Name
+
+                    // Employee details (hidden initially)
+                    const hireDetails = document.createElement('div');
+                    hireDetails.className = 'employee-details';
+                    hireDetails.innerHTML = `
+                        <strong>Email:</strong> ${hire[2]}<br>
+                        <strong>Position:</strong> ${hire[3]}
+                    `;
+
+                    // Toggle details when employee name is clicked
+                    hireItem.onclick = () => {
+                        hireDetails.style.display = hireDetails.style.display === 'none' ? 'block' : 'none';
+                    };
+
+                    hireItem.appendChild(hireDetails);
                     newHiresList.appendChild(hireItem);
                 });
             })
@@ -158,26 +179,31 @@
                     "Authorization": `Bearer ${accessToken}`
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 const employees = data.values;
                 const employeeList = document.getElementById('existingEmployeesList');
                 employeeList.innerHTML = ''; // Clear the list before populating
 
-                if (!employees) {
-                    throw new Error('No data found for existing employees.');
-                }
-
-                // Loop through and create items for each employee
                 employees.forEach(employee => {
-                    const employeeItem = document.createElement('div');
+                    const employeeItem = document.createElement('li');
                     employeeItem.className = 'employee-item';
-                    employeeItem.innerText = `${employee[0]} ${employee[1]}`; // Display First Name and Last Name
+                    employeeItem.innerText = `${employee[0]} ${employee[1]}`; // Display Name
+
+                    // Employee details (hidden initially)
+                    const employeeDetails = document.createElement('div');
+                    employeeDetails.className = 'employee-details';
+                    employeeDetails.innerHTML = `
+                        <strong>Email:</strong> ${employee[2]}<br>
+                        <strong>Position:</strong> ${employee[3]}
+                    `;
+
+                    // Toggle details when employee name is clicked
+                    employeeItem.onclick = () => {
+                        employeeDetails.style.display = employeeDetails.style.display === 'none' ? 'block' : 'none';
+                    };
+
+                    employeeItem.appendChild(employeeDetails);
                     employeeList.appendChild(employeeItem);
                 });
             })
