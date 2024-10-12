@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Onboarding</title>
+    <title>Employee Onboarding with OAuth</title>
     <style>
         /* Basic styling */
         body {
@@ -51,7 +51,10 @@
             background-color: rgb(60, 90, 220);
         }
 
-        /* Debugging output styles */
+        #oauth-status {
+            margin-top: 20px;
+        }
+
         .debug-output {
             margin-top: 20px;
             padding: 15px;
@@ -66,6 +69,9 @@
             overflow-y: auto;
         }
     </style>
+
+    <!-- Include Google's OAuth 2.0 client-side library -->
+    <script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
     <div class="form-container">
@@ -77,15 +83,48 @@
             <input type="text" id="position" placeholder="Position" required><br>
             <button type="submit" class="btn">Submit</button>
         </form>
+        <p id="oauth-status">Not authenticated</p>
         <p id="successMessage" style="color: green; display: none;">Form submitted successfully!</p>
         <p id="errorMessage" style="color: red; display: none;">There was an error submitting the form. See details below.</p>
-        
-        <!-- Debugging output section -->
+
         <div id="debugOutput" class="debug-output" style="display: none;"></div>
     </div>
 
     <script>
-        document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+        // Load Google API and initiate OAuth
+        let accessToken;
+
+        function authenticate() {
+            return gapi.auth2.getAuthInstance()
+                .signIn({ scope: 'https://www.googleapis.com/auth/spreadsheets' })
+                .then(function () {
+                    document.getElementById('oauth-status').innerText = 'Authenticated';
+                    accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+                    console.log("Sign-in successful");
+                }, function (err) {
+                    console.error("Error signing in", err);
+                    document.getElementById('oauth-status').innerText = 'Authentication failed';
+                });
+        }
+
+        function loadClient() {
+            return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/sheets/v4/rest")
+                .then(function () {
+                    console.log("GAPI client loaded for API");
+                    authenticate();
+                }, function (err) {
+                    console.error("Error loading GAPI client for API", err);
+                });
+        }
+
+        // Load Google API client library and initialize the auth process
+        gapi.load("client:auth2", function () {
+            gapi.auth2.init({
+                client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com" // Your OAuth Client ID
+            });
+        });
+
+        document.getElementById('onboardingForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
             const firstName = document.getElementById('firstName').value;
@@ -97,37 +136,27 @@
                 "values": [[firstName, lastName, email, position]]
             };
 
-            // Append data to Google Sheets
-            const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ'; // Spreadsheet ID
-            const API_KEY = 'AIzaSyA60qadwBjj1X_pX7G5GUPSYPqldzSg9Ss'; // New API key
-
+            const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ'; // Google Sheet ID
             const range = 'Sheet1'; // The target sheet to append data
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS&key=${API_KEY}`;
 
-            const debugOutput = document.getElementById('debugOutput');
-            debugOutput.style.display = 'none'; // Hide debug output initially
-            debugOutput.innerHTML = ''; // Clear previous debug info
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
 
             fetch(url, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${accessToken}`
                 },
                 body: JSON.stringify(data)
             })
             .then(response => {
-                // Display all response info
-                debugOutput.style.display = 'block';
-                debugOutput.innerHTML += `Response status: ${response.status}\n\n`;
-
-                return response.json().then(result => {
-                    debugOutput.innerHTML += `Response data: \n${JSON.stringify(result, null, 2)}\n\n`;
-
-                    if (!response.ok) {
+                if (!response.ok) {
+                    return response.json().then(errData => {
+                        console.error('Error details:', errData);
                         throw new Error('Failed to submit data');
-                    }
-                    return result;
-                });
+                    });
+                }
+                return response.json();
             })
             .then(result => {
                 document.getElementById('successMessage').style.display = 'block';
@@ -136,10 +165,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-
-                // Show error details on the page
                 document.getElementById('errorMessage').style.display = 'block';
-                debugOutput.innerHTML += `Error: ${error.message}\n`;
             });
         });
     </script>
