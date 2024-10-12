@@ -39,21 +39,21 @@
             background-color: #45a049;
         }
 
-        /* Error and Debug Output Styling */
+        /* Debug Output Styling */
         .debug-output {
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #ccc;
             background-color: #f1f1f1;
             border-radius: 5px;
-            white-space: pre-wrap; /* Preserve formatting */
+            white-space: pre-wrap;
             max-height: 300px;
-            overflow-y: auto;  /* Scroll if too much content */
+            overflow-y: auto;
         }
 
-        /* Styling for the file input */
+        /* File Input Styling */
         .file-input {
-            display: none; /* Hide the file input */
+            display: none;
         }
 
         .file-input-label {
@@ -96,7 +96,7 @@
                 </select>
             </div>
 
-            <!-- File upload button with hidden input -->
+            <!-- File Upload Button -->
             <div class="form-group">
                 <label for="resume" class="file-input-label">Choose Resume</label>
                 <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" class="file-input" required>
@@ -112,9 +112,10 @@
     </div>
 
     <script>
-        // Show the file dialog when clicking the label
-        document.querySelector('.file-input-label').addEventListener('click', function() {
-            document.getElementById('resume').click();
+        // Attach the file upload functionality
+        document.querySelector('.file-input-label').addEventListener('click', function(event) {
+            event.preventDefault();  // Prevent any double triggering
+            document.getElementById('resume').click();  // Open file dialog
         });
 
         document.getElementById('application-form').onsubmit = function(event) {
@@ -130,14 +131,16 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                return response.json();  // Attempt to parse JSON response
+            })
             .then(data => {
                 console.log('Response from server:', data);  // Log the server response
-
+                
                 if (data.result === 'success') {
-                    document.getElementById('debug-output').textContent = 'Application sent successfully! Logs:\n' + data.logs.join('\n');
+                    document.getElementById('debug-output').textContent = 'Application sent successfully!\n' + data.logs.join('\n');
                 } else {
-                    document.getElementById('debug-output').textContent = 'Failed to send application. Logs:\n' + data.logs.join('\n');
+                    document.getElementById('debug-output').textContent = 'Failed to send application.\n' + data.logs.join('\n');
                 }
             })
             .catch(error => {
