@@ -112,10 +112,21 @@
     </div>
 
     <script>
+        // Attach the file upload functionality
+        document.querySelector('.file-input-label').addEventListener('click', function(event) {
+            event.preventDefault();  // Prevent any double triggering
+            document.getElementById('resume').click();  // Open file dialog
+        });
+
         document.getElementById('application-form').onsubmit = function(event) {
             event.preventDefault();  // Prevent default form submission
 
             const formData = new FormData(this);  // Collect form data
+
+            // Log form data entries to ensure everything is correct
+            for (let entry of formData.entries()) {
+                console.log(entry[0], entry[1]);  // Log form fields and file to the console
+            }
 
             // Clear previous debug messages
             document.getElementById('debug-output').textContent = 'Sending application...';
