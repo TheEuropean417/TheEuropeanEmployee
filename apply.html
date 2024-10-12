@@ -39,6 +39,23 @@
         .btn:hover {
             background-color: #45a049;
         }
+
+        /* Resume Upload Area */
+        .resume-upload {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .resume-upload p {
+            margin: 0;
+        }
+
+        .resume-upload input[type="file"] {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -64,9 +81,9 @@
                 </select>
             </div>
 
-            <!-- The file upload input field (Resume Upload) -->
-            <div class="form-group">
-                <label for="resume">Upload your resume:</label>
+            <!-- Custom Resume Upload Button -->
+            <div class="resume-upload" onclick="document.getElementById('resume').click()">
+                <p>Click here to upload your resume or drag and drop</p>
                 <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" required>
             </div>
 
@@ -76,9 +93,12 @@
 
     <script>
         document.getElementById('application-form').onsubmit = function(event) {
-            event.preventDefault();
+            event.preventDefault();  // Prevent default form submission
 
-            const formData = new FormData(this);
+            const formData = new FormData(this);  // Collect form data
+
+            // Log the formData object for debugging
+            console.log('Form Data:', formData);
 
             // Send form data to the Google Apps Script Web App
             fetch('https://script.google.com/macros/s/AKfycbxTjrarfXrSgwH_fakkCewBYRilDKXvGbqv9lrXdO6EPNSOZDWD1hJaaPiZDA_QLblX/exec', {
@@ -87,13 +107,18 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log('Response from server:', data);  // Log the server response
+
                 if (data.result === 'success') {
                     alert('Application sent successfully!');
                 } else {
                     alert('Failed to send application.');
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);  // Log any errors
+                alert('An error occurred. Please try again.');
+            });
         };
     </script>
 </body>
