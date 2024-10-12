@@ -122,6 +122,11 @@
             return data.slice(1); // Skip the first row (index 0)
         }
 
+        // Function to toggle the display of employee details
+        function toggleEmployeeDetails(detailsElement) {
+            detailsElement.style.display = detailsElement.style.display === 'none' ? 'block' : 'none';
+        }
+
         // Fetch New Hires list
         function fetchNewHires() {
             const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
@@ -153,11 +158,10 @@
                         <strong>Email:</strong> ${hire[2]}<br>
                         <strong>Position:</strong> ${hire[3]}
                     `;
+                    hireDetails.style.display = 'none'; // Ensure the details are hidden initially
 
                     // Toggle details immediately on first click
-                    hireItem.addEventListener('click', function() {
-                        hireDetails.style.display = hireDetails.style.display === 'none' ? 'block' : 'none';
-                    });
+                    hireItem.addEventListener('click', () => toggleEmployeeDetails(hireDetails));
 
                     hireItem.appendChild(hireDetails);
                     newHiresList.appendChild(hireItem);
@@ -202,11 +206,10 @@
                         <strong>Email:</strong> ${employee[2]}<br>
                         <strong>Position:</strong> ${employee[3]}
                     `;
+                    employeeDetails.style.display = 'none'; // Ensure the details are hidden initially
 
                     // Toggle details immediately on first click
-                    employeeItem.addEventListener('click', function() {
-                        employeeDetails.style.display = employeeDetails.style.display === 'none' ? 'block' : 'none';
-                    });
+                    employeeItem.addEventListener('click', () => toggleEmployeeDetails(employeeDetails));
 
                     employeeItem.appendChild(employeeDetails);
                     employeeList.appendChild(employeeItem);
