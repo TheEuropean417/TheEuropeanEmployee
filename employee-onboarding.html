@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Onboarding with OAuth & Google Sheets</title>
+    <title>Employee Onboarding with Google Identity Services</title>
     <style>
         /* Basic styling */
         body {
@@ -71,8 +71,8 @@
         }
     </style>
 
-    <!-- Include Google's OAuth 2.0 client-side library -->
-    <script src="https://apis.google.com/js/api.js"></script>
+    <!-- Include Google's Identity Services library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="form-container">
@@ -102,52 +102,33 @@
     <script>
         let accessToken; // This will hold the access token after authentication
 
-        // Initialize Google API client and authenticate user
-        function authenticate() {
-            console.log("Starting OAuth sign-in...");
-            gapi.auth2.getAuthInstance()
-                .signIn({ scope: 'https://www.googleapis.com/auth/spreadsheets' })
-                .then(function () {
-                    accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
-                    console.log("Sign-in successful. Access token:", accessToken);
-                    document.getElementById('oauth-status').innerText = 'Authenticated';
-                    document.getElementById('onboardingForm').style.display = 'block';
-                    document.getElementById('signInButton').style.display = 'none';
-                }, function (error) {
-                    console.error("Error during OAuth sign-in:", error);
-                    document.getElementById('oauth-status').innerText = 'Authentication failed: ' + JSON.stringify(error, null, 2);
-                });
+        function handleCredentialResponse(response) {
+            // This function is called when the user successfully signs in
+            console.log("Credential response:", response);
+            accessToken = response.credential; // Get access token from the response
+            document.getElementById('oauth-status').innerText = 'Authenticated';
+            document.getElementById('onboardingForm').style.display = 'block';
+            document.getElementById('signInButton').style.display = 'none';
         }
 
-        function loadClient() {
-            console.log("Loading Google API client...");
-            gapi.client.load("https://content.googleapis.com/discovery/v1/apis/sheets/v4/rest")
-                .then(function () {
-                    console.log("Google API client loaded.");
-                }, function (error) {
-                    showError('Failed to load GAPI client: ' + JSON.stringify(error, null, 2));
-                    console.error("Error loading GAPI client for API:", error);
-                });
-        }
+        function loadIdentityServices() {
+            console.log("Initializing Google Identity Services...");
 
-        function showError(errorMsg) {
-            const debugOutput = document.getElementById('debugOutput');
-            debugOutput.style.display = 'block';
-            debugOutput.innerHTML = `Error: ${errorMsg}`;
-        }
-
-        gapi.load("client:auth2", function () {
-            console.log("Initializing Google OAuth...");
-            gapi.auth2.init({
-                client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com"
-            }).then(function () {
-                console.log("OAuth client initialized.");
-                document.getElementById('signInButton').addEventListener('click', authenticate);
-            }).catch(function (error) {
-                console.error("OAuth client initialization failed:", error);
-                showError('OAuth client initialization failed: ' + JSON.stringify(error, null, 2));
+            google.accounts.oauth2.initTokenClient({
+                client_id: "987467361535-6jg9rgqsl3etrc502b2jmc1i7b3qckif.apps.googleusercontent.com",
+                scope: 'https://www.googleapis.com/auth/spreadsheets',
+                callback: handleCredentialResponse
             });
-        });
+
+            document.getElementById('signInButton').addEventListener('click', function () {
+                google.accounts.oauth2.requestAccessToken(); // Request access token on button click
+            });
+        }
+
+        // Call this once the page is loaded
+        window.onload = function() {
+            loadIdentityServices(); // Initialize GIS on page load
+        };
 
         // Submit the form to Google Sheets
         document.getElementById('onboardingForm').addEventListener('submit', function (e) {
@@ -200,6 +181,12 @@
                 document.getElementById('errorMessage').style.display = 'block';
             });
         });
+
+        function showError(errorMsg) {
+            const debugOutput = document.getElementById('debugOutput');
+            debugOutput.style.display = 'block';
+            debugOutput.innerHTML = `Error: ${errorMsg}`;
+        }
 
         function showSuccess(successMsg) {
             const debugOutput = document.getElementById('debugOutput');
