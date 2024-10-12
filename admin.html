@@ -47,12 +47,28 @@
 
     <script>
         // Fetch employee data from Google Sheets
-        fetch(`https://sheets.googleapis.com/v4/spreadsheets/1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ/values/A1:Z100?key=AIzaSyBRNJR2YC9sa0S9sF69DK1zEuYDkecWcyk`)
-            .then(response => response.json())
+        const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ'; // Google Sheet ID
+        const API_KEY = 'AIzaSyA60qadwBjj1X_pX7G5GUPSYPqldzSg9Ss'; // New API key
+        const range = 'Sheet1!A2:D'; // Assuming data starts from A2 to D (First Name, Last Name, Email, Position)
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                return response.json();
+            })
             .then(data => {
-                const employees = data.values.slice(1); // Skip the first row (header)
+                const employees = data.values || []; // Fetch employee data, handle empty case
                 const employeeListDiv = document.getElementById('employeeList');
 
+                if (employees.length === 0) {
+                    employeeListDiv.innerHTML = '<p>No employee data found.</p>';
+                    return;
+                }
+
+                // Create employee list
                 employees.forEach(employee => {
                     const employeeDiv = document.createElement('div');
                     employeeDiv.classList.add('employee');
@@ -66,7 +82,11 @@
                     employeeListDiv.appendChild(employeeDiv);
                 });
             })
-            .catch(error => console.error('Error fetching employee data:', error));
+            .catch(error => {
+                console.error('Error fetching employee data:', error);
+                const employeeListDiv = document.getElementById('employeeList');
+                employeeListDiv.innerHTML = '<p>There was an error fetching the employee data.</p>';
+            });
     </script>
 </body>
 </html>

@@ -83,8 +83,8 @@
             const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ'; // Spreadsheet ID
             const API_KEY = 'AIzaSyA60qadwBjj1X_pX7G5GUPSYPqldzSg9Ss'; // New API key
 
-            const range = 'Sheet1!A2:D'; // Specific sheet name and range (adjust if needed)
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}:append?valueInputOption=RAW&key=${API_KEY}`;
+            const range = 'Sheet1'; // The target sheet to append data
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS&key=${API_KEY}`;
 
             fetch(url, {
                 method: "POST",
