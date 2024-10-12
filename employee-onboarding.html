@@ -63,6 +63,7 @@
             <button type="submit" class="btn">Submit</button>
         </form>
         <p id="successMessage" style="color: green; display: none;">Form submitted successfully!</p>
+        <p id="errorMessage" style="color: red; display: none;">There was an error submitting the form. Check the console for details.</p>
     </div>
 
     <script>
@@ -85,12 +86,22 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to submit data');
+                }
+                return response.json();
+            })
             .then(data => {
                 document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
                 document.getElementById('onboardingForm').reset();
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('successMessage').style.display = 'none';
+            });
         });
     </script>
 </body>
