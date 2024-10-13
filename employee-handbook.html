@@ -8,32 +8,50 @@
 <body>
   <h1>Employee Handbook</h1>
 
-  <!-- Display the PDF (optional, you can remove this iframe if not needed) -->
+  <!-- Display the PDF for reference (optional) -->
   <iframe src="https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf" 
           width="100%" height="600px"></iframe>
 
-  <!-- Hidden Form for Signature Fields -->
+  <!-- Signature Form -->
   <form id="signForm">
-    <button type="submit" id="submitButton">Complete Signing</button>
+    <label for="signature_1">Signature for Page 1:</label>
+    <input type="text" id="signature_1" name="signature_1" required><br>
+
+    <label for="signature_2">Signature for Page 2:</label>
+    <input type="text" id="signature_2" name="signature_2" required><br>
+
+    <label for="signature_3">Signature for Page 3:</label>
+    <input type="text" id="signature_3" name="signature_3" required><br>
+
+    <!-- Add more fields for additional pages as needed -->
+
+    <button type="submit" id="submitButton">Submit</button>
   </form>
 
   <script>
     document.getElementById('signForm').addEventListener('submit', function(event) {
       event.preventDefault();
 
-      // Example: Send signature data (this can be extended with signature interaction)
+      // Collect the signatures for each page
+      const signatures = [
+        document.getElementById('signature_1').value,
+        document.getElementById('signature_2').value,
+        document.getElementById('signature_3').value
+      ];
+
+      // Send the signatures to the backend
       fetch('https://employee-pdf-sign-backend.uc.r.appspot.com/upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ signature: "Sample Signature" }), // Modify to capture real signature data
+        body: JSON.stringify({ signatures: signatures }), // Pass the signatures array
       })
       .then(response => response.json())
       .then(data => {
         if (data.success) {
           alert('Document signed successfully!');
-          window.location.href = data.fileUrl;
+          window.location.href = data.fileUrl; // Redirect to signed PDF on Google Drive
         } else {
           alert('Error signing the document.');
         }
