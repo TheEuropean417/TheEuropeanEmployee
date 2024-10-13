@@ -26,29 +26,32 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
             max-width: 90%;
-            width: 450px;
-            margin: 20px;
+            width: 420px;  /* Slightly smaller for better fit */
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Vertically center the content */
         }
 
         h1 {
-            font-size: 2rem;
+            font-size: 1.8rem; /* Smaller heading */
             color: rgb(82, 113, 255);
             margin-bottom: 20px;
-            margin-top: 0;
+            margin-top: 10px;  /* Add a margin to prevent it from being cut off */
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: left;
         }
 
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 12px;  /* Reduce padding for a slimmer look */
             margin: 10px 0;
             border: 2px solid rgb(221, 196, 213);
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;  /* Slightly smaller text */
             color: #333;
             background-color: #f9f9f9;
             box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
@@ -63,12 +66,12 @@
         .btn {
             display: inline-block;
             width: 100%;
-            padding: 15px;
+            padding: 13px;  /* Slightly smaller for better balance */
             background: rgb(82, 113, 255);
             color: white;
             border: none;
             border-radius: 50px;
-            font-size: 1.2rem;
+            font-size: 1rem;  /* Slightly smaller text */
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
@@ -85,7 +88,7 @@
         /* File Input */
         .file-input-label {
             display: block;
-            padding: 15px;
+            padding: 13px;
             background-color: rgb(221, 196, 213);
             color: white;
             border-radius: 50px;
@@ -121,7 +124,7 @@
             color: #555;
             font-weight: bold;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1rem;  /* Slightly smaller */
             line-height: 1.6;
         }
 
@@ -142,11 +145,11 @@
             }
 
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
             }
 
             .btn {
-                font-size: 1rem;
+                font-size: 0.9rem;
             }
 
             .file-input-label {
