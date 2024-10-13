@@ -47,8 +47,17 @@
             background-color: #f1f1f1;
             border-radius: 5px;
             white-space: pre-wrap;
-            max-height: 300px;
+            max-height: 100px;
             overflow-y: auto;
+            color: #555;
+        }
+
+        .debug-success {
+            color: green;
+        }
+
+        .debug-error {
+            color: red;
         }
 
         /* File Input Styling */
@@ -108,6 +117,7 @@
                 <label for="resume" class="file-input-label">Choose Resume</label>
                 <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" class="file-input" required>
                 <span id="file-name" class="file-name">No file selected</span>
+                <span id="file-error" class="file-error" style="color: red;"></span>
             </div>
 
             <button type="submit" class="btn">SEND</button>
@@ -122,12 +132,26 @@
     <script>
         const fileInput = document.getElementById('resume');
         const fileNameDisplay = document.getElementById('file-name');
+        const fileErrorDisplay = document.getElementById('file-error');
+        const debugOutput = document.getElementById('debug-output');
         let base64File = '';  // Variable to store base64 file content
+        const maxFileSize = 25 * 1024 * 1024;  // Set file size limit to 25MB
 
         // Show the selected file name and convert the file to base64
         fileInput.addEventListener('change', function() {
+            fileErrorDisplay.textContent = '';  // Clear previous errors
+
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
+
+                // Check if the file exceeds the size limit
+                if (file.size > maxFileSize) {
+                    fileErrorDisplay.textContent = 'File exceeds the 25MB limit. Please select a smaller file.';
+                    fileNameDisplay.textContent = 'No file selected';
+                    base64File = '';  // Clear the base64 file
+                    return;
+                }
+
                 fileNameDisplay.textContent = 'Selected file: ' + file.name;
 
                 // Convert file to Base64
@@ -144,6 +168,11 @@
         document.getElementById('application-form').onsubmit = function(event) {
             event.preventDefault();  // Prevent default form submission
 
+            if (!base64File) {
+                fileErrorDisplay.textContent = 'Please select a valid file under 25MB.';
+                return;
+            }
+
             const formData = new FormData(this);  // Collect form data
 
             // Add base64-encoded file to form data
@@ -152,13 +181,8 @@
                 formData.append('resumeFileName', fileInput.files[0].name);  // Append the file name
             }
 
-            // Log form data entries to ensure everything is correct
-            for (let entry of formData.entries()) {
-                console.log(entry[0], entry[1]);  // Log form fields and file to the console
-            }
-
             // Clear previous debug messages
-            document.getElementById('debug-output').textContent = 'Sending application...';
+            debugOutput.textContent = 'Sending application...';
 
             // Send form data to the Google Apps Script Web App
             fetch('https://script.google.com/macros/s/AKfycbxTjrarfXrSgwH_fakkCewBYRilDKXvGbqv9lrXdO6EPNSOZDWD1hJaaPiZDA_QLblX/exec', {
@@ -172,17 +196,20 @@
                 return response.json();  // Attempt to parse JSON response
             })
             .then(data => {
-                console.log('Response from server:', data);  // Log the server response
-                
                 if (data.result === 'success') {
-                    document.getElementById('debug-output').textContent = 'Application sent successfully!\n' + data.logs.join('\n');
+                    debugOutput.textContent = 'Application sent successfully!';
+                    debugOutput.classList.add('debug-success');
+                    debugOutput.classList.remove('debug-error');
                 } else {
-                    document.getElementById('debug-output').textContent = 'Failed to send application.\n' + data.logs.join('\n');
+                    debugOutput.textContent = 'Failed to send application.';
+                    debugOutput.classList.add('debug-error');
+                    debugOutput.classList.remove('debug-success');
                 }
             })
             .catch(error => {
-                console.error('Fetch error:', error);  // Log any errors
-                document.getElementById('debug-output').textContent = 'Fetch error: ' + error;
+                debugOutput.textContent = 'An error occurred: ' + error;
+                debugOutput.classList.add('debug-error');
+                debugOutput.classList.remove('debug-success');
             });
         };
     </script>
