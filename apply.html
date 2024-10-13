@@ -84,7 +84,7 @@
     <div class="form-container">
         <h1>Apply for a Position</h1>
 
-        <form id="application-form" enctype="multipart/form-data">
+        <form id="application-form">
             <div class="form-group">
                 <input type="text" name="name" placeholder="Full Name" required>
             </div>
@@ -122,11 +122,20 @@
     <script>
         const fileInput = document.getElementById('resume');
         const fileNameDisplay = document.getElementById('file-name');
+        let base64File = '';  // Variable to store base64 file content
 
-        // Show the selected file name when a file is chosen
+        // Show the selected file name and convert the file to base64
         fileInput.addEventListener('change', function() {
             if (fileInput.files.length > 0) {
-                fileNameDisplay.textContent = 'Selected file: ' + fileInput.files[0].name;
+                const file = fileInput.files[0];
+                fileNameDisplay.textContent = 'Selected file: ' + file.name;
+
+                // Convert file to Base64
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    base64File = reader.result.split(',')[1];  // Store the Base64-encoded content
+                };
+                reader.readAsDataURL(file);  // Convert the file to base64
             } else {
                 fileNameDisplay.textContent = 'No file selected';
             }
@@ -137,8 +146,13 @@
 
             const formData = new FormData(this);  // Collect form data
 
+            // Add base64-encoded file to form data
+            if (base64File) {
+                formData.append('resumeBase64', base64File);  // Append the Base64-encoded file content
+                formData.append('resumeFileName', fileInput.files[0].name);  // Append the file name
+            }
+
             // Log form data entries to ensure everything is correct
-            console.log('Form Data Entries:');
             for (let entry of formData.entries()) {
                 console.log(entry[0], entry[1]);  // Log form fields and file to the console
             }
