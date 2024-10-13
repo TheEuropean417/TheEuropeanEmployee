@@ -3,23 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Handbook Signing</title>
+  <title>Employee Handbook - PDF Signing</title>
+  <!-- pdf-lib for manipulating PDF files -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <!-- Google API JS client -->
+  <script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
-  <h1>Employee Handbook</h1>
-
-  <!-- Display the dynamically generated PDF in an iframe -->
-  <iframe id="pdfFrame" src="https://employee-pdf-sign-backend.uc.r.appspot.com/generate-pdf" width="100%" height="600px"></iframe>
-
-  <!-- Button to submit the signed PDF (optional) -->
-  <button id="submitButton">Submit Signed PDF</button>
+  <h1>Employee Handbook Signature</h1>
+  <button id="signPdfBtn">Add Signature Fields</button>
+  <button id="uploadPdfBtn">Upload to Google Drive</button>
 
   <script>
-    // Optional: Handle form submission if needed (e.g., submitting filled PDF to backend)
-    document.getElementById('submitButton').addEventListener('click', function() {
-      alert('Submission functionality to be implemented');
-      // Add submission logic here (e.g., send the filled-out PDF back to the server)
+    let pdfDoc;
+
+    // Load the PDF from the provided URL
+    async function loadPdfFromUrl() {
+      const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
+
+      const response = await fetch(pdfUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+      alert("PDF loaded. Click 'Add Signature Fields' to proceed.");
+    }
+
+    // Load the Google Drive API and authenticate
+    function handleClientLoad() {
+      gapi.load('client:auth2', initClient);
+    }
+
+    // Initialize the Google API client
+    function initClient() {
+      gapi.client.init({
+        apiKey: 'AIzaSyAXHsPZNkfoNFCRflMdnC8-FUmpzZeHFIM',  // Your API Key
+        clientId: '1092193969062-bu0vdc6317v4in97k9glu2gauq8m0786.apps.googleusercontent.com', // Your Client ID
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+        scope: 'https://www.googleapis.com/auth/drive.file',
+      }).then(function () {
+        gapi.auth2.getAuthInstance().signIn();
+      });
+    }
+
+    // Add signature fields next to each "Acknowledgment:" instance
+    document.getElementById('signPdfBtn').addEventListener('click', async () => {
+      if (!pdfDoc) {
+        alert("Please load the PDF first.");
+        return;
+      }
+
+      const pages = pdfDoc.getPages();
+
+      // Iterate over each page in the PDF
+      pages.forEach((page, pageIndex) => {
+        const { width, height } = page.getSize();
+
+        // Placeholder logic: Add signature fields at specific positions for each page
+        // This example assumes a fixed Y position for demonstration purposes
+        let yPos = 700;  // Y position for each signature
+
+        page.drawText('Acknowledgment:', { x: 50, y: yPos, size: 12 });
+        page.drawText('Signature:', { x: 400, y: yPos, size: 12 });
+        page.drawRectangle({
+          x: 460,
+          y: yPos - 10,
+          width: 200,
+          height: 25,
+          borderColor: PDFLib.rgb(0, 0, 0),
+          borderWidth: 1,
+        });
+      });
+
+      alert("Signature fields added. You can now upload the PDF.");
     });
+
+    // Upload the modified PDF to Google Drive
+    function uploadFileToDrive(blob) {
+      const metadata = {
+        name: 'signed-employee-handbook.pdf',
+        mimeType: 'application/pdf',
+        parents: ['19aBK3wMPVq9LfDeI0T4NDOQO8fzB38Dl']  // Google Drive folder ID
+      };
+
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      form.append('file', blob);
+
+      fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+        method: 'POST',
+        headers: new Headers({
+          'Authorization': 'Bearer ' + gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token
+        }),
+        body: form
+      }).then((response) => response.json())
+        .then((value) => console.log('File uploaded to Drive: ', value.id));
+    }
+
+    // Save and upload the modified PDF
+    document.getElementById('uploadPdfBtn').addEventListener('click', async () => {
+      if (!pdfDoc) {
+        alert("Please load the PDF first.");
+        return;
+      }
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+
+      // Upload to Google Drive
+      uploadFileToDrive(blob);
+    });
+
+    // Load the Google API Client when the page loads
+    window.onload = () => {
+      handleClientLoad();
+      loadPdfFromUrl();
+    };
   </script>
 </body>
 </html>
