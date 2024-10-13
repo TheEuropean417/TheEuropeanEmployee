@@ -138,6 +138,7 @@
             const formData = new FormData(this);  // Collect form data
 
             // Log form data entries to ensure everything is correct
+            console.log('Form Data Entries:');
             for (let entry of formData.entries()) {
                 console.log(entry[0], entry[1]);  // Log form fields and file to the console
             }
@@ -146,7 +147,7 @@
             document.getElementById('debug-output').textContent = 'Sending application...';
 
             // Send form data to the Google Apps Script Web App
-            fetch('https://script.google.com/macros/s/AKfycbxTjrarfXrSgwH_fakkCewBYRilDKXvGbqv9lrXdO6EPNSOZDWD1hJaaPiZDA_QLblX/exec', {
+            fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
                 method: 'POST',
                 body: formData
             })
