@@ -25,14 +25,16 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 500px;
-            width: 100%;
+            max-width: 90%;
+            width: 450px;
+            margin: 20px;
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: rgb(82, 113, 255);
             margin-bottom: 20px;
+            margin-top: 0;
         }
 
         .form-group {
@@ -42,7 +44,7 @@
 
         input, select {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             margin: 10px 0;
             border: 2px solid rgb(221, 196, 213);
             border-radius: 8px;
@@ -129,6 +131,27 @@
 
         .debug-error {
             color: red;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .form-container {
+                max-width: 95%;
+                width: 100%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .btn {
+                font-size: 1rem;
+            }
+
+            .file-input-label {
+                padding: 10px;
+            }
         }
     </style>
 
