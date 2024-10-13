@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Handbook Signing</title>
+</head>
+<body>
+  <h1>Employee Handbook</h1>
+
+  <!-- PDF View (Optional if you want to show the PDF) -->
+  <iframe src="https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf" 
+          width="100%" height="600px"></iframe>
+
+  <!-- Signature Form -->
+  <form id="signForm">
+    <label for="signature">Type your name as a signature:</label>
+    <input type="text" id="signature" name="signature" required>
+    <button type="submit">Sign Document</button>
+  </form>
+
+  <script>
+    document.getElementById('signForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent default form submission
+
+      // Get the typed signature from the form
+      const signature = document.getElementById('signature').value;
+
+      // Send the signature to the backend via Fetch API
+      fetch('https://employee-pdf-sign-backend.uc.r.appspot.com/sign', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ signature: signature }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Document signed successfully!');
+          // Optionally redirect the user to download the signed PDF
+          window.location.href = data.fileUrl; // Link to the signed PDF
+        } else {
+          alert('Error signing the document.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('There was an error signing the document.');
+      });
+    });
+  </script>
+</body>
+</html>
