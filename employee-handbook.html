@@ -12,68 +12,36 @@
   <iframe src="https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf" 
           width="100%" height="600px"></iframe>
 
-  <!-- Signature Form -->
+  <!-- Hidden Form for Signature Fields -->
   <form id="signForm">
-    <label for="signature">Type your name as a signature:</label>
-    <input type="text" id="signature" name="signature" required>
-
-    <!-- Display signature progress -->
-    <div id="pageStatus"></div>
-
-    <!-- Button will appear when signing is done -->
-    <button type="submit" id="submitButton" style="display: none;">Complete Signing</button>
+    <button type="submit" id="submitButton">Complete Signing</button>
   </form>
 
   <script>
-    // Variable to track the current page for signing
-    let currentPage = 1;
-    let totalPages = 3; // Adjust this to the actual number of pages in your document
-
     document.getElementById('signForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevent default form submission
+      event.preventDefault();
 
-      const signature = document.getElementById('signature').value;
-
-      if (signature.trim() === "") {
-        alert('You must enter a valid signature.');
-        return;
-      }
-
-      // Check if all pages are signed
-      if (currentPage <= totalPages) {
-        alert(`Please sign on page ${currentPage} to the right of "Acknowledgement:"`);
-        currentPage++; // Move to the next page
-        document.getElementById('pageStatus').innerText = `You have signed page ${currentPage - 1}`;
-        document.getElementById('signature').value = ""; // Clear the signature field for next page
-      }
-
-      // Once all pages are signed, show the complete button
-      if (currentPage > totalPages) {
-        document.getElementById('submitButton').style.display = 'block';
-
-        // Send the final signature to the backend after signing all pages
-        fetch('https://employee-pdf-sign-backend.uc.r.appspot.com/sign', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ signature: signature }),
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert('Document signed successfully!');
-            // Redirect the user to the signed PDF on Google Drive or Cloud Storage
-            window.location.href = data.fileUrl; // Google Drive or Storage URL for signed PDF
-          } else {
-            alert('Error signing the document.');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('There was an error signing the document.');
-        });
-      }
+      // Example: Send signature data (this can be extended with signature interaction)
+      fetch('https://employee-pdf-sign-backend.uc.r.appspot.com/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ signature: "Sample Signature" }), // Modify to capture real signature data
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Document signed successfully!');
+          window.location.href = data.fileUrl;
+        } else {
+          alert('Error signing the document.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('There was an error signing the document.');
+      });
     });
   </script>
 </body>
