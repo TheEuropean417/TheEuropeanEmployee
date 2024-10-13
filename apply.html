@@ -26,35 +26,38 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
             max-width: 90%;
-            width: 420px;  /* Slightly smaller for better fit */
+            width: 420px;
             margin: 0;
             display: flex;
             flex-direction: column;
             justify-content: center; /* Vertically center the content */
+            align-items: center;  /* Center the fields horizontally */
         }
 
         h1 {
-            font-size: 1.8rem; /* Smaller heading */
+            font-size: 1.8rem;
             color: rgb(82, 113, 255);
             margin-bottom: 20px;
-            margin-top: 10px;  /* Add a margin to prevent it from being cut off */
+            margin-top: 10px;
         }
 
         .form-group {
             margin-bottom: 15px;
-            text-align: left;
+            text-align: center;
+            width: 100%;  /* Ensure full width for form elements */
         }
 
         input, select {
-            width: 100%;
-            padding: 12px;  /* Reduce padding for a slimmer look */
+            width: 100%;  /* Centered input fields */
+            padding: 12px;
             margin: 10px 0;
             border: 2px solid rgb(221, 196, 213);
             border-radius: 8px;
-            font-size: 0.95rem;  /* Slightly smaller text */
+            font-size: 0.95rem;
             color: #333;
             background-color: #f9f9f9;
             box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+            display: block;  /* Block level for full-width input */
         }
 
         input:focus, select:focus {
@@ -66,12 +69,12 @@
         .btn {
             display: inline-block;
             width: 100%;
-            padding: 13px;  /* Slightly smaller for better balance */
+            padding: 13px;
             background: rgb(82, 113, 255);
             color: white;
             border: none;
             border-radius: 50px;
-            font-size: 1rem;  /* Slightly smaller text */
+            font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
@@ -95,6 +98,8 @@
             cursor: pointer;
             transition: background 0.3s ease;
             margin-top: 15px;
+            text-align: center;
+            width: 100%;
         }
 
         .file-input-label:hover {
@@ -124,8 +129,9 @@
             color: #555;
             font-weight: bold;
             text-align: center;
-            font-size: 1rem;  /* Slightly smaller */
+            font-size: 1rem;
             line-height: 1.6;
+            width: 100%;  /* Ensure full width */
         }
 
         .debug-success {
