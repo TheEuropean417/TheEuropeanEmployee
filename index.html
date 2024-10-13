@@ -11,7 +11,7 @@
             padding: 0;
             font-family: 'Montserrat', sans-serif;
             height: 100%;
-            background-color: #faf5f8; /* Soft background color */
+            background: linear-gradient(135deg, rgb(82, 113, 255), rgb(221, 196, 213)); /* Same gradient as apply.html */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -35,32 +35,25 @@
             margin-bottom: 30px;
         }
 
-        h1 {
-            font-size: 3rem;
-            color: #ffffff;
-            text-transform: uppercase;
-            margin-bottom: 30px;
-            letter-spacing: 3px;
-        }
-
         /* Button Styles */
         .btn {
             display: block;
             width: 100%;
-            max-width: 300px;
+            max-width: 250px; /* Reduced button size */
             margin: 15px auto;
-            padding: 20px 40px;
+            padding: 15px 30px; /* Reduced padding */
             color: #fff;
             text-decoration: none;
-            font-size: 1.2rem;
+            font-size: 1rem; /* Reduced font size */
             letter-spacing: 2px;
             text-transform: uppercase;
             border: none;
             border-radius: 50px;
             background: rgb(82, 113, 255); /* Blue button color */
-            box-shadow: 0 15px 30px rgba(82, 113, 255, 0.6), 0 0 20px rgba(82, 113, 255, 0.7), 0 0 40px rgba(82, 113, 255, 0.4); /* Multi-layer shadow for futuristic effect */
+            box-shadow: 0 15px 30px rgba(82, 113, 255, 0.6), 0 0 20px rgba(82, 113, 255, 0.7), 0 0 40px rgba(82, 113, 255, 0.4); /* Multi-layer shadow */
             cursor: pointer;
             transition: all 0.4s ease;
+            text-align: center; /* Center button text */
         }
 
         /* Hover Effect for Buttons */
@@ -71,12 +64,9 @@
 
         /* Responsive design */
         @media screen and (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
             .btn {
-                padding: 15px 30px;
-                font-size: 1rem;
+                padding: 10px 20px; /* Adjust padding for smaller screens */
+                font-size: 0.9rem;
                 max-width: 100%;
             }
             .logo {
@@ -90,18 +80,15 @@
 </head>
 <body>
     <div class="container">
-        <!-- Logo -->
+        <!-- Moved the company logo into the heading's place -->
         <img src="https://b1767dc1b20523885e3a.cdn6.editmysite.com/uploads/b/b1767dc1b20523885e3a00d3d4c6a7fd82e9c90cefba70278cf527c59f580d89/Untitled%20design%20%281%29_1727046864.png?width=2400&optimize=medium" alt="The European Logo" class="logo">
-        
-        <!-- Heading -->
-        <h1>Welcome to The European</h1>
+
+        <!-- Employee Portal Heading -->
         <h1>Employee Portal</h1>
 
-        <!-- New Button for Job Application -->
+        <!-- Updated Buttons -->
         <a href="apply.html" class="btn apply-position">Apply for a Position at The European</a>
-
-        <!-- Existing Buttons -->
-        <a href="employee-onboarding.html" class="btn onboarding">New Employee Onboarding</a>
+        <a href="employee-handbook.html" class="btn onboarding">Employee Handbook Confirmation</a>
         <a href="admin.html" class="btn admin">The European Administration</a>
     </div>
 </body>
