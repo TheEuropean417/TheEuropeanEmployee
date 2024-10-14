@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Text Extraction</title>
+  <title>PDF Text Extraction - Ordered by Y Position</title>
   <!-- pdfjs-dist for extracting text from PDF files -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
 </head>
 <body>
-  <h1>PDF Text Extraction</h1>
+  <h1>PDF Text Extraction (Ordered by Y Position)</h1>
 
   <!-- Button to trigger text extraction -->
   <button id="extractTextBtn">Extract Text from PDF</button>
@@ -20,7 +20,7 @@
     const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
     const extractedTextDiv = document.getElementById('extractedText');
 
-    // Function to extract text from PDF using pdfjs-dist
+    // Function to extract and order text based on Y-coordinates
     async function extractTextFromPDF() {
       try {
         // Load the PDF document from the given URL
@@ -34,11 +34,21 @@
           const page = await pdf.getPage(pageNum);
           const textContent = await page.getTextContent();
 
-          let pageText = '';
-          textContent.items.forEach((item) => {
-            pageText += item.str + ' ';
+          // Collect all items in an array with their Y coordinates
+          let textItems = textContent.items.map(item => {
+            return {
+              str: item.str,
+              y: item.transform[5] // Y coordinate is stored in transform[5]
+            };
           });
 
+          // Sort items by Y-coordinate in descending order (header at top, footer at bottom)
+          textItems.sort((a, b) => b.y - a.y);
+
+          // Build the ordered text for this page
+          let pageText = textItems.map(item => item.str).join(' ');
+
+          // Add the page text to the final extracted text
           extractedText += `Page ${pageNum}:\n${pageText}\n\n`;
         }
 
