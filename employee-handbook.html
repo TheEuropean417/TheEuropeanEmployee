@@ -13,15 +13,16 @@
 </head>
 <body>
   <h1>Employee Handbook Signature</h1>
-  <button id="signPdfBtn">Extract Text & Add Signature Fields</button>
-  <button id="uploadPdfBtn">Upload to Google Drive</button>
+  <button id="extractTextBtn">Extract Text from PDF</button>
+  <button id="signPdfBtn" disabled>Add Signature Fields</button>
+  <button id="uploadPdfBtn" disabled>Upload to Google Drive</button>
 
   <script>
     let pdfDoc;
     let acknowledgmentPositions = [];
 
-    // Load the PDF from the URL and extract text using pdfjs-dist
-    async function loadPdfAndExtractText() {
+    // Extract text from the PDF using pdfjs-dist
+    async function extractTextFromPDF() {
       const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
       
       const loadingTask = pdfjsLib.getDocument(pdfUrl);
@@ -33,11 +34,14 @@
       for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
         const page = await pdf.getPage(pageNum);
         const textContent = await page.getTextContent();
-        
+
         let pageText = '';
         textContent.items.forEach((item) => {
           pageText += item.str + ' ';
         });
+
+        // Log extracted text for debugging
+        console.log(`Page ${pageNum} Text: `, pageText);
 
         // Find all instances of "Acknowledgment:" and store their page number and positions
         let idx = pageText.indexOf('Acknowledgment:');
@@ -50,7 +54,14 @@
       }
 
       console.log("Extracted Text:", extractedText);
-      alert(`Found ${acknowledgmentPositions.length} instance(s) of "Acknowledgment:" in the PDF.`);
+
+      // Enable the "Add Signature Fields" button if "Acknowledgment:" is found
+      if (acknowledgmentPositions.length > 0) {
+        document.getElementById('signPdfBtn').disabled = false;
+        alert(`Found ${acknowledgmentPositions.length} instance(s) of "Acknowledgment:" in the PDF.`);
+      } else {
+        alert("No 'Acknowledgment:' found in the document.");
+      }
     }
 
     // Add signature fields using pdf-lib based on acknowledgmentPositions
@@ -85,6 +96,7 @@
       });
 
       alert("Signature fields added. You can now upload the PDF.");
+      document.getElementById('uploadPdfBtn').disabled = false;
     });
 
     // Load the Google Drive API and authenticate
@@ -140,11 +152,13 @@
       uploadFileToDrive(blob);
     });
 
-    // Load the Google API Client when the page loads
-    window.onload = () => {
-      handleClientLoad();
+    // Trigger text extraction
+    document.getElementById('extractTextBtn').addEventListener('click', () => {
       loadPdfAndExtractText(); // Extract the text and find "Acknowledgment:"
-    };
+    });
+
+    // Load the Google API Client when the page loads
+    window.onload = handleClientLoad;
   </script>
 </body>
 </html>
