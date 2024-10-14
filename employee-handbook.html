@@ -3,40 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Text Extraction Debug</title>
+  <title>PDF Text Extraction</title>
   <!-- pdfjs-dist for extracting text from PDF files -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
 </head>
 <body>
-  <h1>PDF Text Extraction Debug</h1>
+  <h1>PDF Text Extraction</h1>
+
+  <!-- Button to trigger text extraction -->
   <button id="extractTextBtn">Extract Text from PDF</button>
 
-  <!-- Debug information will be displayed here -->
-  <div id="debugInfo" style="white-space: pre-wrap; background-color: #f0f0f0; padding: 10px; border: 1px solid #ddd;"></div>
+  <!-- Text content will be displayed here -->
+  <div id="extractedText" style="white-space: pre-wrap; background-color: #f0f0f0; padding: 10px; border: 1px solid #ddd;"></div>
 
   <script>
     const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
-    const debugInfoDiv = document.getElementById('debugInfo');
-
-    // Function to log debug information on the page
-    function logDebugInfo(message) {
-      debugInfoDiv.textContent += message + '\n';
-    }
+    const extractedTextDiv = document.getElementById('extractedText');
 
     // Function to extract text from PDF using pdfjs-dist
     async function extractTextFromPDF() {
       try {
-        logDebugInfo("Starting PDF text extraction...");
-
         // Load the PDF document from the given URL
         const loadingTask = pdfjsLib.getDocument(pdfUrl);
         const pdf = await loadingTask.promise;
-        logDebugInfo(`PDF loaded successfully. Number of pages: ${pdf.numPages}`);
+
+        let extractedText = '';
 
         // Loop through each page in the PDF
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-          logDebugInfo(`\nExtracting text from page ${pageNum}...`);
-
           const page = await pdf.getPage(pageNum);
           const textContent = await page.getTextContent();
 
@@ -45,19 +39,21 @@
             pageText += item.str + ' ';
           });
 
-          logDebugInfo(`Page ${pageNum} Text:\n${pageText}\n`);
+          extractedText += `Page ${pageNum}:\n${pageText}\n\n`;
         }
 
-        logDebugInfo("Text extraction completed.");
+        // Display the extracted text on the page
+        extractedTextDiv.textContent = extractedText;
+
       } catch (error) {
-        logDebugInfo(`Error during PDF text extraction: ${error.message}`);
+        extractedTextDiv.textContent = `Error during PDF text extraction: ${error.message}`;
       }
     }
 
     // Button event listener to trigger text extraction
     document.getElementById('extractTextBtn').addEventListener('click', () => {
-      // Clear previous debug info
-      debugInfoDiv.textContent = '';
+      // Clear previous text
+      extractedTextDiv.textContent = '';
       extractTextFromPDF();
     });
   </script>
