@@ -47,7 +47,7 @@
       await renderPDF();
     };
 
-    // Function to render the PDF pages and add signature fields
+    // Function to render the PDF pages and scan for "Acknowledgment:" after rendering
     async function renderPDF() {
       try {
         const loadingTask = pdfjsLib.getDocument(pdfUrl);
@@ -72,16 +72,23 @@
           // Append the canvas to the container
           pdfContainer.appendChild(canvas);
 
-          // Extract text and add signature fields next to "Acknowledgment:"
+          // Extract text after rendering the page
           const textContent = await page.getTextContent();
+
+          // Process each text item on the page
+          let acknowledgmentFound = false;
           textContent.items.forEach((item) => {
-            if (item.str.includes('Acknowledgment:')) {
+            if (item.str.includes('Acknowledgment:') && !acknowledgmentFound) {
+              acknowledgmentFound = true;
+
+              // Create a signature field next to the word "Acknowledgment"
               const signatureField = document.createElement('input');
               signatureField.type = 'text';
               signatureField.placeholder = 'Enter Signature';
               signatureField.classList.add('signature-field');
-              signatures.push(signatureField);
-              // Add signature field to the container below the canvas
+              signatures.push({ signatureField, pageNum });
+
+              // Append signature field next to the canvas
               pdfContainer.appendChild(signatureField);
             }
           });
@@ -95,7 +102,7 @@
     document.getElementById('submitSignaturesBtn').addEventListener('click', async () => {
       // Ensure all signatures are filled out
       for (let i = 0; i < signatures.length; i++) {
-        if (!signatures[i].value) {
+        if (!signatures[i].signatureField.value) {
           alert('Please fill out all signature fields.');
           return;
         }
@@ -106,12 +113,13 @@
       const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
       const pages = pdfDoc.getPages();
 
-      // Add typed signatures to each page that has a signature field
-      signatures.forEach((signatureField, index) => {
-        const pageIndex = Math.floor(index / pages.length);
+      // Add typed signatures to the corresponding page and location
+      signatures.forEach((signature, index) => {
+        const pageIndex = signature.pageNum - 1;  // Convert page number to 0-based index
         const page = pages[pageIndex];
-        const signatureText = signatureField.value;
-        // Add the signature text at a fixed position (next to "Acknowledgment")
+        const signatureText = signature.signatureField.value;
+
+        // Add the signature text near the footer of the page (adjust x, y for positioning)
         page.drawText(signatureText, {
           x: 400,  // Adjust x as needed
           y: 50,   // Adjust y as needed (footer position)
