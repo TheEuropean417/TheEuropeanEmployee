@@ -3,67 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Text Extraction - Ordered by Y Position</title>
+  <title>PDF Text Extraction with Formatting</title>
   <!-- pdfjs-dist for extracting text from PDF files -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <style>
+    .pdf-text {
+      position: absolute;
+      white-space: pre;
+    }
+    #pdfContainer {
+      position: relative;
+      width: 100%;
+      height: auto;
+      border: 1px solid #ddd;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+  </style>
 </head>
 <body>
-  <h1>PDF Text Extraction (Ordered by Y Position)</h1>
+  <h1>PDF Text Extraction with Formatting</h1>
 
   <!-- Button to trigger text extraction -->
   <button id="extractTextBtn">Extract Text from PDF</button>
 
-  <!-- Text content will be displayed here -->
-  <div id="extractedText" style="white-space: pre-wrap; background-color: #f0f0f0; padding: 10px; border: 1px solid #ddd;"></div>
+  <!-- Container to position extracted text -->
+  <div id="pdfContainer"></div>
 
   <script>
     const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
-    const extractedTextDiv = document.getElementById('extractedText');
+    const pdfContainer = document.getElementById('pdfContainer');
 
-    // Function to extract and order text based on Y-coordinates
+    // Function to extract text from PDF and apply formatting
     async function extractTextFromPDF() {
       try {
         // Load the PDF document from the given URL
         const loadingTask = pdfjsLib.getDocument(pdfUrl);
         const pdf = await loadingTask.promise;
 
-        let extractedText = '';
+        // Clear previous content
+        pdfContainer.innerHTML = '';
+        let containerWidth = pdfContainer.offsetWidth;
 
         // Loop through each page in the PDF
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
           const page = await pdf.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 1.0 });
           const textContent = await page.getTextContent();
 
-          // Collect all items in an array with their Y coordinates
-          let textItems = textContent.items.map(item => {
-            return {
-              str: item.str,
-              y: item.transform[5] // Y coordinate is stored in transform[5]
-            };
+          // Set the container size based on the PDF page size
+          pdfContainer.style.width = viewport.width + 'px';
+          pdfContainer.style.height = viewport.height * pdf.numPages + 'px';
+
+          textContent.items.forEach(item => {
+            // Create a div for each text item
+            const textDiv = document.createElement('div');
+            textDiv.classList.add('pdf-text');
+            textDiv.textContent = item.str;
+
+            // Position the text based on its coordinates (convert to percentage for responsive layout)
+            const xPercentage = (item.transform[4] / viewport.width) * 100;
+            const yPercentage = ((viewport.height - item.transform[5]) / viewport.height) * 100; // Reverse Y
+
+            // Apply font size and positioning
+            const fontSize = item.transform[0]; // Font size is in transform[0]
+            textDiv.style.left = `${xPercentage}%`;
+            textDiv.style.top = `${yPercentage}%`;
+            textDiv.style.fontSize = `${fontSize}px`;
+
+            // Optionally, set text alignment (you can extend this)
+            if (xPercentage < 10) {
+              textDiv.style.textAlign = 'left';
+            } else if (xPercentage > 90) {
+              textDiv.style.textAlign = 'right';
+            } else {
+              textDiv.style.textAlign = 'center';
+            }
+
+            // Append the text item to the container
+            pdfContainer.appendChild(textDiv);
           });
-
-          // Sort items by Y-coordinate in descending order (header at top, footer at bottom)
-          textItems.sort((a, b) => b.y - a.y);
-
-          // Build the ordered text for this page
-          let pageText = textItems.map(item => item.str).join(' ');
-
-          // Add the page text to the final extracted text
-          extractedText += `Page ${pageNum}:\n${pageText}\n\n`;
         }
 
-        // Display the extracted text on the page
-        extractedTextDiv.textContent = extractedText;
-
       } catch (error) {
-        extractedTextDiv.textContent = `Error during PDF text extraction: ${error.message}`;
+        pdfContainer.textContent = `Error during PDF text extraction: ${error.message}`;
       }
     }
 
     // Button event listener to trigger text extraction
     document.getElementById('extractTextBtn').addEventListener('click', () => {
-      // Clear previous text
-      extractedTextDiv.textContent = '';
       extractTextFromPDF();
     });
   </script>
