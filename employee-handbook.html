@@ -51,7 +51,6 @@
   <script>
     const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
     const pdfTextContainer = document.getElementById('pdfTextContainer');
-    const signatures = [];
 
     // Load the PDF and extract text on page load
     window.onload = async function() {
@@ -77,12 +76,13 @@
           textContent.items.sort((a, b) => a.transform[5] < b.transform[5] ? 1 : -1);
 
           let lastY = null;
+          let lastX = null;
 
           textContent.items.forEach((item) => {
             const text = item.str;
             const yPosition = item.transform[5];
             const xPosition = item.transform[4];
-            const spacing = Math.abs(xPosition - (lastY ? lastY.xPosition : 0)) > 5 ? ' ' : '';
+            const spacing = (lastX && Math.abs(xPosition - lastX) > 10) ? ' ' : '';
 
             // Classify text into headers, footers, and main content based on Y-coordinate
             if (yPosition > 700) { // Assuming header area is above Y=700
@@ -95,7 +95,7 @@
             }
 
             // Insert line breaks if there's a significant Y-position gap (new paragraph)
-            if (lastY && Math.abs(lastY.yPosition - yPosition) > 15) {
+            if (lastY && Math.abs(lastY - yPosition) > 20) {
               mainText += '\n\n';
             }
 
@@ -104,7 +104,8 @@
               footerText += `<span>${text}</span> <input type="text" placeholder="Enter Signature" class="signature-field">`;
             }
 
-            lastY = { xPosition, yPosition };
+            lastY = yPosition;
+            lastX = xPosition;
           });
 
           // Create HTML structure for the page with header, main text, and footer
