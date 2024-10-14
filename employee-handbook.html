@@ -12,12 +12,21 @@
   <script src="https://apis.google.com/js/api.js"></script>
   <style>
     #pdfTextContainer {
-      width: 100%;
+      width: 80%;
       margin: 20px auto;
       padding: 10px;
       border: 1px solid #ccc;
       line-height: 1.5;
       white-space: pre-wrap;
+      font-family: Arial, sans-serif;
+    }
+    .page-header, .page-footer {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .main-text {
+      text-align: justify;
     }
     .signature-field {
       display: block;
@@ -48,7 +57,7 @@
       await extractTextFromPDF();
     };
 
-    // Function to extract text from the PDF and display it as HTML
+    // Function to extract text from the PDF and display it in HTML, preserving headers, main text, and footers
     async function extractTextFromPDF() {
       try {
         const loadingTask = pdfjsLib.getDocument(pdfUrl);
@@ -59,23 +68,40 @@
           const textContent = await page.getTextContent();
 
           let pageText = '';
+          let headerText = '';
+          let footerText = '';
+          let mainText = '';
+
+          // Sort text by its position to maintain proper order
+          textContent.items.sort((a, b) => a.transform[5] < b.transform[5] ? 1 : -1);
+
           textContent.items.forEach((item) => {
-            // Capture the text item
             const text = item.str;
 
-            // Check for "Acknowledgment:" keyword and insert a signature field
-            if (text.includes('Acknowledgment:')) {
-              // Insert signature input field next to "Acknowledgment:"
-              pageText += `<span>${text}</span> <input type="text" placeholder="Enter Signature" class="signature-field">`;
+            // Classify text into headers, footers, and main content based on Y-coordinate
+            const yPosition = item.transform[5];
+            if (yPosition > 700) { // Assuming header area is above Y=700
+              headerText += text + ' ';
+            } else if (yPosition < 100) { // Assuming footer area is below Y=100
+              footerText += text + ' ';
             } else {
-              // Add normal text to the HTML
-              pageText += text + ' ';
+              mainText += text + ' ';
+            }
+
+            // Check for "Acknowledgment:" keyword in the footer and add a signature field
+            if (text.includes('Acknowledgment:')) {
+              footerText += `<span>${text}</span> <input type="text" placeholder="Enter Signature" class="signature-field">`;
             }
           });
 
-          // Add the text for the current page to the HTML container
+          // Create HTML structure for the page with header, main text, and footer
           const pageDiv = document.createElement('div');
-          pageDiv.innerHTML = `<p><strong>Page ${pageNum}:</strong></p><p>${pageText}</p>`;
+          pageDiv.innerHTML = `
+            <div class="page-header"><strong>Page ${pageNum} Header:</strong> ${headerText}</div>
+            <div class="main-text">${mainText}</div>
+            <div class="page-footer"><strong>Page ${pageNum} Footer:</strong> ${footerText}</div>
+            <hr>
+          `;
           pdfTextContainer.appendChild(pageDiv);
         }
       } catch (error) {
