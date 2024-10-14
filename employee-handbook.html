@@ -3,162 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Handbook - PDF Signing</title>
-  <!-- pdf-lib for manipulating PDF files -->
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <title>PDF Text Extraction Debug</title>
   <!-- pdfjs-dist for extracting text from PDF files -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-  <!-- Google API JS client -->
-  <script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
-  <h1>Employee Handbook Signature</h1>
+  <h1>PDF Text Extraction Debug</h1>
   <button id="extractTextBtn">Extract Text from PDF</button>
-  <button id="signPdfBtn" disabled>Add Signature Fields</button>
-  <button id="uploadPdfBtn" disabled>Upload to Google Drive</button>
+
+  <!-- Debug information will be displayed here -->
+  <div id="debugInfo" style="white-space: pre-wrap; background-color: #f0f0f0; padding: 10px; border: 1px solid #ddd;"></div>
 
   <script>
-    let pdfDoc;
-    let acknowledgmentPositions = [];
+    const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
+    const debugInfoDiv = document.getElementById('debugInfo');
 
-    // Extract text from the PDF using pdfjs-dist
+    // Function to log debug information on the page
+    function logDebugInfo(message) {
+      debugInfoDiv.textContent += message + '\n';
+    }
+
+    // Function to extract text from PDF using pdfjs-dist
     async function extractTextFromPDF() {
-      const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
-      
-      const loadingTask = pdfjsLib.getDocument(pdfUrl);
-      const pdf = await loadingTask.promise;
+      try {
+        logDebugInfo("Starting PDF text extraction...");
 
-      let extractedText = '';
-      acknowledgmentPositions = [];
+        // Load the PDF document from the given URL
+        const loadingTask = pdfjsLib.getDocument(pdfUrl);
+        const pdf = await loadingTask.promise;
+        logDebugInfo(`PDF loaded successfully. Number of pages: ${pdf.numPages}`);
 
-      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const textContent = await page.getTextContent();
+        // Loop through each page in the PDF
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          logDebugInfo(`\nExtracting text from page ${pageNum}...`);
 
-        let pageText = '';
-        textContent.items.forEach((item) => {
-          pageText += item.str + ' ';
-        });
+          const page = await pdf.getPage(pageNum);
+          const textContent = await page.getTextContent();
 
-        // Log extracted text for debugging
-        console.log(`Page ${pageNum} Text: `, pageText);
+          let pageText = '';
+          textContent.items.forEach((item) => {
+            pageText += item.str + ' ';
+          });
 
-        // Find all instances of "Acknowledgment:" and store their page number and positions
-        let idx = pageText.indexOf('Acknowledgment:');
-        while (idx !== -1) {
-          acknowledgmentPositions.push({ pageNum, position: idx });
-          idx = pageText.indexOf('Acknowledgment:', idx + 1); // Search for next occurrence
+          logDebugInfo(`Page ${pageNum} Text:\n${pageText}\n`);
         }
 
-        extractedText += `Page ${pageNum}:\n${pageText}\n\n`;
-      }
-
-      console.log("Extracted Text:", extractedText);
-
-      // Enable the "Add Signature Fields" button if "Acknowledgment:" is found
-      if (acknowledgmentPositions.length > 0) {
-        document.getElementById('signPdfBtn').disabled = false;
-        alert(`Found ${acknowledgmentPositions.length} instance(s) of "Acknowledgment:" in the PDF.`);
-      } else {
-        alert("No 'Acknowledgment:' found in the document.");
+        logDebugInfo("Text extraction completed.");
+      } catch (error) {
+        logDebugInfo(`Error during PDF text extraction: ${error.message}`);
       }
     }
 
-    // Add signature fields using pdf-lib based on acknowledgmentPositions
-    document.getElementById('signPdfBtn').addEventListener('click', async () => {
-      const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
-      const response = await fetch(pdfUrl);
-      const arrayBuffer = await response.arrayBuffer();
-      pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-
-      if (acknowledgmentPositions.length === 0) {
-        alert("No 'Acknowledgment:' found. Please extract text first.");
-        return;
-      }
-
-      // Add signature fields to the PDF
-      acknowledgmentPositions.forEach(({ pageNum }) => {
-        const pages = pdfDoc.getPages();
-        const page = pages[pageNum - 1]; // Page index is zero-based in pdf-lib
-
-        // Insert signature field next to the "Acknowledgment:" text (fixed Y for demo)
-        const yPos = 100 + Math.random() * 200; // This would be dynamic in a real implementation
-
-        page.drawText('Signature:', { x: 400, y: yPos, size: 12 });
-        page.drawRectangle({
-          x: 460,
-          y: yPos - 10,
-          width: 200,
-          height: 25,
-          borderColor: PDFLib.rgb(0, 0, 0),
-          borderWidth: 1,
-        });
-      });
-
-      alert("Signature fields added. You can now upload the PDF.");
-      document.getElementById('uploadPdfBtn').disabled = false;
-    });
-
-    // Load the Google Drive API and authenticate
-    function handleClientLoad() {
-      gapi.load('client:auth2', initClient);
-    }
-
-    // Initialize the Google API client
-    function initClient() {
-      gapi.client.init({
-        apiKey: 'AIzaSyAXHsPZNkfoNFCRflMdnC8-FUmpzZeHFIM',  // Your API Key
-        clientId: '1092193969062-bu0vdc6317v4in97k9glu2gauq8m0786.apps.googleusercontent.com', // Your Client ID
-        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
-        scope: 'https://www.googleapis.com/auth/drive.file',
-      }).then(function () {
-        gapi.auth2.getAuthInstance().signIn();
-      });
-    }
-
-    // Upload the modified PDF to Google Drive
-    function uploadFileToDrive(blob) {
-      const metadata = {
-        name: 'signed-employee-handbook.pdf',
-        mimeType: 'application/pdf',
-        parents: ['19aBK3wMPVq9LfDeI0T4NDOQO8fzB38Dl']  // Google Drive folder ID
-      };
-
-      const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      form.append('file', blob);
-
-      fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
-        method: 'POST',
-        headers: new Headers({
-          'Authorization': 'Bearer ' + gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token
-        }),
-        body: form
-      }).then((response) => response.json())
-        .then((value) => console.log('File uploaded to Drive: ', value.id));
-    }
-
-    // Save and upload the modified PDF
-    document.getElementById('uploadPdfBtn').addEventListener('click', async () => {
-      if (!pdfDoc) {
-        alert("Please extract text and add signature fields first.");
-        return;
-      }
-
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: "application/pdf" });
-
-      // Upload to Google Drive
-      uploadFileToDrive(blob);
-    });
-
-    // Trigger text extraction
+    // Button event listener to trigger text extraction
     document.getElementById('extractTextBtn').addEventListener('click', () => {
-      loadPdfAndExtractText(); // Extract the text and find "Acknowledgment:"
+      // Clear previous debug info
+      debugInfoDiv.textContent = '';
+      extractTextFromPDF();
     });
-
-    // Load the Google API Client when the page loads
-    window.onload = handleClientLoad;
   </script>
 </body>
 </html>
