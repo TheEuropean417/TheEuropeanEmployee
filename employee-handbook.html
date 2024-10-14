@@ -14,7 +14,6 @@
     #pdfContainer {
       width: 100%;
       margin: 0 auto;
-      text-align: center;
       position: relative;
     }
     canvas {
@@ -85,8 +84,8 @@
               signatures.push({ signatureField, pageNum });
 
               // Position the signature field based on the coordinates of "Acknowledgment:"
-              const x = (item.transform[4] + 150) * scale; // X coordinate, adjusted for the position
-              const y = (viewport.height - item.transform[5] - 20) * scale; // Y coordinate (inverted for canvas)
+              const x = (item.transform[4] + 150); // X coordinate, adjusted for the position
+              const y = (viewport.height - item.transform[5] - 20); // Y coordinate (inverted for canvas)
 
               // Style and position the signature field
               signatureField.style.left = `${x}px`;
