@@ -3,130 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Rendering with Signature Fields</title>
-  <!-- pdfjs-dist for rendering PDF files -->
+  <title>PDF to Text with Signature Fields</title>
+  <!-- pdfjs-dist for extracting text from PDF files -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
   <!-- pdf-lib for manipulating PDF files -->
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <!-- Google API JS client -->
   <script src="https://apis.google.com/js/api.js"></script>
   <style>
-    #pdfContainer {
+    #pdfTextContainer {
       width: 100%;
-      margin: 0 auto;
-      position: relative;
-    }
-    canvas {
-      margin-bottom: 20px;
-      border: 1px solid #ddd;
+      margin: 20px auto;
+      padding: 10px;
+      border: 1px solid #ccc;
+      line-height: 1.5;
+      white-space: pre-wrap;
     }
     .signature-field {
-      position: absolute;
+      display: block;
+      margin: 10px 0;
       font-size: 14px;
       padding: 5px;
       border: 1px solid #000;
-      width: 200px;
+      width: 300px;
     }
   </style>
 </head>
 <body>
-  <h1>PDF Rendering with Signature Fields</h1>
+  <h1>Employee Handbook with Signature Fields</h1>
 
-  <!-- Container to hold rendered PDF pages -->
-  <div id="pdfContainer"></div>
+  <!-- Container to hold the extracted PDF text -->
+  <div id="pdfTextContainer"></div>
+
+  <!-- Button to submit the signatures -->
   <button id="submitSignaturesBtn">Submit Signatures & Upload PDF</button>
 
   <script>
     const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
-    const pdfContainer = document.getElementById('pdfContainer');
+    const pdfTextContainer = document.getElementById('pdfTextContainer');
     const signatures = [];
 
-    // Load and render the PDF on page load
+    // Load the PDF and extract text on page load
     window.onload = async function() {
-      await renderPDF();
+      await extractTextFromPDF();
     };
 
-    // Function to render the PDF pages and scan for "Acknowledgment:" after rendering
-    async function renderPDF() {
+    // Function to extract text from the PDF and display it as HTML
+    async function extractTextFromPDF() {
       try {
         const loadingTask = pdfjsLib.getDocument(pdfUrl);
         const pdf = await loadingTask.promise;
 
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
           const page = await pdf.getPage(pageNum);
-          const scale = 1.5;
-          const viewport = page.getViewport({ scale });
-
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d');
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-
-          const renderContext = {
-            canvasContext: context,
-            viewport: viewport,
-          };
-          await page.render(renderContext).promise;
-
-          // Append the canvas to the container
-          pdfContainer.appendChild(canvas);
-
-          // Extract text after rendering the page
           const textContent = await page.getTextContent();
 
-          // Process each text item on the page to find "Acknowledgment:"
+          let pageText = '';
           textContent.items.forEach((item) => {
-            if (item.str.includes('Acknowledgment:')) {
-              const signatureField = document.createElement('input');
-              signatureField.type = 'text';
-              signatureField.placeholder = 'Enter Signature';
-              signatureField.classList.add('signature-field');
-              signatures.push({ signatureField, pageNum });
+            // Capture the text item
+            const text = item.str;
 
-              // Position the signature field based on the coordinates of "Acknowledgment:"
-              const x = (item.transform[4] + 150); // X coordinate, adjusted for the position
-              const y = (viewport.height - item.transform[5] - 20); // Y coordinate (inverted for canvas)
-
-              // Style and position the signature field
-              signatureField.style.left = `${x}px`;
-              signatureField.style.top = `${y}px`;
-              signatureField.style.width = '200px';
-
-              // Append the signature field to the container
-              pdfContainer.appendChild(signatureField);
+            // Check for "Acknowledgment:" keyword and insert a signature field
+            if (text.includes('Acknowledgment:')) {
+              // Insert signature input field next to "Acknowledgment:"
+              pageText += `<span>${text}</span> <input type="text" placeholder="Enter Signature" class="signature-field">`;
+            } else {
+              // Add normal text to the HTML
+              pageText += text + ' ';
             }
           });
+
+          // Add the text for the current page to the HTML container
+          const pageDiv = document.createElement('div');
+          pageDiv.innerHTML = `<p><strong>Page ${pageNum}:</strong></p><p>${pageText}</p>`;
+          pdfTextContainer.appendChild(pageDiv);
         }
       } catch (error) {
-        console.error('Error rendering PDF:', error.message);
+        console.error('Error extracting text from PDF:', error.message);
       }
     }
 
-    // Function to capture signatures and convert PDF back to PDF with signatures
+    // Function to capture signature inputs and convert the updated content back to a PDF
     document.getElementById('submitSignaturesBtn').addEventListener('click', async () => {
-      // Ensure all signatures are filled out
-      for (let i = 0; i < signatures.length; i++) {
-        if (!signatures[i].signatureField.value) {
-          alert('Please fill out all signature fields.');
-          return;
-        }
-      }
+      const signatureFields = document.querySelectorAll('.signature-field');
+      const signatures = [];
 
-      // Load the PDF with pdf-lib
+      // Collect the values of all signature fields
+      signatureFields.forEach((field, index) => {
+        const value = field.value.trim();
+        if (value === '') {
+          alert('Please fill out all signature fields.');
+          throw new Error('Incomplete signatures');
+        }
+        signatures.push({ page: index + 1, signature: value });
+      });
+
+      // Load the original PDF with pdf-lib
       const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer());
       const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
       const pages = pdfDoc.getPages();
 
-      // Add typed signatures to the corresponding page and location
+      // Add the signatures to the appropriate places in the PDF
       signatures.forEach((signature, index) => {
-        const pageIndex = signature.pageNum - 1;  // Convert page number to 0-based index
-        const page = pages[pageIndex];
-        const signatureText = signature.signatureField.value;
+        const page = pages[signature.page - 1];  // Get the correct page
+        const signatureText = signature.signature;
 
-        // Add the signature text near the footer of the page (adjust x, y for positioning)
+        // Add the signature to the bottom of the page (adjust x, y as necessary)
         page.drawText(signatureText, {
-          x: 400,  // Adjust x as needed
-          y: 50,   // Adjust y as needed (footer position)
+          x: 400,  // Adjust x position
+          y: 50,   // Adjust y position
           size: 12,
         });
       });
@@ -137,7 +122,7 @@
       // Convert the updated PDF to a blob
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
 
-      // Upload the PDF to Google Drive
+      // Upload the signed PDF to Google Drive
       uploadFileToDrive(blob);
     });
 
@@ -165,7 +150,7 @@
           authInstance.signIn().then(() => {
             const accessToken = authInstance.currentUser.get().getAuthResponse().access_token;
 
-            // Upload file to Google Drive
+            // Upload the file to Google Drive
             fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
               method: 'POST',
               headers: new Headers({
