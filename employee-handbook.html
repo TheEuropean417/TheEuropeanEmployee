@@ -3,68 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Text Extraction</title>
-  <!-- pdfjs-dist for extracting text from PDF files -->
+  <title>PDF Rendering</title>
+  <!-- pdfjs-dist for rendering PDF files -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <style>
+    #pdfContainer {
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+    }
+    canvas {
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+    }
+  </style>
 </head>
 <body>
-  <h1>PDF Text Extraction</h1>
+  <h1>PDF Rendering Example</h1>
 
-  <!-- Button to trigger text extraction -->
-  <button id="extractTextBtn">Extract Text from PDF</button>
+  <!-- Button to trigger PDF rendering -->
+  <button id="renderPdfBtn">Render PDF</button>
 
-  <!-- Text content will be displayed here -->
-  <div id="extractedText" style="white-space: pre-wrap; background-color: #f0f0f0; padding: 10px; border: 1px solid #ddd;"></div>
+  <!-- Container to hold rendered PDF pages -->
+  <div id="pdfContainer"></div>
 
   <script>
     const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
-    const extractedTextDiv = document.getElementById('extractedText');
+    const pdfContainer = document.getElementById('pdfContainer');
 
-    // Function to extract and order text based on Y-coordinates
-    async function extractTextFromPDF() {
+    // Function to render the PDF pages
+    async function renderPDF() {
       try {
         // Load the PDF document from the given URL
         const loadingTask = pdfjsLib.getDocument(pdfUrl);
         const pdf = await loadingTask.promise;
 
-        let extractedText = '';
+        // Clear previous content
+        pdfContainer.innerHTML = '';
 
-        // Loop through each page in the PDF
+        // Loop through each page in the PDF and render it as a canvas
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
           const page = await pdf.getPage(pageNum);
-          const textContent = await page.getTextContent();
 
-          // Collect all items in an array with their Y coordinates
-          let textItems = textContent.items.map(item => {
-            return {
-              str: item.str,
-              y: item.transform[5] // Y coordinate is stored in transform[5]
-            };
-          });
+          // Set scale for rendering
+          const scale = 1.5;
+          const viewport = page.getViewport({ scale });
 
-          // Sort items by Y-coordinate in descending order (header at top, footer at bottom)
-          textItems.sort((a, b) => b.y - a.y);
+          // Create a canvas element for each page
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
 
-          // Build the ordered text for this page
-          let pageText = textItems.map(item => item.str).join(' ');
+          // Render the page on the canvas
+          const renderContext = {
+            canvasContext: context,
+            viewport: viewport,
+          };
+          await page.render(renderContext).promise;
 
-          // Add the page text to the final extracted text
-          extractedText += `Page ${pageNum}:\n${pageText}\n\n`;
+          // Append the canvas to the PDF container
+          pdfContainer.appendChild(canvas);
         }
 
-        // Display the extracted text on the page
-        extractedTextDiv.textContent = extractedText;
-
       } catch (error) {
-        extractedTextDiv.textContent = `Error during PDF text extraction: ${error.message}`;
+        pdfContainer.textContent = `Error during PDF rendering: ${error.message}`;
       }
     }
 
-    // Button event listener to trigger text extraction
-    document.getElementById('extractTextBtn').addEventListener('click', () => {
-      // Clear previous text
-      extractedTextDiv.textContent = '';
-      extractTextFromPDF();
+    // Button event listener to trigger PDF rendering
+    document.getElementById('renderPdfBtn').addEventListener('click', () => {
+      renderPDF();
     });
   </script>
 </body>
