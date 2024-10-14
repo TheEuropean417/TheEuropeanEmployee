@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF to Text with Signature Fields</title>
-  <!-- pdfjs-dist for extracting text from PDF files -->
+  <title>Employee Handbook with Signature Fields</title>
+  <!-- Include pdf.js for extracting text from PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-  <!-- pdf-lib for manipulating PDF files -->
+  <!-- Include pdf-lib for creating and modifying PDFs -->
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <!-- Google API JS client -->
-  <script src="https://apis.google.com/js/api.js"></script>
   <style>
     #pdfTextContainer {
       width: 80%;
@@ -20,115 +18,76 @@
       white-space: pre-wrap;
       font-family: Arial, sans-serif;
     }
-    .page-header, .page-footer {
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    .main-text {
-      text-align: justify;
-      margin-bottom: 20px;
-    }
     .signature-field {
-      display: block;
-      margin: 10px 0;
-      font-size: 14px;
+      display: inline-block;
+      margin-left: 10px;
       padding: 5px;
+      font-size: 14px;
       border: 1px solid #000;
-      width: 300px;
+      width: 200px;
     }
   </style>
 </head>
 <body>
   <h1>Employee Handbook with Signature Fields</h1>
 
-  <!-- Container to hold the extracted PDF text -->
+  <!-- Container to display the extracted PDF content -->
   <div id="pdfTextContainer"></div>
 
-  <!-- Button to submit the signatures -->
-  <button id="submitSignaturesBtn">Submit Signatures & Upload PDF</button>
+  <!-- Button to submit signatures and convert to PDF -->
+  <button id="submitSignaturesBtn">Submit Signatures & Convert to PDF</button>
 
   <script>
     const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
     const pdfTextContainer = document.getElementById('pdfTextContainer');
 
-    // Load the PDF and extract text on page load
+    // Function to extract text from the PDF using PDF.js
+    async function extractTextFromPDF() {
+      const loadingTask = pdfjsLib.getDocument(pdfUrl);
+      const pdf = await loadingTask.promise;
+
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+
+        let pageText = '';
+
+        // Sort the text content to preserve the layout order
+        textContent.items.forEach((item) => {
+          let text = item.str;
+
+          // Detect "Acknowledgment:" and insert signature input fields next to it
+          if (text.includes("Acknowledgment:")) {
+            text += `<input type="text" placeholder="Sign here" class="signature-field">`;
+          }
+
+          // Append each text chunk to the page text
+          pageText += text + ' ';
+        });
+
+        // Create a container for each page and add it to the main container
+        const pageDiv = document.createElement('div');
+        pageDiv.innerHTML = `<p><strong>Page ${pageNum}:</strong></p><p>${pageText}</p><hr>`;
+        pdfTextContainer.appendChild(pageDiv);
+      }
+    }
+
+    // Load and extract the text from the PDF on page load
     window.onload = async function() {
       await extractTextFromPDF();
     };
 
-    // Function to extract text from the PDF and display it in HTML, preserving headers, main text, and footers
-    async function extractTextFromPDF() {
-      try {
-        const loadingTask = pdfjsLib.getDocument(pdfUrl);
-        const pdf = await loadingTask.promise;
+    // Function to convert HTML back to PDF using pdf-lib
+    async function convertHtmlToPDF() {
+      // Load the original PDF
+      const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer());
+      const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+      const pages = pdfDoc.getPages();
 
-        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-          const page = await pdf.getPage(pageNum);
-          const textContent = await page.getTextContent();
-
-          let pageText = '';
-          let headerText = '';
-          let footerText = '';
-          let mainText = '';
-
-          // Sort text by its position to maintain proper order
-          textContent.items.sort((a, b) => a.transform[5] < b.transform[5] ? 1 : -1);
-
-          let lastY = null;
-          let lastX = null;
-
-          textContent.items.forEach((item) => {
-            const text = item.str;
-            const yPosition = item.transform[5];
-            const xPosition = item.transform[4];
-            const spacing = (lastX && Math.abs(xPosition - lastX) > 10) ? ' ' : '';
-
-            // Classify text into headers, footers, and main content based on Y-coordinate
-            if (yPosition > 700) { // Assuming header area is above Y=700
-              headerText += spacing + text;
-            } else if (yPosition < 100) { // Assuming footer area is below Y=100
-              footerText += spacing + text;
-            } else {
-              // Add main text with proper spacing between words
-              mainText += spacing + text;
-            }
-
-            // Insert line breaks if there's a significant Y-position gap (new paragraph)
-            if (lastY && Math.abs(lastY - yPosition) > 20) {
-              mainText += '\n\n';
-            }
-
-            // Check for "Acknowledgment:" keyword in the footer and add a signature field
-            if (text.includes('Acknowledgment:')) {
-              footerText += `<span>${text}</span> <input type="text" placeholder="Enter Signature" class="signature-field">`;
-            }
-
-            lastY = yPosition;
-            lastX = xPosition;
-          });
-
-          // Create HTML structure for the page with header, main text, and footer
-          const pageDiv = document.createElement('div');
-          pageDiv.innerHTML = `
-            <div class="page-header"><strong>Page ${pageNum} Header:</strong> ${headerText}</div>
-            <div class="main-text">${mainText}</div>
-            <div class="page-footer"><strong>Page ${pageNum} Footer:</strong> ${footerText}</div>
-            <hr>
-          `;
-          pdfTextContainer.appendChild(pageDiv);
-        }
-      } catch (error) {
-        console.error('Error extracting text from PDF:', error.message);
-      }
-    }
-
-    // Function to capture signature inputs and convert the updated content back to a PDF
-    document.getElementById('submitSignaturesBtn').addEventListener('click', async () => {
+      // Get signature inputs from the HTML
       const signatureFields = document.querySelectorAll('.signature-field');
       const signatures = [];
 
-      // Collect the values of all signature fields
       signatureFields.forEach((field, index) => {
         const value = field.value.trim();
         if (value === '') {
@@ -138,77 +97,41 @@
         signatures.push({ page: index + 1, signature: value });
       });
 
-      // Load the original PDF with pdf-lib
-      const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer());
-      const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-      const pages = pdfDoc.getPages();
-
-      // Add the signatures to the appropriate places in the PDF
+      // Add signatures to the PDF using pdf-lib
       signatures.forEach((signature, index) => {
-        const page = pages[signature.page - 1];  // Get the correct page
-        const signatureText = signature.signature;
-
-        // Add the signature to the bottom of the page (adjust x, y as necessary)
-        page.drawText(signatureText, {
-          x: 400,  // Adjust x position
-          y: 50,   // Adjust y position
+        const page = pages[signature.page - 1];
+        page.drawText(signature.signature, {
+          x: 400, // Adjust the x position based on layout
+          y: 100, // Adjust the y position based on layout
           size: 12,
         });
       });
 
-      // Save the updated PDF
+      // Save the modified PDF
       const pdfBytes = await pdfDoc.save();
-
-      // Convert the updated PDF to a blob
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-
-      // Upload the signed PDF to Google Drive
-      uploadFileToDrive(blob);
-    });
-
-    // Function to upload the PDF to Google Drive
-    function uploadFileToDrive(blob) {
-      const metadata = {
-        name: 'signed-employee-handbook.pdf',
-        mimeType: 'application/pdf',
-        parents: ['19aBK3wMPVq9LfDeI0T4NDOQO8fzB38Dl'], // Google Drive folder ID
-      };
-
-      const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      form.append('file', blob);
-
-      // Load the Google API client and authenticate
-      gapi.load('client:auth2', () => {
-        gapi.auth2.init({
-          apiKey: 'AIzaSyAXHsPZNkfoNFCRflMdnC8-FUmpzZeHFIM',
-          clientId: '1092193969062-bu0vdc6317v4in97k9glu2gauq8m0786.apps.googleusercontent.com',
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-          scope: 'https://www.googleapis.com/auth/drive.file',
-        }).then(() => {
-          const authInstance = gapi.auth2.getAuthInstance();
-          authInstance.signIn().then(() => {
-            const accessToken = authInstance.currentUser.get().getAuthResponse().access_token;
-
-            // Upload the file to Google Drive
-            fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
-              method: 'POST',
-              headers: new Headers({
-                'Authorization': 'Bearer ' + accessToken,
-              }),
-              body: form,
-            })
-            .then((response) => response.json())
-            .then((data) => {
-              alert('PDF uploaded successfully with ID: ' + data.id);
-            })
-            .catch((error) => {
-              console.error('Error uploading PDF:', error.message);
-            });
-          });
-        });
-      });
+      return new Blob([pdfBytes], { type: 'application/pdf' });
     }
+
+    // Function to download the generated PDF
+    function downloadPDF(pdfBlob) {
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'signed-employee-handbook.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Button click event to submit signatures, convert to PDF, and download
+    document.getElementById('submitSignaturesBtn').addEventListener('click', async () => {
+      try {
+        const pdfBlob = await convertHtmlToPDF();
+        downloadPDF(pdfBlob);
+      } catch (error) {
+        console.error('Error during PDF generation:', error.message);
+      }
+    });
   </script>
 </body>
 </html>
