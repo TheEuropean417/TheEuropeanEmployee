@@ -15,14 +15,14 @@
       width: 100%;
       margin: 0 auto;
       text-align: center;
+      position: relative;
     }
     canvas {
       margin-bottom: 20px;
       border: 1px solid #ddd;
     }
     .signature-field {
-      display: inline-block;
-      margin-left: 20px;
+      position: absolute;
       font-size: 14px;
       padding: 5px;
       border: 1px solid #000;
@@ -75,20 +75,25 @@
           // Extract text after rendering the page
           const textContent = await page.getTextContent();
 
-          // Process each text item on the page
-          let acknowledgmentFound = false;
+          // Process each text item on the page to find "Acknowledgment:"
           textContent.items.forEach((item) => {
-            if (item.str.includes('Acknowledgment:') && !acknowledgmentFound) {
-              acknowledgmentFound = true;
-
-              // Create a signature field next to the word "Acknowledgment"
+            if (item.str.includes('Acknowledgment:')) {
               const signatureField = document.createElement('input');
               signatureField.type = 'text';
               signatureField.placeholder = 'Enter Signature';
               signatureField.classList.add('signature-field');
               signatures.push({ signatureField, pageNum });
 
-              // Append signature field next to the canvas
+              // Position the signature field based on the coordinates of "Acknowledgment:"
+              const x = (item.transform[4] + 150) * scale; // X coordinate, adjusted for the position
+              const y = (viewport.height - item.transform[5] - 20) * scale; // Y coordinate (inverted for canvas)
+
+              // Style and position the signature field
+              signatureField.style.left = `${x}px`;
+              signatureField.style.top = `${y}px`;
+              signatureField.style.width = '200px';
+
+              // Append the signature field to the container
               pdfContainer.appendChild(signatureField);
             }
           });
