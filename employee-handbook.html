@@ -4,12 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee Handbook with Signature Fields</title>
-  <!-- Include pdf.js for extracting text from PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-  <!-- Include pdf-lib for creating and modifying PDFs -->
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <style>
-    #pdfTextContainer {
+    #textContainer {
       width: 80%;
       margin: 20px auto;
       padding: 10px;
@@ -31,80 +27,72 @@
 <body>
   <h1>Employee Handbook with Signature Fields</h1>
 
-  <!-- Container to display the extracted PDF content -->
-  <div id="pdfTextContainer"></div>
+  <!-- Container to display the text content -->
+  <div id="textContainer"></div>
 
   <!-- Button to submit signatures and convert to PDF -->
   <button id="submitSignaturesBtn">Submit Signatures & Convert to PDF</button>
 
   <script>
-    const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
-    const pdfTextContainer = document.getElementById('pdfTextContainer');
+    const textUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/Employee-Handbook-Text.txt';
+    const textContainer = document.getElementById('textContainer');
 
-    // Function to extract text from the PDF using PDF.js
-    async function extractTextFromPDF() {
-      const loadingTask = pdfjsLib.getDocument(pdfUrl);
-      const pdf = await loadingTask.promise;
+    // Function to fetch and display text content from the plain text file
+    async function loadTextFile() {
+      try {
+        const response = await fetch(textUrl);
+        const textContent = await response.text();
 
-      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const textContent = await page.getTextContent();
+        // Replace "Acknowledgment:" with "Acknowledgment:" and a signature input field
+        const updatedText = textContent.replace(/Acknowledgment:/g, 'Acknowledgment:<input type="text" placeholder="Sign here" class="signature-field">');
 
-        let pageText = '';
-
-        // Sort the text content to preserve the layout order
-        textContent.items.forEach((item) => {
-          let text = item.str;
-
-          // Detect "Acknowledgment:" and insert signature input fields next to it
-          if (text.includes("Acknowledgment:")) {
-            text += `<input type="text" placeholder="Sign here" class="signature-field">`;
-          }
-
-          // Append each text chunk to the page text
-          pageText += text + ' ';
-        });
-
-        // Create a container for each page and add it to the main container
-        const pageDiv = document.createElement('div');
-        pageDiv.innerHTML = `<p><strong>Page ${pageNum}:</strong></p><p>${pageText}</p><hr>`;
-        pdfTextContainer.appendChild(pageDiv);
+        // Set the updated text with signature fields into the container
+        textContainer.innerHTML = `<p>${updatedText}</p>`;
+      } catch (error) {
+        console.error('Error loading text file:', error);
       }
     }
 
-    // Load and extract the text from the PDF on page load
+    // Load the text content on page load
     window.onload = async function() {
-      await extractTextFromPDF();
+      await loadTextFile();
     };
 
     // Function to convert HTML back to PDF using pdf-lib
     async function convertHtmlToPDF() {
-      // Load the original PDF
-      const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer());
-      const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-      const pages = pdfDoc.getPages();
+      const { PDFDocument } = PDFLib;
+
+      // Create a new PDF document
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage([600, 800]);
+      const { width, height } = page.getSize();
 
       // Get signature inputs from the HTML
       const signatureFields = document.querySelectorAll('.signature-field');
       const signatures = [];
-
       signatureFields.forEach((field, index) => {
         const value = field.value.trim();
         if (value === '') {
           alert('Please fill out all signature fields.');
           throw new Error('Incomplete signatures');
         }
-        signatures.push({ page: index + 1, signature: value });
+        signatures.push(value);
       });
 
-      // Add signatures to the PDF using pdf-lib
-      signatures.forEach((signature, index) => {
-        const page = pages[signature.page - 1];
-        page.drawText(signature.signature, {
-          x: 400, // Adjust the x position based on layout
-          y: 100, // Adjust the y position based on layout
-          size: 12,
-        });
+      // Add text and signatures to the PDF
+      const lines = textContainer.innerText.split('\n');
+      let yOffset = height - 50; // Start from top of page
+      lines.forEach((line, lineIndex) => {
+        // Add the text line to the PDF
+        page.drawText(line, { x: 50, y: yOffset, size: 12 });
+
+        // For each signature field, draw the signature on the PDF
+        if (line.includes('Acknowledgment:')) {
+          const signature = signatures.shift(); // Get the corresponding signature
+          page.drawText(signature, { x: 400, y: yOffset, size: 12 });
+        }
+
+        yOffset -= 20; // Move to the next line
       });
 
       // Save the modified PDF
