@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Rendering</title>
+  <title>PDF Rendering with Signature Fields</title>
   <!-- pdfjs-dist for rendering PDF files -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <!-- pdf-lib for manipulating PDF files -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <!-- Google API JS client -->
+  <script src="https://apis.google.com/js/api.js"></script>
   <style>
     #pdfContainer {
       width: 100%;
@@ -16,65 +20,158 @@
       margin-bottom: 20px;
       border: 1px solid #ddd;
     }
+    .signature-field {
+      display: inline-block;
+      margin-left: 20px;
+      font-size: 14px;
+      padding: 5px;
+      border: 1px solid #000;
+      width: 200px;
+    }
   </style>
 </head>
 <body>
-  <h1>PDF Rendering Example</h1>
-
-  <!-- Button to trigger PDF rendering -->
-  <button id="renderPdfBtn">Render PDF</button>
+  <h1>PDF Rendering with Signature Fields</h1>
 
   <!-- Container to hold rendered PDF pages -->
   <div id="pdfContainer"></div>
+  <button id="submitSignaturesBtn">Submit Signatures & Upload PDF</button>
 
   <script>
     const pdfUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/handbook-template.pdf';
     const pdfContainer = document.getElementById('pdfContainer');
+    const signatures = [];
 
-    // Function to render the PDF pages
+    // Load and render the PDF on page load
+    window.onload = async function() {
+      await renderPDF();
+    };
+
+    // Function to render the PDF pages and add signature fields
     async function renderPDF() {
       try {
-        // Load the PDF document from the given URL
         const loadingTask = pdfjsLib.getDocument(pdfUrl);
         const pdf = await loadingTask.promise;
 
-        // Clear previous content
-        pdfContainer.innerHTML = '';
-
-        // Loop through each page in the PDF and render it as a canvas
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
           const page = await pdf.getPage(pageNum);
-
-          // Set scale for rendering
           const scale = 1.5;
           const viewport = page.getViewport({ scale });
 
-          // Create a canvas element for each page
           const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d');
           canvas.width = viewport.width;
           canvas.height = viewport.height;
 
-          // Render the page on the canvas
           const renderContext = {
             canvasContext: context,
             viewport: viewport,
           };
           await page.render(renderContext).promise;
 
-          // Append the canvas to the PDF container
+          // Append the canvas to the container
           pdfContainer.appendChild(canvas);
-        }
 
+          // Extract text and add signature fields next to "Acknowledgment:"
+          const textContent = await page.getTextContent();
+          textContent.items.forEach((item) => {
+            if (item.str.includes('Acknowledgment:')) {
+              const signatureField = document.createElement('input');
+              signatureField.type = 'text';
+              signatureField.placeholder = 'Enter Signature';
+              signatureField.classList.add('signature-field');
+              signatures.push(signatureField);
+              // Add signature field to the container below the canvas
+              pdfContainer.appendChild(signatureField);
+            }
+          });
+        }
       } catch (error) {
-        pdfContainer.textContent = `Error during PDF rendering: ${error.message}`;
+        console.error('Error rendering PDF:', error.message);
       }
     }
 
-    // Button event listener to trigger PDF rendering
-    document.getElementById('renderPdfBtn').addEventListener('click', () => {
-      renderPDF();
+    // Function to capture signatures and convert PDF back to PDF with signatures
+    document.getElementById('submitSignaturesBtn').addEventListener('click', async () => {
+      // Ensure all signatures are filled out
+      for (let i = 0; i < signatures.length; i++) {
+        if (!signatures[i].value) {
+          alert('Please fill out all signature fields.');
+          return;
+        }
+      }
+
+      // Load the PDF with pdf-lib
+      const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer());
+      const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+      const pages = pdfDoc.getPages();
+
+      // Add typed signatures to each page that has a signature field
+      signatures.forEach((signatureField, index) => {
+        const pageIndex = Math.floor(index / pages.length);
+        const page = pages[pageIndex];
+        const signatureText = signatureField.value;
+        // Add the signature text at a fixed position (next to "Acknowledgment")
+        page.drawText(signatureText, {
+          x: 400,  // Adjust x as needed
+          y: 50,   // Adjust y as needed (footer position)
+          size: 12,
+        });
+      });
+
+      // Save the updated PDF
+      const pdfBytes = await pdfDoc.save();
+
+      // Convert the updated PDF to a blob
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+      // Upload the PDF to Google Drive
+      uploadFileToDrive(blob);
     });
+
+    // Function to upload the PDF to Google Drive
+    function uploadFileToDrive(blob) {
+      const metadata = {
+        name: 'signed-employee-handbook.pdf',
+        mimeType: 'application/pdf',
+        parents: ['19aBK3wMPVq9LfDeI0T4NDOQO8fzB38Dl'], // Google Drive folder ID
+      };
+
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      form.append('file', blob);
+
+      // Load the Google API client and authenticate
+      gapi.load('client:auth2', () => {
+        gapi.auth2.init({
+          apiKey: 'AIzaSyAXHsPZNkfoNFCRflMdnC8-FUmpzZeHFIM',
+          clientId: '1092193969062-bu0vdc6317v4in97k9glu2gauq8m0786.apps.googleusercontent.com',
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+          scope: 'https://www.googleapis.com/auth/drive.file',
+        }).then(() => {
+          const authInstance = gapi.auth2.getAuthInstance();
+          authInstance.signIn().then(() => {
+            const accessToken = authInstance.currentUser.get().getAuthResponse().access_token;
+
+            // Upload file to Google Drive
+            fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+              method: 'POST',
+              headers: new Headers({
+                'Authorization': 'Bearer ' + accessToken,
+              }),
+              body: form,
+            })
+            .then((response) => response.json())
+            .then((data) => {
+              alert('PDF uploaded successfully with ID: ' + data.id);
+            })
+            .catch((error) => {
+              console.error('Error uploading PDF:', error.message);
+            });
+          });
+        });
+      });
+    }
   </script>
 </body>
 </html>
