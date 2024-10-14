@@ -16,7 +16,7 @@
       margin: 20px auto;
       padding: 10px;
       border: 1px solid #ccc;
-      line-height: 1.5;
+      line-height: 1.8;
       white-space: pre-wrap;
       font-family: Arial, sans-serif;
     }
@@ -27,6 +27,7 @@
     }
     .main-text {
       text-align: justify;
+      margin-bottom: 20px;
     }
     .signature-field {
       display: block;
@@ -75,23 +76,35 @@
           // Sort text by its position to maintain proper order
           textContent.items.sort((a, b) => a.transform[5] < b.transform[5] ? 1 : -1);
 
+          let lastY = null;
+
           textContent.items.forEach((item) => {
             const text = item.str;
+            const yPosition = item.transform[5];
+            const xPosition = item.transform[4];
+            const spacing = Math.abs(xPosition - (lastY ? lastY.xPosition : 0)) > 5 ? ' ' : '';
 
             // Classify text into headers, footers, and main content based on Y-coordinate
-            const yPosition = item.transform[5];
             if (yPosition > 700) { // Assuming header area is above Y=700
-              headerText += text + ' ';
+              headerText += spacing + text;
             } else if (yPosition < 100) { // Assuming footer area is below Y=100
-              footerText += text + ' ';
+              footerText += spacing + text;
             } else {
-              mainText += text + ' ';
+              // Add main text with proper spacing between words
+              mainText += spacing + text;
+            }
+
+            // Insert line breaks if there's a significant Y-position gap (new paragraph)
+            if (lastY && Math.abs(lastY.yPosition - yPosition) > 15) {
+              mainText += '\n\n';
             }
 
             // Check for "Acknowledgment:" keyword in the footer and add a signature field
             if (text.includes('Acknowledgment:')) {
               footerText += `<span>${text}</span> <input type="text" placeholder="Enter Signature" class="signature-field">`;
             }
+
+            lastY = { xPosition, yPosition };
           });
 
           // Create HTML structure for the page with header, main text, and footer
