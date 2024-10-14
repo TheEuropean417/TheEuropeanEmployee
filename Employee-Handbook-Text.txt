@@ -188,8 +188,6 @@ information is strictly prohibited.
 
 If an employee believes their conduct may create a conflict of interest, they must disclose it to 
 management. Failure to report may result in disciplinary action. 
-Acknowledgment: I have read and understand the above policy and agree to abide by its 
-guidelines. 
  
 The European's Health and Safety Policy 
 The health and safety of employees, contractors, visitors, and others on The European property are 
@@ -222,9 +220,12 @@ payroll processing.
 
 Enforcement: Altering or falsifying time records is strictly prohibited. Employees who are 
 instructed to falsify records must report it to management immediately. 
-Acknowledgment: I have read and understand the above policy and agree to abide by its 
-guidelines. 
+
+- I have read and understand the above policy and agree to abide by its guidelines. - 
  
+Acknowledgment: 
+
+
 The European's Meal & Rest Break Policy 
  
 Purpose: The European recognizes the necessity of providing employees with designated meal and 
@@ -336,6 +337,7 @@ a violation of Company policy and will result in corrective action up to and inc
 termination. The following miscellaneous items must be adhered to:
   
 • Clothing should be not overly tight or lose fitting  
+
 • Clothing may not contain logos of other restaurants or businesses or may not have offensive 
 messaging • Nails should be short, trimmed, and filed, artificial nails are not permitted. • Hair 
 must be styled neatly and pulled back from the face.  
