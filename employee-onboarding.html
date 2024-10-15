@@ -130,15 +130,15 @@
 
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
-            const email = document.getElementById('email').value;
-            const position = document.getElementById('position').value;
+            const Employee_ID = document.getElementById('Employee_ID').value;
+            // const position = document.getElementById('position').value;
 
             const data = {
                 "values": [[firstName, lastName, email, position]]
             };
 
             const SHEET_ID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
-            const range = 'New_Hires'; // New sheet name
+            const range = 'Employee_Information'; // New sheet name
 
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
 
