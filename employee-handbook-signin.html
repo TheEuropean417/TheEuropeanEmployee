@@ -83,17 +83,22 @@
                 }
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
+                console.log('Raw response:', response); // Log raw response object
+                return response.text(); // Return as text for detailed logging
             })
             .then(data => {
-                console.log("Response from fetchSquareEmployees:", data);
-                if (data.success) {
-                    fetchEmployeeData();
-                } else {
-                    document.getElementById('login-status').innerText = 'Error fetching employee data.';
+                console.log('Response data (as text):', data); // Log text data before parsing
+                try {
+                    const jsonData = JSON.parse(data); // Try to parse it as JSON
+                    console.log('Parsed JSON data:', jsonData); // Log parsed JSON
+                    if (jsonData.success) {
+                        fetchEmployeeData();
+                    } else {
+                        document.getElementById('login-status').innerText = 'Error fetching employee data.';
+                    }
+                } catch (error) {
+                    console.error('Error parsing JSON:', error); // Log parsing errors
+                    document.getElementById('login-status').innerText = 'Invalid response format.';
                 }
             })
             .catch(error => {
@@ -113,18 +118,24 @@
                 }
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
+                console.log('Raw response:', response); // Log raw response object
+                return response.text(); // Return as text for detailed logging
             })
             .then(data => {
-                if (data.success) {
-                    employees = data.employees;
-                    document.getElementById('login-status').innerText = 'Please enter your credentials.';
-                    document.querySelector('.btn').disabled = false;
-                } else {
-                    document.getElementById('login-status').innerText = 'Error loading employee data.';
+                console.log('Response data (as text):', data); // Log text data before parsing
+                try {
+                    const jsonData = JSON.parse(data); // Try to parse it as JSON
+                    console.log('Parsed JSON data:', jsonData); // Log parsed JSON
+                    if (jsonData.success) {
+                        employees = jsonData.employees;
+                        document.getElementById('login-status').innerText = 'Please enter your credentials.';
+                        document.querySelector('.btn').disabled = false;
+                    } else {
+                        document.getElementById('login-status').innerText = 'Error loading employee data.';
+                    }
+                } catch (error) {
+                    console.error('Error parsing JSON:', error); // Log parsing errors
+                    document.getElementById('login-status').innerText = 'Invalid response format.';
                 }
             })
             .catch(error => {
