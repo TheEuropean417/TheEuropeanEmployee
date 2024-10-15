@@ -75,7 +75,7 @@
         // Trigger the fetchSquareEmployees function in Google Apps Script to load the employee data into the Google Sheet
         window.onload = function() {
             console.log("Triggering fetchSquareEmployees...");
-            fetch('https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec?action=fetchSquareEmployees')
+            fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=fetchSquareEmployees')
                 .then(response => response.json())
                 .then(data => {
                     console.log("Response from fetchSquareEmployees: ", data);
@@ -96,7 +96,7 @@
         // Fetch the employee data from the Google Sheet after it has been loaded by the Apps Script
         function fetchEmployeeData() {
             console.log("Fetching employee data from Google Sheet...");
-            fetch('https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec?action=getEmployeeData')
+            fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=getEmployeeData')
                 .then(response => response.json())
                 .then(data => {
                     console.log("Employee data received: ", data);
