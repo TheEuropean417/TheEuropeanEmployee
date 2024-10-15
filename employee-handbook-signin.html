@@ -72,8 +72,8 @@
     <script>
         let employees = [];
 
-        // Trigger the fetchSquareEmployees function in Google Apps Script to load the employee data into the Google Sheet
-        window.onload = function() {
+        // DOMContentLoaded ensures this is triggered when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
             console.log("Triggering fetchSquareEmployees...");
             fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=fetchSquareEmployees')
                 .then(response => response.json())
@@ -81,8 +81,7 @@
                     console.log("Response from fetchSquareEmployees: ", data);
                     if (data.success) {
                         console.log("Employee data has been fetched and loaded into the Google Sheet.");
-                        // Now load the employee data from the Google Sheet
-                        fetchEmployeeData();
+                        fetchEmployeeData();  // Fetch employee data after loading it into Google Sheets
                     } else {
                         document.getElementById('login-status').innerText = 'Error fetching employee data.';
                     }
@@ -91,7 +90,7 @@
                     console.error('Error triggering employee data fetch:', error);
                     document.getElementById('login-status').innerText = 'Error triggering employee data fetch.';
                 });
-        };
+        });
 
         // Fetch the employee data from the Google Sheet after it has been loaded by the Apps Script
         function fetchEmployeeData() {
