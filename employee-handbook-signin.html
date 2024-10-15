@@ -75,8 +75,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log("Triggering fetchSquareEmployees...");
 
-            // Use a CORS proxy to bypass the CORS issue
-            fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=fetchSquareEmployees', {
+            // Use your new Google Cloud Function CORS proxy to bypass CORS issues
+            fetch('https://us-central1-the-european.cloudfunctions.net/corsProxy?url=https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=fetchSquareEmployees', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -110,8 +110,8 @@
         function fetchEmployeeData() {
             console.log("Fetching employee data from Google Sheet...");
 
-            // Use a CORS proxy to bypass the CORS issue
-            fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=getEmployeeData', {
+            // Use your new Google Cloud Function CORS proxy to bypass CORS issues
+            fetch('https://us-central1-the-european.cloudfunctions.net/corsProxy?url=https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=getEmployeeData', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -122,7 +122,6 @@
                 return response.text(); // Return as text for detailed logging
             })
             .then(data => {
-                //console.log('Response data (as text):', data); // Log text data before parsing
                 try {
                     const jsonData = JSON.parse(data); // Try to parse it as JSON
                     console.log('Parsed JSON data:', jsonData); // Log parsed JSON
