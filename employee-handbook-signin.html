@@ -64,7 +64,7 @@
         <form id="loginForm">
             <input type="text" id="name" placeholder="Name (First and Last)" required><br>
             <input type="password" id="password" placeholder="Password" required><br>
-            <button type="submit" class="btn">Login</button>
+            <button type="submit" class="btn" disabled>Login</button>
         </form>
 
         <p id="login-status">Loading employee data...</p>
@@ -73,14 +73,34 @@
     <script>
         let employees = [];
 
-        // Fetch employee data when the page loads
+        // Trigger the fetchSquareEmployees function in Google Apps Script to load the employee data into the Google Sheet
         window.onload = function() {
-            fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec')
+            fetch('https://script.google.com/macros/s/YOUR_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID/exec?action=fetchSquareEmployees')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Employee data has been fetched and loaded into the Google Sheet.');
+                        // Now load the employee data from the Google Sheet
+                        fetchEmployeeData();
+                    } else {
+                        document.getElementById('login-status').innerText = 'Error fetching employee data.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error triggering employee data fetch:', error);
+                    document.getElementById('login-status').innerText = 'Error triggering employee data fetch.';
+                });
+        };
+
+        // Fetch the employee data from the Google Sheet after it has been loaded by the Apps Script
+        function fetchEmployeeData() {
+            fetch('https://script.google.com/macros/s/YOUR_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID/exec?action=getEmployeeData')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         employees = data.employees;
                         document.getElementById('login-status').innerText = 'Please enter your credentials.';
+                        document.querySelector('.btn').disabled = false;  // Enable the login button
                     } else {
                         document.getElementById('login-status').innerText = 'Error loading employee data.';
                     }
@@ -89,7 +109,7 @@
                     console.error('Error:', error);
                     document.getElementById('login-status').innerText = 'Error loading employee data.';
                 });
-        };
+        }
 
         // Handle login form submission
         document.getElementById('loginForm').addEventListener('submit', function (e) {
