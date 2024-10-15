@@ -74,6 +74,8 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             console.log("Triggering fetchSquareEmployees...");
+
+            // Fetch employee data from the Google Apps Script Web App
             fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=fetchSquareEmployees', {
                 method: 'GET',
                 headers: {
@@ -102,6 +104,8 @@
 
         function fetchEmployeeData() {
             console.log("Fetching employee data from Google Sheet...");
+
+            // Fetch employee data from the Google Apps Script Web App
             fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=getEmployeeData', {
                 method: 'GET',
                 headers: {
