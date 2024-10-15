@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Login</title>
     <style>
-        /* Basic styling */
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: #f0f0f0;
@@ -75,11 +74,13 @@
 
         // Trigger the fetchSquareEmployees function in Google Apps Script to load the employee data into the Google Sheet
         window.onload = function() {
-            fetch('https://script.google.com/macros/s/YOUR_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID/exec?action=fetchSquareEmployees')
+            console.log("Triggering fetchSquareEmployees...");
+            fetch('https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec?action=fetchSquareEmployees')
                 .then(response => response.json())
                 .then(data => {
+                    console.log("Response from fetchSquareEmployees: ", data);
                     if (data.success) {
-                        console.log('Employee data has been fetched and loaded into the Google Sheet.');
+                        console.log("Employee data has been fetched and loaded into the Google Sheet.");
                         // Now load the employee data from the Google Sheet
                         fetchEmployeeData();
                     } else {
@@ -94,9 +95,11 @@
 
         // Fetch the employee data from the Google Sheet after it has been loaded by the Apps Script
         function fetchEmployeeData() {
-            fetch('https://script.google.com/macros/s/YOUR_GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID/exec?action=getEmployeeData')
+            console.log("Fetching employee data from Google Sheet...");
+            fetch('https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec?action=getEmployeeData')
                 .then(response => response.json())
                 .then(data => {
+                    console.log("Employee data received: ", data);
                     if (data.success) {
                         employees = data.employees;
                         document.getElementById('login-status').innerText = 'Please enter your credentials.';
