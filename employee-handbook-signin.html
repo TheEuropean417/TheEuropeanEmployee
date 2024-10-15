@@ -67,36 +67,48 @@
             <button type="submit" class="btn">Login</button>
         </form>
 
-        <p id="login-status">Please enter your credentials.</p>
+        <p id="login-status">Loading employee data...</p>
     </div>
 
     <script>
+        let employees = [];
+
+        // Fetch employee data when the page loads
+        window.onload = function() {
+            fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        employees = data.employees;
+                        document.getElementById('login-status').innerText = 'Please enter your credentials.';
+                    } else {
+                        document.getElementById('login-status').innerText = 'Error loading employee data.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('login-status').innerText = 'Error loading employee data.';
+                });
+        };
+
+        // Handle login form submission
         document.getElementById('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
             const name = document.getElementById('name').value;
             const password = document.getElementById('password').value;
 
-            // Call Google Apps Script web app to validate login
-            fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `name=${encodeURIComponent(name)}&password=${encodeURIComponent(password)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = data.redirectUrl;
-                } else {
-                    document.getElementById('login-status').innerText = 'Invalid credentials. Please try again.';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('login-status').innerText = 'There was an error processing your request.';
-            });
+            // Validate credentials
+            const employee = employees.find(emp => 
+                emp.firstName.toLowerCase() + ' ' + emp.lastName.toLowerCase() === name.toLowerCase()
+                && emp.employeeId === password
+            );
+
+            if (employee) {
+                window.location.href = 'https://TheEuropean417.github.io/TheEuropeanEmployee/employee-handbook.html';
+            } else {
+                document.getElementById('login-status').innerText = 'Invalid credentials. Please try again.';
+            }
         });
     </script>
 </body>
