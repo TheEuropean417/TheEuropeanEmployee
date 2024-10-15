@@ -19,8 +19,14 @@
       margin-left: 10px;
       padding: 5px;
       font-size: 14px;
-      border: 1px solid #000;
+      border: 2px solid red; /* Initial red border */
       width: 200px;
+    }
+    .signature-field.valid {
+      border-color: green; /* Green border when valid */
+    }
+    .signature-field.invalid {
+      border-color: red; /* Red border when invalid */
     }
   </style>
 </head>
@@ -48,9 +54,33 @@
 
         // Set the updated text with signature fields into the container
         textContainer.innerHTML = `<p>${updatedText}</p>`;
+
+        // Attach event listeners to signature fields after loading the text
+        attachSignatureValidation();
       } catch (error) {
         console.error('Error loading text file:', error);
       }
+    }
+
+    // Function to attach event listeners to signature fields
+    function attachSignatureValidation() {
+      const signatureFields = document.querySelectorAll('.signature-field');
+      const params = new URLSearchParams(window.location.search);
+      const employeeName = params.get('name').toLowerCase(); // Get the employee name and make it lowercase
+
+      signatureFields.forEach(field => {
+        field.addEventListener('input', function() {
+          const fieldValue = field.value.trim().toLowerCase(); // Get input and convert to lowercase
+          
+          if (fieldValue === employeeName) {
+            field.classList.add('valid');
+            field.classList.remove('invalid');
+          } else {
+            field.classList.add('invalid');
+            field.classList.remove('valid');
+          }
+        });
+      });
     }
 
     window.onload = function() {
