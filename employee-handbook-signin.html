@@ -72,55 +72,68 @@
     <script>
         let employees = [];
 
-        // DOMContentLoaded ensures this is triggered when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log("Triggering fetchSquareEmployees...");
-            fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=fetchSquareEmployees')
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Response from fetchSquareEmployees: ", data);
-                    if (data.success) {
-                        console.log("Employee data has been fetched and loaded into the Google Sheet.");
-                        fetchEmployeeData();  // Fetch employee data after loading it into Google Sheets
-                    } else {
-                        document.getElementById('login-status').innerText = 'Error fetching employee data.';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error triggering employee data fetch:', error);
-                    document.getElementById('login-status').innerText = 'Error triggering employee data fetch.';
-                });
+            fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMd/exec?action=fetchSquareEmployees', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Response from fetchSquareEmployees:", data);
+                if (data.success) {
+                    fetchEmployeeData();
+                } else {
+                    document.getElementById('login-status').innerText = 'Error fetching employee data.';
+                }
+            })
+            .catch(error => {
+                console.error('Error triggering employee data fetch:', error);
+                document.getElementById('login-status').innerText = 'Error triggering employee data fetch.';
+            });
         });
 
-        // Fetch the employee data from the Google Sheet after it has been loaded by the Apps Script
         function fetchEmployeeData() {
             console.log("Fetching employee data from Google Sheet...");
-            fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=getEmployeeData')
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Employee data received: ", data);
-                    if (data.success) {
-                        employees = data.employees;
-                        document.getElementById('login-status').innerText = 'Please enter your credentials.';
-                        document.querySelector('.btn').disabled = false;  // Enable the login button
-                    } else {
-                        document.getElementById('login-status').innerText = 'Error loading employee data.';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+            fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMd/exec?action=getEmployeeData', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    employees = data.employees;
+                    document.getElementById('login-status').innerText = 'Please enter your credentials.';
+                    document.querySelector('.btn').disabled = false;
+                } else {
                     document.getElementById('login-status').innerText = 'Error loading employee data.';
-                });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading employee data:', error);
+                document.getElementById('login-status').innerText = 'Error loading employee data.';
+            });
         }
 
-        // Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const name = document.getElementById('name').value;
             const password = document.getElementById('password').value;
 
-            // Validate credentials
             const employee = employees.find(emp => 
                 emp.firstName.toLowerCase() + ' ' + emp.lastName.toLowerCase() === name.toLowerCase()
                 && emp.employeeId === password
