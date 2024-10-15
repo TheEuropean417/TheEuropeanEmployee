@@ -74,32 +74,66 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             console.log("Triggering fetchSquareEmployees...");
-
-            // Triggering fetchSquareEmployees with no-cors mode to avoid CORS issues
             fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=fetchSquareEmployees', {
                 method: 'GET',
-                mode: 'no-cors'
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
-            .then(() => {
-                // We don't expect any response due to 'no-cors', so just proceed.
-                console.log("fetchSquareEmployees triggered with no-cors.");
-                document.getElementById('login-status').innerText = 'Employee data loaded. Please enter your credentials.';
-                document.querySelector('.btn').disabled = false;
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Response from fetchSquareEmployees:", data);
+                if (data.success) {
+                    fetchEmployeeData();
+                } else {
+                    document.getElementById('login-status').innerText = 'Error fetching employee data.';
+                }
             })
             .catch(error => {
-                console.error('Error triggering fetchSquareEmployees:', error);
+                console.error('Error triggering employee data fetch:', error);
                 document.getElementById('login-status').innerText = 'Error triggering employee data fetch.';
             });
         });
 
-        // Handle login form submission
+        function fetchEmployeeData() {
+            console.log("Fetching employee data from Google Sheet...");
+            fetch('https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=getEmployeeData', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    employees = data.employees;
+                    document.getElementById('login-status').innerText = 'Please enter your credentials.';
+                    document.querySelector('.btn').disabled = false;
+                } else {
+                    document.getElementById('login-status').innerText = 'Error loading employee data.';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading employee data:', error);
+                document.getElementById('login-status').innerText = 'Error loading employee data.';
+            });
+        }
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('name').value;
             const password = document.getElementById('password').value;
 
-            // Validate credentials (you should validate on the backend, but this is just a placeholder)
-            // Assuming employee data was loaded into `employees` array previously
             const employee = employees.find(emp => 
                 emp.firstName.toLowerCase() + ' ' + emp.lastName.toLowerCase() === name.toLowerCase()
                 && emp.employeeId === password
