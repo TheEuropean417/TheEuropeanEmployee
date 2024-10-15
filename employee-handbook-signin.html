@@ -122,7 +122,7 @@
                 return response.text(); // Return as text for detailed logging
             })
             .then(data => {
-                console.log('Response data (as text):', data); // Log text data before parsing
+                //console.log('Response data (as text):', data); // Log text data before parsing
                 try {
                     const jsonData = JSON.parse(data); // Try to parse it as JSON
                     console.log('Parsed JSON data:', jsonData); // Log parsed JSON
