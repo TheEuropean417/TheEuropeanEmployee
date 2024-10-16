@@ -1,92 +1,5 @@
-Our Vision 
-At The European, our commitment to excellence, quality, and accessibility drives us to create 
-a space where exceptional food is both high-quality and available to all. We prioritize using 
-the finest ingredients, sourced locally whenever possible, honoring both time-honored 
-traditions and modern techniques to ensure outstanding taste and freshness. 
-We take pride in serving our guests milk from grass-fed cows and eggs from free-range 
-chickens. While we champion local ingredients, we also recognize the unmatched quality of 
-certain European products. That's why we import our chocolate and many of our pastry 
-ingredients directly from Europe, ensuring the authenticity of our creations. 
-Our goal is to provide a streamlined, quick-service experience that allows our guests to enjoy 
-quality food without sacrificing time. The European embodies the identity of a modern 
-European café—deeply rooted in cultural heritage and old-world values while embracing 
-forward-thinking, adaptable progress. We cherish quality and craftsmanship, whether in food 
-or everyday life, and balance this with the demands of a fast-paced world. This is why The 
-European stands for both excellence and efficiency. 
- 
-Our Mission 
-At The European, we are dedicated to crafting exceptional food that celebrates the artistry of 
-European baking, scratch cooking, and the richness of local farms. Our mission is to create a 
-vibrant, welcoming space where every dish—whether a delicate pastry or a hearty breakfast—
-is made from scratch with the finest ingredients and a commitment to excellence. 
-We believe that food is more than just sustenance; it is a celebration of flavors, a connection 
-to the earth, a way to embrace different cultures, and a source of health and nourishment. 
- 
-- I have read and understand the above policy and agree to abide by its guidelines. - 
- 
-Acknowledgment: 
- 
-
-Our Pillars of Commitment 
-1. Ethically Sourced Ingredients 
-We are committed to supporting local farms and producers by sourcing fresh, high-
-quality ingredients directly from them. This strengthens our connection to the 
-community and ensures that our food reflects the best of what our region has to offer. 
-
-2. Efficiency & Accessibility 
-We strive to make the customer experience as seamless as possible, whether guests 
-are dining in to enjoy our atmosphere or picking up an order on the go. Our aim is to 
-provide an easy, enjoyable experience that fits every lifestyle. 
-
-3. Unparalleled Quality 
-Every item we serve is made from scratch, with daily fresh-baked bread and high-
-quality European pastries that consistently exceed standards of taste and 
-craftsmanship. Our dedication to quality is evident in every bite. 
- 
-Our Goals 
-• To maintain strong, ethical partnerships with local farmers and producers. 
-• To deliver an exceptional, streamlined customer experience that honors both 
-efficiency and quality. 
-• To consistently create and serve food that celebrates the traditions of European baking 
-while embracing the best of modern techniques. 
- 
-The European's Equal Employment Opportunity Policy 
- 
-The European is an Equal Opportunity Employer that does not discriminate on the basis of 
-actual or perceived race, creed, color, religion, alienage or national origin, ancestry, 
-citizenship status, age, disability or handicap, sex (including pregnancy, gender identity, and 
-sexual orientation), marital status, veteran status, genetic information, arrest record, or any 
-other characteristic protected by applicable federal, state, or local laws. Our management 
-team is dedicated to this policy with respect to recruitment, hiring, placement, promotion, 
-transfer, training, compensation, benefits, employee activities, and general treatment 
-during employment. 
-
-Accommodations for Individuals with Disabilities: The European will make reasonable 
-accommodations, as required by law, for known physical or mental disabilities of an otherwise 
-qualified applicant or employee, unless doing so would impose an undue hardship on the 
-company's operations. An accommodation is not reasonable if the employee cannot perform 
-essential job duties safely or effectively even with the accommodation. Employees needing 
-accommodations must contact the company recruiter and provide supporting medical 
-documentation. The European will engage in an interactive process to determine if an 
-accommodation can be made and will notify the employee within a reasonable period. All medical 
-information submitted will be treated confidentially. 
-Religious Accommodations: The European will also attempt to reasonably accommodate the 
-sincere religious beliefs of its employees, provided it does not create an undue hardship on 
-business operations. 
-
-Employees with questions or concerns about equal employment opportunities are encouraged to 
-bring these issues to their Direct Supervisor or their HR Manager. The European prohibits retaliation 
-against individuals who raise equal employment opportunity issues. Employees who believe they 
-have been subjected to retaliation should contact their Direct Supervisor or HR Manager 
-immediately. Violations of this policy, including any retaliatory conduct, will lead to discipline, up to 
-and including termination. All employees are expected to cooperate fully with any investigations. 
- 
-- I have read and understand the above policy and agree to abide by its guidelines. - 
- 
-Acknowledgment: 
- 
- 
 The European's Non-Harassment Policy 
+
 It is The European’s policy to prohibit intentional and unintentional harassment of any individual by 
 another person based on any protected classification, including but not limited to race, color, 
 national origin, disability, religion, marital status, veteran status, sex (including pregnancy, gender 
@@ -111,6 +24,7 @@ Acknowledgment:
  
  
 The European's Sexual Harassment Policy 
+
 The European prohibits harassment of any employee by any supervisor, employee, customer, or 
 vendor based on sex or gender. The goal is to ensure that all employees are free from sexual 
 harassment, including unwelcome sexual advances, requests for sexual favors, obscene gestures, 
@@ -130,6 +44,7 @@ Acknowledgment:
  
  
 The European's Drug and Alcohol Policy 
+
 It is the policy of The European to maintain a work environment that is safe and productive for 
 employees and others having business with the company. The unlawful use, possession, sale, 
 distribution, or manufacture of drugs, or drug paraphernalia while on company or client premises, 
@@ -148,8 +63,6 @@ work hours.
 
 Compliance as a Condition of Employment: Any employee violating this policy will be subject to 
 discipline, up to and including termination, in accordance with applicable laws. 
-Acknowledgment: I have read and understand the above policy and agree to abide by its 
-guidelines. 
 
 - I have read and understand the above policy and agree to abide by its guidelines. - 
  
@@ -174,6 +87,7 @@ Acknowledgment:
  
  
 The European's Conflict of Interest Policy 
+
 All employees of The European are required to act solely in the best interests of the company and 
 avoid situations that create an actual or perceived conflict between their personal interests and 
 those of the company. This includes avoiding any relationships, actions, or decisions that could 
@@ -189,7 +103,9 @@ information is strictly prohibited.
 If an employee believes their conduct may create a conflict of interest, they must disclose it to 
 management. Failure to report may result in disciplinary action. 
  
+
 The European's Health and Safety Policy 
+
 The health and safety of employees, contractors, visitors, and others on The European property are 
 of critical concern to the company. The European complies with all health and safety laws 
 applicable to our business. Employees are expected to keep their work areas safe and free of 
@@ -339,8 +255,11 @@ termination. The following miscellaneous items must be adhered to:
 • Clothing should be not overly tight or lose fitting  
 
 • Clothing may not contain logos of other restaurants or businesses or may not have offensive 
-messaging • Nails should be short, trimmed, and filed, artificial nails are not permitted. • Hair 
-must be styled neatly and pulled back from the face.  
+messaging 
+
+• Nails should be short, trimmed, and filed, artificial nails are not permitted. 
+
+• Hair must be styled neatly and pulled back from the face.  
 
 • Facial hair must be neatly maintained • Fragrances are allowed but should be used in 
 moderation  
@@ -373,9 +292,13 @@ Unacceptable Conduct
 The following behaviors are strictly prohibited: 
 
 • Falsification of records, including timekeeping records and employment documents. 
+
 • Insubordination, including refusal to follow reasonable instructions from supervisors. 
+
 • Theft or misuse of company property or resources. 
+
 • Giving Friends / Family free items or discounts IS CONSIDERED THEFT. 
+
 • Unprofessional or aggressive behavior, including but not limited to bullying, harassment, 
 or creating a disruptive work environment.
  
@@ -415,6 +338,7 @@ Company Rights
 Management reserves the right to take appropriate action to mitigate any conflicts of interest, 
 including transferring one or both employees to another department or, if no suitable position is 
 available, terminating the employment of one or both parties involved in the relationship. 
+
 Enforcement 
 Failure to disclose a personal relationship that creates a conflict of interest will result in disciplinary 
 action, up to and including termination. 
@@ -430,10 +354,12 @@ Zero Tolerance for Theft
 The European maintains a strict zero-tolerance policy regarding theft of any kind. Theft, including 
 but not limited to the taking of money, products, inventory, confidential information, or any other 
 company assets, will result in immediate termination and potential legal action. 
+
 Reporting and Investigation 
 All suspected incidents of theft must be reported to management immediately. The company will 
 conduct a thorough investigation, which may include the use of surveillance footage, audits, and 
 interviews. The European reserves the right to involve law enforcement at its discretion. 
+
 Disciplinary Action 
 Employees found guilty of theft will be terminated immediately and may face prosecution to the 
 fullest extent of the law. Suspicion of theft is sufficient grounds for suspension during the 
@@ -455,8 +381,8 @@ Personal Cell Phone Usage
 Employees are required to keep their personal cell phones turned off or set to silent during working 
 hours. Use of personal cell phones is restricted to break periods and meal times and should take 
 place in designated non-working areas. 
-Exceptions 
 
+Exceptions 
 The only exceptions to this policy are in the case of emergencies or if an employee’s job requires the 
 use of a phone for business purposes. In such cases, employees must seek prior approval from 
 their supervisor.
@@ -487,7 +413,9 @@ monitoring and audit at any time.
 
 Prohibited Conduct 
 • Use of company systems to access or distribute illegal, offensive, or harassing content. 
+
 • Unauthorized access to another employee’s email or files. 
+
 • Use of company systems for personal business ventures or excessive personal use that 
 affects productivity. 
 
@@ -599,7 +527,8 @@ Disciplinary Action
 Failure to adhere to cash handling policies, including intentional falsification of cash transactions, 
 will result in immediate termination. The company reserves the right to pursue criminal charges for 
 theft or fraud. 
- 
+
+
 The European's Client Credit & Debit Card Processing Policy 
 
 Purpose 
@@ -628,7 +557,6 @@ including prosecution for fraud.
 Acknowledgment: 
  
  
- 
 The European's Open Door Policy 
 
 Objective 
@@ -647,6 +575,7 @@ Failure by management to address legitimate concerns raised under this policy ma
 disciplinary action. Similarly, any employee found retaliating against another for raising concerns 
 will face corrective action, up to and including termination. 
  
+
 The European's Corrective Action Policy 
 
 Progressive Discipline 

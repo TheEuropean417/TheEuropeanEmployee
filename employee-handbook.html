@@ -44,10 +44,33 @@
       background-color: grey;
       cursor: not-allowed;
     }
-    #debug-info {
-      margin-top: 20px;
-      color: red;
+    #popupModal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Dark background */
+    }
+    #popupContent {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
       font-family: monospace;
+    }
+    #exitBtn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      display: block;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -60,8 +83,14 @@
   <!-- Button to submit signatures and convert to PDF -->
   <button id="submitSignaturesBtn" disabled>I ACKNOWLEDGE THAT I AM SIGNING THIS ELECTRONIC DOCUMENT AND ADHERING TO ALL OF THE POLICIES SET WITHIN</button> <!-- Initially disabled -->
 
-  <!-- Debug info area -->
-  <div id="debug-info"></div>
+  <!-- Popup Modal -->
+  <div id="popupModal">
+    <div id="popupContent">
+      <h2>Submission Details</h2>
+      <div id="debug-info"></div> <!-- Debug info will appear here inside the modal -->
+      <button id="exitBtn">Exit</button>
+    </div>
+  </div>
 
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script> <!-- Load PDFLib -->
 
@@ -69,13 +98,28 @@
     const textUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/Employee-Handbook-Text.txt';
     const textContainer = document.getElementById('textContainer');
     const submitButton = document.getElementById('submitSignaturesBtn'); // Submit button reference
-    const debugInfo = document.getElementById('debug-info'); // Debug info area
+    const debugInfo = document.getElementById('debug-info'); // Debug info area inside the modal
+    const popupModal = document.getElementById('popupModal'); // Modal element
+    const exitButton = document.getElementById('exitBtn'); // Exit button
 
-    // Helper function to update debug info
+    // Helper function to update debug info inside the modal
     function updateDebugInfo(message) {
       debugInfo.innerHTML += `<p>${message}</p>`;
       console.log(message); // Log in console as well
     }
+
+    // Function to open the modal
+    function openModal() {
+      popupModal.style.display = 'block';
+    }
+
+    // Function to close the modal and redirect to the success page
+    function closeModal() {
+      window.location.href = 'https://theeuropean417.github.io/TheEuropeanEmployee/employee-handbook-success.html';
+    }
+
+    // Exit button click event to close the modal and redirect
+    exitButton.addEventListener('click', closeModal);
 
     // Function to fetch and display text content from the plain text file
     async function loadTextFile() {
@@ -224,17 +268,6 @@
               }
             });
 
-            // Use CORS Anywhere to bypass CORS issues
-            //const proxyURL = `https://cors-anywhere.herokuapp.com/${scriptURL}`;
-
-            //const response = await fetch(proxyURL, {
-            //  method: 'POST',
-            //  body: JSON.stringify(payload),
-            //  headers: {
-            //    'Content-Type': 'application/json'
-            //  }
-            //});
-
             const rawText = await response.text(); // Capture raw response
             updateDebugInfo('Raw response from server: ' + rawText); // Display raw response
 
@@ -280,6 +313,7 @@
         const employeeName = new URLSearchParams(window.location.search).get('name');
         updateDebugInfo('Employee name: ' + employeeName);
         await sendPDFToGoogleDrive(pdfBlob, employeeName);
+        openModal(); // Open the modal when PDF generation and submission are successful
       } catch (error) {
         updateDebugInfo('Error during submission process: ' + error.message);
       }
