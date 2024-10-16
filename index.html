@@ -11,41 +11,37 @@
             padding: 0;
             font-family: 'Montserrat', sans-serif;
             height: 100%;
+            background: linear-gradient(135deg, rgb(82, 113, 255), rgb(221, 196, 213)); /* Initial background */
             display: flex;
             justify-content: center;
             align-items: center;
-            background-size: 400% 400%; /* For smooth animation */
-            animation: gradientShift 10s ease infinite; /* Animation applied here */
+            background-size: 300% 300%; /* Scaling for smoother animation */
+            animation: gradientShift 15s ease infinite; /* Applying the animation */
         }
 
-        /* Keyframes for the animated gradient */
+        /* Keyframes for animated gradient */
         @keyframes gradientShift {
             0% {
-                background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213));
-            }
-            25% {
-                background: linear-gradient(135deg, rgb(221, 196, 213), rgb(82, 113, 255));
+                background-position: 0% 50%;
             }
             50% {
-                background: linear-gradient(135deg, rgb(82, 113, 255), rgb(253, 240, 249));
-            }
-            75% {
-                background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213));
+                background-position: 100% 50%;
             }
             100% {
-                background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213));
+                background-position: 0% 50%;
             }
         }
 
         /* Main container for content */
         .container {
             text-align: center;
-            background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213)); /* Fun gradient for block */
+            background: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3); /* Subtle shadow */
             max-width: 500px;
             width: 100%;
+            backdrop-filter: blur(10px); /* Slight blur for futuristic effect */
         }
 
         /* Logo styling */
