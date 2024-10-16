@@ -269,7 +269,290 @@
                 const x = Math.random() * screenWidth;
                 const y = Math.random() * screenHeight;
                 createParticle(x, y);
-                createLine(x, y);
+                createLine(x, y);<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The European - Home</title>
+    <style>
+        /* General Reset */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213)); /* Original gradient */
+            background-size: 300% 300%;
+            animation: gradientShift 15s ease infinite;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Background movement: Simulate soft waves */
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Particle System */
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            animation: particleGrow 5s ease-out infinite, particleGlow 3s ease-in-out infinite;
+        }
+
+        /* Particle movement */
+        @keyframes particleGrow {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(0);
+            }
+        }
+
+        /* Particle glowing pulse */
+        @keyframes particleGlow {
+            0%, 100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Light Flares */
+        .flare {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.6);
+            opacity: 0;
+            animation: flareMove 4s ease-in-out infinite;
+        }
+
+        /* Light flare animation */
+        @keyframes flareMove {
+            0% {
+                opacity: 0;
+                transform: scale(0) translate(0, 0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1) translate(100px, 100px); /* Moves in a diagonal */
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0) translate(200px, 200px); /* Disappears after */
+            }
+        }
+
+        /* Main container for content */
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 50px rgba(255, 255, 255, 0.4);
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: scale(0.8);
+            animation: revealContainer 2s ease forwards 3s; /* Delayed reveal */
+        }
+
+        /* Container reveal */
+        @keyframes revealContainer {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Logo styling */
+        .logo {
+            max-width: 250px;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: revealLogo 1.8s ease forwards 4s;
+        }
+
+        /* Logo reveal */
+        @keyframes revealLogo {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Button styling */
+        .btn {
+            display: block;
+            width: 100%;
+            max-width: 250px;
+            margin: 15px auto;
+            padding: 12px 25px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 50px;
+            background: rgba(82, 113, 255, 0.8);
+            box-shadow: 0 10px 25px rgba(82, 113, 255, 0.6), 0 0 30px rgba(82, 113, 255, 0.9);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Button reveal with delay */
+        .btn.apply-position {
+            animation: revealButton 1.2s ease forwards 4.5s;
+        }
+        .btn.employee-handbook {
+            animation: revealButton 1.2s ease forwards 4.7s;
+        }
+        .btn.admin {
+            animation: revealButton 1.2s ease forwards 4.9s;
+        }
+
+        /* Button reveal animation */
+        @keyframes revealButton {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Button hover effect */
+        .btn:hover {
+            box-shadow: 0 20px 40px rgba(82, 113, 255, 1), 0 0 60px rgba(82, 113, 255, 0.9), 0 0 80px rgba(82, 113, 255, 0.8);
+            transform: translateY(-5px);
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            .logo {
+                max-width: 180px;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .btn {
+                font-size: 0.8rem;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Particle container and light flares -->
+    <div id="particle-container"></div>
+    <div id="flare-container"></div>
+
+    <div class="container">
+        <!-- Company logo -->
+        <img src="https://b1767dc1b20523885e3a.cdn6.editmysite.com/uploads/b/b1767dc1b20523885e3a00d3d4c6a7fd82e9c90cefba70278cf527c59f580d89/Untitled%20design%20%281%29_1727046864.png?width=2400&optimize=medium" alt="The European Logo" class="logo">
+
+        <!-- Employee Portal Heading -->
+        <h1>Employee Portal</h1>
+
+        <!-- Buttons -->
+        <a href="apply.html" class="btn apply-position">Apply for a Position at The European</a>
+        <a href="employee-handbook-signin.html" class="btn employee-handbook">Employee Handbook Confirmation</a>
+        <a href="admin.html" class="btn admin">The European Administration</a>
+    </div>
+
+    <script>
+        const particleContainer = document.getElementById('particle-container');
+        const flareContainer = document.getElementById('flare-container');
+        const particleCount = 50; // Number of particles
+        const flareCount = 5; // Number of light flares
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        // Create particles
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            particleContainer.appendChild(particle);
+        }
+
+        // Create light flares
+        function createFlare(x, y) {
+            const flare = document.createElement('div');
+            flare.classList.add('flare');
+            flare.style.left = `${x}px`;
+            flare.style.top = `${y}px`;
+            flareContainer.appendChild(flare);
+        }
+
+        // Generate the cosmic particles and flares
+        function generateCosmicScene() {
+            for (let i = 0; i < particleCount; i++) {
+                const x = Math.random() * screenWidth;
+                const y = Math.random() * screenHeight;
+                createParticle(x, y);
+            }
+
+            for (let i = 0; i < flareCount; i++) {
+                const x = Math.random() * screenWidth;
+                const y = Math.random() * screenHeight;
+                createFlare(x, y);
+            }
+        }
+
+        // Trigger the generation on page load
+        window.onload = generateCosmicScene;
+    </script>
+</body>
+</html>
+
             }
         }
 
