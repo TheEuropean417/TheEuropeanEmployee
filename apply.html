@@ -78,11 +78,13 @@
             width: 100%;
         }
 
+        /* Updated input fields and select dropdown with gradient border */
         input, select {
             width: 80%;
             padding: 12px;
             margin: 10px 0;
-            border: 2px solid rgb(221, 196, 213);
+            border: 2px solid;
+            border-image: linear-gradient(to right, rgb(253, 240, 249), rgb(221, 196, 213)) 1;
             border-radius: 8px;
             font-size: 0.95rem;
             color: #333;
@@ -94,9 +96,44 @@
         }
 
         input:focus, select:focus {
-            border-color: rgb(82, 113, 255);
+            border-color: transparent; /* Remove the original border color */
+            border-image: linear-gradient(to right, rgb(253, 240, 249), rgb(221, 196, 213)) 1;
             outline: none;
-            box-shadow: 0 0 5px rgba(82, 113, 255, 0.5);
+            box-shadow: 0 0 5px rgba(82, 113, 255, 0.5); /* Optional: you can change this color if needed */
+        }
+
+        /* Updated "Choose Resume" button with gradient background */
+        .file-input-label {
+            display: block;
+            padding: 13px;
+            background: linear-gradient(to right, rgb(253, 240, 249), rgb(221, 196, 213)); /* Gradient background */
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 15px;
+            width: 80%;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .file-input-label:hover {
+            background: linear-gradient(to right, rgb(233, 220, 230), rgb(221, 196, 213)); /* Darken slightly on hover */
+        }
+
+        .file-name {
+            display: block;
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+            text-align: center;
+        }
+
+        .file-error {
+            color: red;
+            margin-top: 5px;
+            display: block;
         }
 
         .btn {
@@ -121,39 +158,6 @@
             background: rgb(66, 90, 204);
             box-shadow: 0 12px 25px rgba(66, 90, 204, 0.5);
             transform: translateY(-2px);
-        }
-
-        .file-input-label {
-            display: block;
-            padding: 13px;
-            background-color: rgb(221, 196, 213);
-            color: white;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 15px;
-            width: 80%;
-            text-align: center;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .file-input-label:hover {
-            background-color: rgb(199, 173, 188);
-        }
-
-        .file-name {
-            display: block;
-            margin-top: 10px;
-            font-style: italic;
-            color: #666;
-            text-align: center;
-        }
-
-        .file-error {
-            color: red;
-            margin-top: 5px;
-            display: block;
         }
 
         .debug-output {
