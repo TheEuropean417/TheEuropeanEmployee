@@ -169,7 +169,7 @@
       }
     }
 
-    // Function to send the PDF to Google Drive using Google Apps Script
+    // Function to send the PDF to Google Drive using the CORS proxy
     async function sendPDFToGoogleDrive(pdfBlob, employeeName) {
       try {
         // Convert the PDF Blob to base64
@@ -188,9 +188,12 @@
             // Google Apps Script web app URL
             const scriptURL = 'https://script.google.com/macros/s/AKfycbwL-5PKrulNajvNlTlyfMQEiCFzmLM3fkMF3e5Qg101UgPCy8CIaePMaePp_jhmBc4gEA/exec'; // Provided script URL
 
-            updateDebugInfo('Sending PDF to Google Apps Script...');
+            // Use the CORS proxy to forward the request
+            const proxyURL = `https://us-central1-the-european.cloudfunctions.net/corsProxy?url=${encodeURIComponent(scriptURL)}`;
+
+            updateDebugInfo('Sending PDF to Google Apps Script via CORS proxy...');
             
-            const response = await fetch(scriptURL, {
+            const response = await fetch(proxyURL, {
               method: 'POST',
               body: JSON.stringify(payload),
               headers: {
