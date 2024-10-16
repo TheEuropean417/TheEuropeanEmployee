@@ -121,15 +121,19 @@
       }
     }
 
-    // Convert HTML to PDF and return the PDF Blob
+    // Convert HTML to PDF and return the PDF Blob (with multi-page handling)
     async function convertHtmlToPDF() {
       try {
         const { PDFDocument } = PDFLib;
 
         // Create a new PDF document
         const pdfDoc = await PDFDocument.create();
-        const page = pdfDoc.addPage([600, 800]);
+        let page = pdfDoc.addPage([600, 800]); // Start with one page
         const { width, height } = page.getSize();
+
+        const fontSize = 12;
+        const lineHeight = 20;
+        let yOffset = height - 50; // Start from the top of the page
 
         // Get signature inputs from the HTML
         const signatureFields = document.querySelectorAll('.signature-field');
@@ -144,21 +148,25 @@
 
         // Add text and signatures to the PDF
         const lines = textContainer.innerText.split('\n');
-        let yOffset = height - 50; // Start from top of page
         let signatureIndex = 0;
 
         lines.forEach((line) => {
+          if (yOffset < 40) { // Check if there's space left on the current page
+            page = pdfDoc.addPage([600, 800]); // Add a new page
+            yOffset = height - 50; // Reset yOffset for the new page
+          }
+
           // Add the text line to the PDF
-          page.drawText(line, { x: 50, y: yOffset, size: 12 });
+          page.drawText(line, { x: 50, y: yOffset, size: fontSize });
 
           // For each "Acknowledgment" line, draw the corresponding signature
-          if (line.includes('Acknowledgment:')) {
+          if (line.includes('Acknowledgment:') && signatureIndex < signatures.length) {
             const signature = signatures[signatureIndex]; // Get the corresponding signature
-            page.drawText(signature, { x: 400, y: yOffset, size: 12 });
+            page.drawText(signature, { x: 400, y: yOffset, size: fontSize });
             signatureIndex++; // Move to the next signature
           }
 
-          yOffset -= 20; // Move to the next line
+          yOffset -= lineHeight; // Move to the next line, decreasing yOffset
         });
 
         // Save the modified PDF
