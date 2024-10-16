@@ -11,7 +11,7 @@
             padding: 0;
             font-family: 'Montserrat', sans-serif;
             height: 100%;
-            background: linear-gradient(135deg, rgb(82, 113, 255), rgb(221, 196, 213)); /* Same gradient as apply.html */
+            background: linear-gradient(135deg, rgb(82, 113, 255), rgb(221, 196, 213)); /* Background gradient */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,8 +21,8 @@
         /* Main container for content */
         .container {
             text-align: center;
-            background-color: rgb(221, 196, 213); /* Lavender box color */
-            padding: 50px;
+            background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213)); /* Fun gradient for block */
+            padding: 40px;
             border-radius: 15px;
             box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3); /* Subtle shadow */
             max-width: 500px;
@@ -31,26 +31,26 @@
 
         /* Logo styling */
         .logo {
-            max-width: 300px;
-            margin-bottom: 30px;
+            max-width: 250px;
+            margin-bottom: 20px;
         }
 
         /* Button Styles */
         .btn {
             display: block;
             width: 100%;
-            max-width: 250px; /* Reduced button size */
+            max-width: 250px; /* Button size */
             margin: 15px auto;
-            padding: 15px 30px; /* Reduced padding */
+            padding: 12px 25px; /* Adjusted padding for mobile */
             color: #fff;
             text-decoration: none;
-            font-size: 1rem; /* Reduced font size */
+            font-size: 1rem; /* Button font size */
             letter-spacing: 2px;
             text-transform: uppercase;
             border: none;
             border-radius: 50px;
-            background: rgb(82, 113, 255); /* Blue button color */
-            box-shadow: 0 15px 30px rgba(82, 113, 255, 0.6), 0 0 20px rgba(82, 113, 255, 0.7), 0 0 40px rgba(82, 113, 255, 0.4); /* Multi-layer shadow */
+            background: rgb(82, 113, 255); /* Button color */
+            box-shadow: 0 10px 25px rgba(82, 113, 255, 0.6), 0 0 15px rgba(82, 113, 255, 0.7); /* Button shadow */
             cursor: pointer;
             transition: all 0.4s ease;
             text-align: center; /* Center button text */
@@ -58,7 +58,7 @@
 
         /* Hover Effect for Buttons */
         .btn:hover {
-            box-shadow: 0 20px 40px rgba(82, 113, 255, 1), 0 0 30px rgba(82, 113, 255, 0.9), 0 0 60px rgba(82, 113, 255, 0.8); /* Strong glow effect on hover */
+            box-shadow: 0 20px 40px rgba(82, 113, 255, 1), 0 0 30px rgba(82, 113, 255, 0.9), 0 0 60px rgba(82, 113, 255, 0.8); /* Stronger glow effect */
             transform: translateY(-5px);
         }
 
@@ -66,11 +66,21 @@
         @media screen and (max-width: 768px) {
             .btn {
                 padding: 10px 20px; /* Adjust padding for smaller screens */
-                font-size: 0.9rem;
+                font-size: 0.9rem;  /* Font size adjustment */
                 max-width: 100%;
             }
             .logo {
-                max-width: 200px;
+                max-width: 180px; /* Logo scaling for mobile */
+            }
+            .container {
+                padding: 30px; /* Reduced padding for mobile */
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .btn {
+                font-size: 0.8rem; /* Font size adjustment for smaller devices */
+                padding: 8px 15px; /* Adjust padding */
             }
         }
     </style>
@@ -80,7 +90,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Moved the company logo into the heading's place -->
+        <!-- Company logo -->
         <img src="https://b1767dc1b20523885e3a.cdn6.editmysite.com/uploads/b/b1767dc1b20523885e3a00d3d4c6a7fd82e9c90cefba70278cf527c59f580d89/Untitled%20design%20%281%29_1727046864.png?width=2400&optimize=medium" alt="The European Logo" class="logo">
 
         <!-- Employee Portal Heading -->
