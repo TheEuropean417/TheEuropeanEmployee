@@ -202,6 +202,9 @@
               }
             });
 
+            // Log the status and status text of the fetch response
+            updateDebugInfo(`Fetch status: ${response.status} (${response.statusText})`);
+
             const rawText = await response.text(); // Capture raw response
             updateDebugInfo('Raw response from server: ' + rawText); // Display raw response
 
