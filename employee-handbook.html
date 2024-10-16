@@ -170,55 +170,59 @@
     }
 
     // Function to send the PDF to Google Drive using the CORS proxy
-      async function sendPDFToGoogleDrive(pdfBlob, employeeName) {
-        try {
-          // Convert the PDF Blob to base64
-          const reader = new FileReader();
-          reader.readAsDataURL(pdfBlob);
-          reader.onloadend = async function() {
+    async function sendPDFToGoogleDrive(pdfBlob, employeeName) {
+      try {
+        // Convert the PDF Blob to base64
+        const reader = new FileReader();
+        reader.readAsDataURL(pdfBlob);
+        reader.onloadend = async function() {
+          try {
+            const base64data = reader.result.split(',')[1]; // Get the base64 part of the Data URL
+
+            // Prepare the payload to send to the Google Apps Script
+            const payload = {
+              pdfContent: base64data,
+              employeeName: employeeName
+            };
+
+            // Google Apps Script web app URL (from your deployment)
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbwL-5PKrulNajvNlTlyfMQEiCFzmLM3fkMF3e5Qg101UgPCy8CIaePMaePp_jhmBc4gEA/exec';
+
+            // Use CORS Anywhere to bypass CORS issues
+            const proxyURL = `https://cors-anywhere.herokuapp.com/${scriptURL}`;
+
+            updateDebugInfo('Sending PDF to Google Apps Script via CORS proxy...');
+
+            const response = await fetch(proxyURL, {
+              method: 'POST',
+              body: JSON.stringify(payload),
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            const rawText = await response.text(); // Capture raw response
+            updateDebugInfo('Raw response from server: ' + rawText); // Display raw response
+
             try {
-              const base64data = reader.result.split(',')[1]; // Get the base64 part of the Data URL
-
-              // Prepare the payload to send to the Google Apps Script
-              const payload = {
-                pdfContent: base64data,
-                employeeName: employeeName
-              };
-
-              // Google Apps Script web app URL (directly)
-              const scriptURL = 'https://script.google.com/macros/s/AKfycbwL-5PKrulNajvNlTlyfMQEiCFzmLM3fkMF3e5Qg101UgPCy8CIaePMaePp_jhmBc4gEA/exec'; // Provided script URL
-
-              updateDebugInfo('Sending PDF to Google Apps Script directly...');
-              
-              const response = await fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify(payload),
-                headers: {
-                  'Content-Type': 'application/json'
-                }
-              });
-
-              const rawText = await response.text(); // Capture raw response
-              updateDebugInfo('Raw response from server: ' + rawText); // Display raw response
-
-              try {
-                const result = JSON.parse(rawText); // Attempt to parse JSON
-                if (result.success) {
-                  updateDebugInfo('File saved successfully: ' + result.fileUrl);
-                } else {
-                  updateDebugInfo('Error saving file: ' + result.message);
-                }
-              } catch (error) {
-                updateDebugInfo('Error parsing response as JSON: ' + error.message);
+              const result = JSON.parse(rawText); // Attempt to parse JSON
+              if (result.success) {
+                updateDebugInfo('File saved successfully: ' + result.fileUrl);
+              } else {
+                updateDebugInfo('Error saving file: ' + result.message);
               }
             } catch (error) {
-              updateDebugInfo('Error sending PDF to Google Drive: ' + error.message);
+              updateDebugInfo('Error parsing response as JSON: ' + error.message);
             }
-          };
-        } catch (error) {
-          updateDebugInfo('Error converting PDF to base64: ' + error.message);
-        }
+          } catch (error) {
+            updateDebugInfo('Error sending PDF to Google Drive: ' + error.message);
+          }
+        };
+      } catch (error) {
+        updateDebugInfo('Error converting PDF to base64: ' + error.message);
       }
+    }
+
 
 
 
