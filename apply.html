@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply for a Position at The European</title>
     <style>
-        /* Background gradient */
+        /* Background gradient animation */
         body, html {
             margin: 0;
             padding: 0;
@@ -16,14 +16,29 @@
             background: linear-gradient(135deg, rgb(82, 113, 255), rgb(221, 196, 213));
             font-family: 'Montserrat', sans-serif;
             color: #333;
+            background-size: 300% 300%;
+            animation: gradientShift 15s ease infinite;
         }
 
-        /* Form container */
+        /* Keyframes for animated gradient background */
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Form container with fade-in and scaling effect */
         .form-container {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.7);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
             text-align: center;
             max-width: 90%;
             width: 420px;
@@ -32,6 +47,22 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: scale(0.8);
+            animation: fadeInContainer 2.5s ease forwards 2s;
+        }
+
+        /* Container fade-in animation */
+        @keyframes fadeInContainer {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         h1 {
@@ -48,7 +79,7 @@
         }
 
         input, select {
-            width: 80%;  /* Reduced width for better balance */
+            width: 80%;
             padding: 12px;
             margin: 10px 0;
             border: 2px solid rgb(221, 196, 213);
@@ -59,7 +90,7 @@
             box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
             display: block;
             margin-left: auto;
-            margin-right: auto; /* Ensure fields are centered */
+            margin-right: auto;
         }
 
         input:focus, select:focus {
@@ -70,7 +101,7 @@
 
         .btn {
             display: inline-block;
-            width: 80%;  /* Match button width with input fields */
+            width: 80%;
             padding: 13px;
             background: rgb(82, 113, 255);
             color: white;
@@ -92,7 +123,6 @@
             transform: translateY(-2px);
         }
 
-        /* File Input */
         .file-input-label {
             display: block;
             padding: 13px;
@@ -102,7 +132,7 @@
             cursor: pointer;
             transition: background 0.3s ease;
             margin-top: 15px;
-            width: 80%;  /* Match the width of other fields */
+            width: 80%;
             text-align: center;
             margin-left: auto;
             margin-right: auto;
@@ -126,7 +156,6 @@
             display: block;
         }
 
-        /* Centered Debug Box */
         .debug-output {
             margin-top: 20px;
             padding: 15px;
@@ -138,7 +167,7 @@
             text-align: center;
             font-size: 1rem;
             line-height: 1.6;
-            width: 80%;  /* Match the width of other elements */
+            width: 80%;
             margin-left: auto;
             margin-right: auto;
         }
@@ -151,7 +180,6 @@
             color: red;
         }
 
-        /* Responsive Design */
         @media screen and (max-width: 768px) {
             .form-container {
                 max-width: 95%;
@@ -224,14 +252,12 @@
         let base64File = '';  // Variable to store base64 file content
         const maxFileSize = 25 * 1024 * 1024;  // Set file size limit to 25MB
 
-        // Show the selected file name and convert the file to base64
         fileInput.addEventListener('change', function() {
             fileErrorDisplay.textContent = '';  // Clear previous errors
 
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
 
-                // Check if the file exceeds the size limit
                 if (file.size > maxFileSize) {
                     fileErrorDisplay.textContent = 'File exceeds the 25MB limit. Please select a smaller file.';
                     fileNameDisplay.textContent = 'No file selected';
@@ -241,12 +267,11 @@
 
                 fileNameDisplay.textContent = 'Selected file: ' + file.name;
 
-                // Convert file to Base64
                 const reader = new FileReader();
                 reader.onloadend = function() {
-                    base64File = reader.result.split(',')[1];  // Store the Base64-encoded content
+                    base64File = reader.result.split(',')[1];
                 };
-                reader.readAsDataURL(file);  // Convert the file to base64
+                reader.readAsDataURL(file);
             } else {
                 fileNameDisplay.textContent = 'No file selected';
             }
@@ -260,19 +285,15 @@
                 return;
             }
 
-            const formData = new FormData(this);  // Collect form data
+            const formData = new FormData(this);
 
-            // Add base64-encoded file to form data
             if (base64File) {
-                formData.append('resumeBase64', base64File);  // Append the Base64-encoded file content
-                formData.append('resumeFileName', fileInput.files[0].name);  // Append the file name
+                formData.append('resumeBase64', base64File);
+                formData.append('resumeFileName', fileInput.files[0].name);
             }
 
-            // Clear previous debug messages
             debugOutput.textContent = 'Sending application...';
 
-            // Send form data to the Google Apps Script Web App
-            // https://script.google.com/home/
             fetch('https://script.google.com/macros/s/AKfycbxTjrarfXrSgwH_fakkCewBYRilDKXvGbqv9lrXdO6EPNSOZDWD1hJaaPiZDA_QLblX/exec', {
                 method: 'POST',
                 body: formData
@@ -281,7 +302,7 @@
                 if (!response.ok) {
                     throw new Error('Server returned ' + response.status + ' : ' + response.statusText);
                 }
-                return response.json();  // Attempt to parse JSON response
+                return response.json();
             })
             .then(data => {
                 if (data.result === 'success') {
