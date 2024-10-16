@@ -262,7 +262,7 @@
             // Update this with your Cloud Function's trigger URL
             const proxyURL = `https://us-central1-the-european.cloudfunctions.net/CORSforsignaturesite`;
 
-            updateDebugInfo('Sending PDF to Google Apps Script via CORS proxy...');
+            updateDebugInfo('Sending PDF through CORS proxy...');
 
             const response = await fetch(proxyURL, {
               method: 'POST',
@@ -272,13 +272,13 @@
               }
             });
 
-            const rawText = await response.text(); // Capture raw response
-            updateDebugInfo('Raw response from server: ' + rawText); // Display raw response
+            //const rawText = await response.text(); // Capture raw response
+            //updateDebugInfo('Raw response from server: ' + rawText); // Display raw response
 
             try {
               const result = JSON.parse(rawText); // Attempt to parse JSON
               if (result.success) {
-                updateDebugInfo('File saved successfully: ' + result.fileUrl);
+                updateDebugInfo('FILES SAVED SUCCESSFULLY! - YOU MAY NOW EXIT'); //+ result.fileUrl);
               } else {
                 updateDebugInfo('Error saving file: ' + result.message);
               }
@@ -311,7 +311,7 @@
 
     // Button click event to submit signatures, convert to PDF, and send it to Google Drive
     submitButton.addEventListener('click', async () => {
-      updateDebugInfo('Submit button clicked. Starting PDF generation...');
+      updateDebugInfo('*PLEASE WAIT TO EXIT UNTIL YOU SEE THAT THE FILE WAS SAVED SUCCESSFULLY AT THE BOTTOM FOR CONFIRMATION');
       try {
         const pdfBlob = await convertHtmlToPDF();
         const employeeName = new URLSearchParams(window.location.search).get('name');
