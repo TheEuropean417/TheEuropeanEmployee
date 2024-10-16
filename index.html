@@ -19,7 +19,7 @@
             animation: gradientShift 15s ease infinite; /* Applying the animation */
         }
 
-        /* Keyframes for animated gradient */
+        /* Keyframes for animated gradient background */
         @keyframes gradientShift {
             0% {
                 background-position: 0% 50%;
@@ -35,13 +35,28 @@
         /* Main container for content */
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+            background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213)); /* Initial gradient */
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3); /* Subtle shadow */
             max-width: 500px;
             width: 100%;
             backdrop-filter: blur(10px); /* Slight blur for futuristic effect */
+            background-size: 300% 300%; /* Scaling for smoother animation */
+            animation: containerShift 10s ease infinite; /* Applying animation */
+        }
+
+        /* Keyframes for the container gradient animation */
+        @keyframes containerShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         /* Logo styling */
