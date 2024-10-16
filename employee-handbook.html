@@ -28,6 +28,10 @@
     .signature-field.invalid {
       border-color: red; /* Red border when invalid */
     }
+    #submitSignaturesBtn:disabled {
+      background-color: grey;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -37,11 +41,14 @@
   <div id="textContainer"></div>
 
   <!-- Button to submit signatures and convert to PDF -->
-  <button id="submitSignaturesBtn">Submit Signatures & Convert to PDF</button>
+  <button id="submitSignaturesBtn" disabled>Submit Signatures & Convert to PDF</button> <!-- Initially disabled -->
+
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script> <!-- Load PDFLib -->
 
   <script>
     const textUrl = 'https://theeuropean417.github.io/TheEuropeanEmployee/Employee-Handbook-Text.txt';
     const textContainer = document.getElementById('textContainer');
+    const submitButton = document.getElementById('submitSignaturesBtn'); // Submit button reference
 
     // Function to fetch and display text content from the plain text file
     async function loadTextFile() {
@@ -79,26 +86,27 @@
             field.classList.add('invalid');
             field.classList.remove('valid');
           }
+
+          // Check if all fields are valid before enabling the button
+          checkAllFieldsValid();
         });
       });
     }
 
-    window.onload = function() {
-      // Extract the name parameter from the URL
-      const params = new URLSearchParams(window.location.search);
-      const employeeName = params.get('name');
+    // Function to check if all signature fields are valid (green)
+    function checkAllFieldsValid() {
+      const allFields = document.querySelectorAll('.signature-field');
+      const allValid = Array.from(allFields).every(field => field.classList.contains('valid'));
 
-      // If the name exists, append it to the title
-      if (employeeName) {
-        document.title = `Employee Handbook with Signature Fields - ${employeeName}`;
-        document.querySelector('h1').innerText = `Employee Handbook for ${employeeName}`;
+      // Enable the submit button if all fields are valid, otherwise disable it
+      if (allValid) {
+        submitButton.disabled = false;
+      } else {
+        submitButton.disabled = true;
       }
+    }
 
-      // Load the text file content
-      loadTextFile();
-    };
-
-    // Function to convert HTML back to PDF using pdf-lib
+    // Convert HTML to PDF and return the PDF Blob
     async function convertHtmlToPDF() {
       const { PDFDocument } = PDFLib;
 
@@ -110,7 +118,7 @@
       // Get signature inputs from the HTML
       const signatureFields = document.querySelectorAll('.signature-field');
       const signatures = [];
-      signatureFields.forEach((field, index) => {
+      signatureFields.forEach((field) => {
         const value = field.value.trim();
         if (value === '') {
           alert('Please fill out all signature fields.');
@@ -122,7 +130,7 @@
       // Add text and signatures to the PDF
       const lines = textContainer.innerText.split('\n');
       let yOffset = height - 50; // Start from top of page
-      lines.forEach((line, lineIndex) => {
+      lines.forEach((line) => {
         // Add the text line to the PDF
         page.drawText(line, { x: 50, y: yOffset, size: 12 });
 
@@ -140,22 +148,65 @@
       return new Blob([pdfBytes], { type: 'application/pdf' });
     }
 
-    // Function to download the generated PDF
-    function downloadPDF(pdfBlob) {
-      const url = URL.createObjectURL(pdfBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'signed-employee-handbook.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    // Function to send the PDF to Google Drive using Google Apps Script
+    async function sendPDFToGoogleDrive(pdfBlob, employeeName) {
+      // Convert the PDF Blob to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(pdfBlob);
+      reader.onloadend = async function() {
+        const base64data = reader.result.split(',')[1]; // Get the base64 part of the Data URL
+
+        // Prepare the payload to send to the Google Apps Script
+        const payload = {
+          pdfContent: base64data,
+          employeeName: employeeName
+        };
+
+        // Google Apps Script web app URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwL-5PKrulNajvNlTlyfMQEiCFzmLM3fkMF3e5Qg101UgPCy8CIaePMaePp_jhmBc4gEA/exec'; // Provided script URL
+
+        try {
+          const response = await fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            console.log('File saved successfully:', result.fileUrl);
+          } else {
+            console.error('Error saving file:', result.message);
+          }
+        } catch (error) {
+          console.error('Error sending PDF to Google Drive:', error);
+        }
+      };
     }
 
-    // Button click event to submit signatures, convert to PDF, and download
-    document.getElementById('submitSignaturesBtn').addEventListener('click', async () => {
+    window.onload = function() {
+      // Extract the name parameter from the URL
+      const params = new URLSearchParams(window.location.search);
+      const employeeName = params.get('name');
+
+      // If the name exists, append it to the title
+      if (employeeName) {
+        document.title = `Employee Handbook with Signature Fields - ${employeeName}`;
+        document.querySelector('h1').innerText = `Employee Handbook for ${employeeName}`;
+      }
+
+      // Load the text file content
+      loadTextFile();
+    };
+
+    // Button click event to submit signatures, convert to PDF, and send it to Google Drive
+    submitButton.addEventListener('click', async () => {
       try {
         const pdfBlob = await convertHtmlToPDF();
-        downloadPDF(pdfBlob);
+        const employeeName = new URLSearchParams(window.location.search).get('name');
+        await sendPDFToGoogleDrive(pdfBlob, employeeName);
       } catch (error) {
         console.error('Error during PDF generation:', error.message);
       }
