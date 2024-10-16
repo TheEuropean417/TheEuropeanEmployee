@@ -21,23 +21,6 @@
             position: relative;
         }
 
-        /* Rain Particle Styling */
-        .rain {
-            position: absolute;
-            width: 2px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.8);
-            bottom: 100%;
-            animation: fall 2s linear infinite;
-        }
-
-        /* Rain Falling Animation */
-        @keyframes fall {
-            to {
-                transform: translateY(100vh);
-            }
-        }
-
         /* Keyframes for animated gradient background */
         @keyframes gradientShift {
             0% {
@@ -51,10 +34,33 @@
             }
         }
 
-        /* Main container for content with intro animation */
+        /* Particle effect styling */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            opacity: 0;
+            animation: moveParticle 3s ease-out forwards;
+        }
+
+        /* Particle movement */
+        @keyframes moveParticle {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y));
+                opacity: 0;
+            }
+        }
+
+        /* Main container for content */
         .container {
             text-align: center;
-            background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213)); /* Initial gradient */
+            background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213)); /* Gradient background */
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3); /* Subtle shadow */
@@ -63,19 +69,18 @@
             backdrop-filter: blur(10px); /* Slight blur for futuristic effect */
             background-size: 300% 300%; /* Scaling for smoother animation */
             opacity: 0;
-            transform: translateY(-50px); /* Start above */
-            animation: fadeInBuild 2s ease forwards 3s; /* Delayed intro after rain */
+            animation: fadeInBuild 2s ease forwards 1.5s; /* Delayed intro */
         }
 
-        /* Fade-in and build effect for container */
+        /* Container fade-in build */
         @keyframes fadeInBuild {
             0% {
                 opacity: 0;
-                transform: translateY(-50px); /* Start off screen */
+                transform: scale(0.8); /* Start small */
             }
             100% {
                 opacity: 1;
-                transform: translateY(0); /* Full visibility */
+                transform: scale(1); /* Full size */
             }
         }
 
@@ -84,18 +89,18 @@
             max-width: 250px;
             margin-bottom: 20px;
             opacity: 0;
-            animation: fadeInLogo 1.5s ease forwards 4s; /* Logo fades in after container */
+            animation: fadeInLogo 1.8s ease forwards 2.5s; /* Logo fades in after container */
         }
 
         /* Logo fade-in effect */
         @keyframes fadeInLogo {
             0% {
                 opacity: 0;
-                transform: translateY(-20px); /* Start slightly above */
+                transform: scale(0.8); /* Start small */
             }
             100% {
                 opacity: 1;
-                transform: translateY(0); /* Settle into place */
+                transform: scale(1); /* Full size */
             }
         }
 
@@ -124,13 +129,13 @@
 
         /* Button fade-in effects */
         .btn.apply-position {
-            animation: fadeInButton 1.2s ease forwards 4.5s; /* Delayed for staggered effect */
+            animation: fadeInButton 1.2s ease forwards 3s; /* Delayed for staggered effect */
         }
         .btn.employee-handbook {
-            animation: fadeInButton 1.2s ease forwards 4.7s;
+            animation: fadeInButton 1.2s ease forwards 3.2s;
         }
         .btn.admin {
-            animation: fadeInButton 1.2s ease forwards 4.9s;
+            animation: fadeInButton 1.2s ease forwards 3.4s;
         }
 
         /* Fade-in for buttons */
@@ -170,8 +175,6 @@
     </style>
 </head>
 <body>
-    <!-- Rain container where rain particles will be added -->
-    <div id="rain-container"></div>
 
     <div class="container">
         <!-- Company logo -->
@@ -187,24 +190,41 @@
     </div>
 
     <script>
-        // JavaScript to create rain effect
-        const rainContainer = document.getElementById('rain-container');
+        // JavaScript to create particle explosion effect
+        const particleCount = 50; // Number of particles
+        const container = document.body;
 
-        function createRain() {
-            const rain = document.createElement('div');
-            rain.classList.add('rain');
-            rain.style.left = `${Math.random() * window.innerWidth}px`; // Random horizontal position
-            rain.style.animationDuration = `${Math.random() * 2 + 1.5}s`; // Random fall speed
-            rainContainer.appendChild(rain);
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
 
-            // Remove the rain drop after it falls
+            // Random particle direction
+            const randomX = Math.random() * (Math.random() < 0.5 ? -1 : 1) * 200;
+            const randomY = Math.random() * (Math.random() < 0.5 ? -1 : 1) * 200;
+            particle.style.setProperty('--x', `${randomX}px`);
+            particle.style.setProperty('--y', `${randomY}px`);
+
+            container.appendChild(particle);
+
+            // Remove the particle after animation
             setTimeout(() => {
-                rain.remove();
-            }, 3000); // Remove after 3s
+                particle.remove();
+            }, 3000);
         }
 
-        // Generate rain every 100ms
-        setInterval(createRain, 100);
+        // Trigger explosion effect on page load
+        window.addEventListener('load', () => {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    createParticle(centerX, centerY);
+                }, i * 30); // Delay between particle creation
+            }
+        });
     </script>
 </body>
 </html>
