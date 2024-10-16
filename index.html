@@ -16,8 +16,26 @@
             justify-content: center;
             align-items: center;
             background-size: 300% 300%; /* Scaling for smoother animation */
-            animation: gradientShift 15s ease infinite; /* Applying the animation */
+            animation: gradientShift 15s ease infinite; /* Background gradient animation */
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Rain Particle Styling */
+        .rain {
+            position: absolute;
+            width: 2px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.8);
+            bottom: 100%;
+            animation: fall 2s linear infinite;
+        }
+
+        /* Rain Falling Animation */
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
         }
 
         /* Keyframes for animated gradient background */
@@ -44,39 +62,20 @@
             width: 100%;
             backdrop-filter: blur(10px); /* Slight blur for futuristic effect */
             background-size: 300% 300%; /* Scaling for smoother animation */
-            animation: containerShift 10s ease infinite, matrixBuild 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; /* Matrix build animation */
             opacity: 0;
-            transform: scale(0.8);
-            clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+            transform: translateY(-50px); /* Start above */
+            animation: fadeInBuild 2s ease forwards 3s; /* Delayed intro after rain */
         }
 
-        /* Keyframes for the Matrix-style container build */
-        @keyframes matrixBuild {
+        /* Fade-in and build effect for container */
+        @keyframes fadeInBuild {
             0% {
-                clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
                 opacity: 0;
-            }
-            50% {
-                clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
-                opacity: 0.5;
+                transform: translateY(-50px); /* Start off screen */
             }
             100% {
-                clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
                 opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* Keyframes for the container gradient animation */
-        @keyframes containerShift {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
+                transform: translateY(0); /* Full visibility */
             }
         }
 
@@ -85,22 +84,18 @@
             max-width: 250px;
             margin-bottom: 20px;
             opacity: 0;
-            animation: glitchFade 1.8s ease forwards 1.5s; /* Glitchy fade for logo */
+            animation: fadeInLogo 1.5s ease forwards 4s; /* Logo fades in after container */
         }
 
-        /* Glitchy fade effect for logo */
-        @keyframes glitchFade {
+        /* Logo fade-in effect */
+        @keyframes fadeInLogo {
             0% {
                 opacity: 0;
-                transform: scale(0.9);
-            }
-            50% {
-                opacity: 0.5;
-                transform: scale(1.1);
+                transform: translateY(-20px); /* Start slightly above */
             }
             100% {
                 opacity: 1;
-                transform: scale(1);
+                transform: translateY(0); /* Settle into place */
             }
         }
 
@@ -124,44 +119,30 @@
             transition: all 0.4s ease;
             text-align: center; /* Center button text */
             opacity: 0;
-            transform: translateY(30px); /* Start below */
+            transform: translateY(20px); /* Start slightly below */
         }
 
-        /* Hover Effect for Buttons */
-        .btn:hover {
-            box-shadow: 0 20px 40px rgba(82, 113, 255, 1), 0 0 30px rgba(82, 113, 255, 0.9), 0 0 60px rgba(82, 113, 255, 0.8); /* Stronger glow effect */
-            transform: translateY(-5px);
+        /* Button fade-in effects */
+        .btn.apply-position {
+            animation: fadeInButton 1.2s ease forwards 4.5s; /* Delayed for staggered effect */
+        }
+        .btn.employee-handbook {
+            animation: fadeInButton 1.2s ease forwards 4.7s;
+        }
+        .btn.admin {
+            animation: fadeInButton 1.2s ease forwards 4.9s;
         }
 
-        /* Keyframes for button fade-in and glitch effect */
-        @keyframes glitchIn {
+        /* Fade-in for buttons */
+        @keyframes fadeInButton {
             0% {
                 opacity: 0;
-                transform: translateY(30px) scale(1.1);
-            }
-            25% {
-                opacity: 0.5;
-                transform: translateY(10px) scale(1.05);
-            }
-            50% {
-                opacity: 0.8;
-                transform: translateY(-5px) scale(1);
+                transform: translateY(20px); /* Start below */
             }
             100% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0); /* Settle into place */
             }
-        }
-
-        /* Sequential glitchy animations for buttons */
-        .btn.apply-position {
-            animation: glitchIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards 2s;
-        }
-        .btn.employee-handbook {
-            animation: glitchIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards 2.2s;
-        }
-        .btn.admin {
-            animation: glitchIn 1s cubic-bezier(0.25, 1, 0.5, 1) forwards 2.4s;
         }
 
         /* Responsive design */
@@ -187,11 +168,11 @@
             }
         }
     </style>
-
-    <!-- Import Montserrat font from Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Rain container where rain particles will be added -->
+    <div id="rain-container"></div>
+
     <div class="container">
         <!-- Company logo -->
         <img src="https://b1767dc1b20523885e3a.cdn6.editmysite.com/uploads/b/b1767dc1b20523885e3a00d3d4c6a7fd82e9c90cefba70278cf527c59f580d89/Untitled%20design%20%281%29_1727046864.png?width=2400&optimize=medium" alt="The European Logo" class="logo">
@@ -204,5 +185,26 @@
         <a href="employee-handbook-signin.html" class="btn employee-handbook">Employee Handbook Confirmation</a>
         <a href="admin.html" class="btn admin">The European Administration</a>
     </div>
+
+    <script>
+        // JavaScript to create rain effect
+        const rainContainer = document.getElementById('rain-container');
+
+        function createRain() {
+            const rain = document.createElement('div');
+            rain.classList.add('rain');
+            rain.style.left = `${Math.random() * window.innerWidth}px`; // Random horizontal position
+            rain.style.animationDuration = `${Math.random() * 2 + 1.5}s`; // Random fall speed
+            rainContainer.appendChild(rain);
+
+            // Remove the rain drop after it falls
+            setTimeout(() => {
+                rain.remove();
+            }, 3000); // Remove after 3s
+        }
+
+        // Generate rain every 100ms
+        setInterval(createRain, 100);
+    </script>
 </body>
 </html>
