@@ -211,8 +211,8 @@
             // Google Apps Script web app URL (from your deployment)
             const scriptURL = 'https://script.google.com/macros/s/AKfycbwL-5PKrulNajvNlTlyfMQEiCFzmLM3fkMF3e5Qg101UgPCy8CIaePMaePp_jhmBc4gEA/exec';
 
-            // Use CORS Anywhere to bypass CORS issues
-            const proxyURL = `https://cors-anywhere.herokuapp.com/${scriptURL}`;
+            // Update this with your Cloud Function's trigger URL
+            const proxyURL = `https://us-central1-the-european.cloudfunctions.net/CORSforsignaturesite`;
 
             updateDebugInfo('Sending PDF to Google Apps Script via CORS proxy...');
 
@@ -223,6 +223,17 @@
                 'Content-Type': 'application/json'
               }
             });
+
+            // Use CORS Anywhere to bypass CORS issues
+            //const proxyURL = `https://cors-anywhere.herokuapp.com/${scriptURL}`;
+
+            //const response = await fetch(proxyURL, {
+            //  method: 'POST',
+            //  body: JSON.stringify(payload),
+            //  headers: {
+            //    'Content-Type': 'application/json'
+            //  }
+            //});
 
             const rawText = await response.text(); // Capture raw response
             updateDebugInfo('Raw response from server: ' + rawText); // Display raw response
