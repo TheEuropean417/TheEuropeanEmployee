@@ -170,6 +170,7 @@
     }
 
     // Function to send the PDF to Google Drive using the CORS proxy
+    // Function to send the PDF to Google Drive using the CORS proxy
     async function sendPDFToGoogleDrive(pdfBlob, employeeName) {
       try {
         // Convert the PDF Blob to base64
@@ -201,11 +202,18 @@
               }
             });
 
-            const result = await response.json();
-            if (result.success) {
-              updateDebugInfo('File saved successfully: ' + result.fileUrl);
-            } else {
-              updateDebugInfo('Error saving file: ' + result.message);
+            const rawText = await response.text(); // Capture raw response
+            updateDebugInfo('Raw response from server: ' + rawText); // Display raw response
+
+            try {
+              const result = JSON.parse(rawText); // Attempt to parse JSON
+              if (result.success) {
+                updateDebugInfo('File saved successfully: ' + result.fileUrl);
+              } else {
+                updateDebugInfo('Error saving file: ' + result.message);
+              }
+            } catch (error) {
+              updateDebugInfo('Error parsing response as JSON: ' + error.message);
             }
           } catch (error) {
             updateDebugInfo('Error sending PDF to Google Drive: ' + error.message);
@@ -215,6 +223,7 @@
         updateDebugInfo('Error converting PDF to base64: ' + error.message);
       }
     }
+
 
     window.onload = function() {
       // Extract the name parameter from the URL
