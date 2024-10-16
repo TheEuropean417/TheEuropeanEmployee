@@ -11,11 +11,30 @@
             padding: 0;
             font-family: 'Montserrat', sans-serif;
             height: 100%;
-            background: linear-gradient(135deg, rgb(82, 113, 255), rgb(221, 196, 213)); /* Background gradient */
             display: flex;
             justify-content: center;
             align-items: center;
-            background-size: cover;
+            background-size: 400% 400%; /* For smooth animation */
+            animation: gradientShift 10s ease infinite; /* Animation applied here */
+        }
+
+        /* Keyframes for the animated gradient */
+        @keyframes gradientShift {
+            0% {
+                background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213));
+            }
+            25% {
+                background: linear-gradient(135deg, rgb(221, 196, 213), rgb(82, 113, 255));
+            }
+            50% {
+                background: linear-gradient(135deg, rgb(82, 113, 255), rgb(253, 240, 249));
+            }
+            75% {
+                background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213));
+            }
+            100% {
+                background: linear-gradient(135deg, rgb(253, 240, 249), rgb(221, 196, 213));
+            }
         }
 
         /* Main container for content */
