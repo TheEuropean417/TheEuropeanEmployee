@@ -34,27 +34,44 @@
             }
         }
 
-        /* Particle effect styling */
-        .particle {
+        /* SVG portal container for liquid morphing */
+        .liquid-portal {
             position: absolute;
-            width: 2px;
-            height: 2px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            opacity: 0;
-            animation: moveParticle 3s ease-out forwards;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            opacity: 1;
+            z-index: 10;
+            animation: morphPortal 4s ease-in-out forwards;
         }
 
-        /* Particle movement */
-        @keyframes moveParticle {
+        /* Morphing SVG animation for the portal */
+        @keyframes morphPortal {
             0% {
-                transform: translate(0, 0);
+                width: 50px;
+                height: 50px;
+                transform: translate(-50%, -50%) scale(0);
                 opacity: 1;
             }
+            50% {
+                width: 250px;
+                height: 250px;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
             100% {
-                transform: translate(var(--x), var(--y));
+                width: 300px;
+                height: 300px;
+                transform: translate(-50%, -50%) scale(1);
                 opacity: 0;
             }
+        }
+
+        /* SVG styling */
+        .liquid-portal svg {
+            width: 100%;
+            height: 100%;
         }
 
         /* Main container for content */
@@ -69,7 +86,8 @@
             backdrop-filter: blur(10px); /* Slight blur for futuristic effect */
             background-size: 300% 300%; /* Scaling for smoother animation */
             opacity: 0;
-            animation: fadeInBuild 2s ease forwards 1.5s; /* Delayed intro */
+            transform: scale(0.8);
+            animation: fadeInBuild 2s ease forwards 4s; /* Delayed intro after portal */
         }
 
         /* Container fade-in build */
@@ -89,7 +107,7 @@
             max-width: 250px;
             margin-bottom: 20px;
             opacity: 0;
-            animation: fadeInLogo 1.8s ease forwards 2.5s; /* Logo fades in after container */
+            animation: fadeInLogo 1.8s ease forwards 5s; /* Logo fades in after container */
         }
 
         /* Logo fade-in effect */
@@ -129,13 +147,13 @@
 
         /* Button fade-in effects */
         .btn.apply-position {
-            animation: fadeInButton 1.2s ease forwards 3s; /* Delayed for staggered effect */
+            animation: fadeInButton 1.2s ease forwards 5.5s; /* Delayed for staggered effect */
         }
         .btn.employee-handbook {
-            animation: fadeInButton 1.2s ease forwards 3.2s;
+            animation: fadeInButton 1.2s ease forwards 5.7s;
         }
         .btn.admin {
-            animation: fadeInButton 1.2s ease forwards 3.4s;
+            animation: fadeInButton 1.2s ease forwards 5.9s;
         }
 
         /* Fade-in for buttons */
@@ -176,6 +194,22 @@
 </head>
 <body>
 
+    <!-- Liquid Morphing Portal -->
+    <div class="liquid-portal">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+            <circle cx="50" cy="50" r="45" fill="url(#grad1)">
+                <animate attributeName="r" from="0" to="45" dur="2s" fill="freeze"/>
+                <animate attributeName="r" from="45" to="300" dur="1.8s" begin="2s" fill="freeze"/>
+            </circle>
+            <defs>
+                <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                    <stop offset="0%" style="stop-color:rgb(253, 240, 249);stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:rgb(221, 196, 213);stop-opacity:0" />
+                </radialGradient>
+            </defs>
+        </svg>
+    </div>
+
     <div class="container">
         <!-- Company logo -->
         <img src="https://b1767dc1b20523885e3a.cdn6.editmysite.com/uploads/b/b1767dc1b20523885e3a00d3d4c6a7fd82e9c90cefba70278cf527c59f580d89/Untitled%20design%20%281%29_1727046864.png?width=2400&optimize=medium" alt="The European Logo" class="logo">
@@ -189,42 +223,5 @@
         <a href="admin.html" class="btn admin">The European Administration</a>
     </div>
 
-    <script>
-        // JavaScript to create particle explosion effect
-        const particleCount = 50; // Number of particles
-        const container = document.body;
-
-        function createParticle(x, y) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-
-            // Random particle direction
-            const randomX = Math.random() * (Math.random() < 0.5 ? -1 : 1) * 200;
-            const randomY = Math.random() * (Math.random() < 0.5 ? -1 : 1) * 200;
-            particle.style.setProperty('--x', `${randomX}px`);
-            particle.style.setProperty('--y', `${randomY}px`);
-
-            container.appendChild(particle);
-
-            // Remove the particle after animation
-            setTimeout(() => {
-                particle.remove();
-            }, 3000);
-        }
-
-        // Trigger explosion effect on page load
-        window.addEventListener('load', () => {
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-
-            for (let i = 0; i < particleCount; i++) {
-                setTimeout(() => {
-                    createParticle(centerX, centerY);
-                }, i * 30); // Delay between particle creation
-            }
-        });
-    </script>
 </body>
 </html>
