@@ -145,14 +145,17 @@
         // Add text and signatures to the PDF
         const lines = textContainer.innerText.split('\n');
         let yOffset = height - 50; // Start from top of page
+        let signatureIndex = 0;
+
         lines.forEach((line) => {
           // Add the text line to the PDF
           page.drawText(line, { x: 50, y: yOffset, size: 12 });
 
-          // For each signature field, draw the signature on the PDF
+          // For each "Acknowledgment" line, draw the corresponding signature
           if (line.includes('Acknowledgment:')) {
-            const signature = signatures.shift(); // Get the corresponding signature
+            const signature = signatures[signatureIndex]; // Get the corresponding signature
             page.drawText(signature, { x: 400, y: yOffset, size: 12 });
+            signatureIndex++; // Move to the next signature
           }
 
           yOffset -= 20; // Move to the next line
@@ -222,9 +225,6 @@
         updateDebugInfo('Error converting PDF to base64: ' + error.message);
       }
     }
-
-
-
 
     window.onload = function() {
       // Extract the name parameter from the URL
