@@ -21,6 +21,34 @@
             position: relative;
         }
 
+        /* Water Droplet Effect */
+        .droplet {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(255, 255, 255, 0.6);
+            animation: fall 3s ease-in forwards;
+            opacity: 0;
+        }
+
+        /* Droplet falling animation */
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) scale(0.1);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(40vh) scale(1);
+            }
+            100% {
+                transform: translateY(100vh) scale(0.1);
+                opacity: 0;
+            }
+        }
+
         /* Glowing light burst intro */
         .light-burst {
             position: absolute;
@@ -51,19 +79,6 @@
             }
         }
 
-        /* Keyframes for animated gradient background */
-        @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
         /* Main container for content */
         .container {
             text-align: center;
@@ -76,7 +91,7 @@
             backdrop-filter: blur(10px); /* Slight blur for futuristic effect */
             opacity: 0;
             transform: scale(0.8);
-            animation: fadeInContainer 2s ease forwards 2.5s; /* Delayed intro */
+            animation: fadeInContainer 2.5s ease forwards 3s; /* Delayed intro */
         }
 
         /* Container fade-in build */
@@ -96,7 +111,7 @@
             max-width: 250px;
             margin-bottom: 20px;
             opacity: 0;
-            animation: fadeInLogo 1.8s ease forwards 3s; /* Logo fades in after container */
+            animation: fadeInLogo 1.8s ease forwards 4s; /* Logo fades in after container */
         }
 
         /* Logo fade-in effect */
@@ -136,13 +151,13 @@
 
         /* Button fade-in effects */
         .btn.apply-position {
-            animation: fadeInButton 1.2s ease forwards 3.5s; /* Staggered intro */
+            animation: fadeInButton 1.2s ease forwards 4.5s; /* Staggered intro */
         }
         .btn.employee-handbook {
-            animation: fadeInButton 1.2s ease forwards 3.7s;
+            animation: fadeInButton 1.2s ease forwards 4.7s;
         }
         .btn.admin {
-            animation: fadeInButton 1.2s ease forwards 3.9s;
+            animation: fadeInButton 1.2s ease forwards 4.9s;
         }
 
         /* Fade-in for buttons */
@@ -161,6 +176,19 @@
         .btn:hover {
             box-shadow: 0 20px 40px rgba(82, 113, 255, 1), 0 0 30px rgba(82, 113, 255, 0.9), 0 0 60px rgba(82, 113, 255, 0.8);
             transform: translateY(-5px);
+        }
+
+        /* Keyframes for animated gradient background */
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         /* Responsive design */
@@ -189,9 +217,14 @@
 </head>
 <body>
 
-    <!-- Glowing light burst intro -->
-    <div class="light-burst"></div>
+    <!-- Water droplets falling -->
+    <div class="droplet" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="droplet" style="left: 30%; animation-delay: 0.3s;"></div>
+    <div class="droplet" style="left: 50%; animation-delay: 0.6s;"></div>
+    <div class="droplet" style="left: 70%; animation-delay: 0.9s;"></div>
+    <div class="droplet" style="left: 90%; animation-delay: 1.2s;"></div>
 
+    <!-- Container and content -->
     <div class="container">
         <!-- Company logo -->
         <img src="https://b1767dc1b20523885e3a.cdn6.editmysite.com/uploads/b/b1767dc1b20523885e3a00d3d4c6a7fd82e9c90cefba70278cf527c59f580d89/Untitled%20design%20%281%29_1727046864.png?width=2400&optimize=medium" alt="The European Logo" class="logo">
@@ -199,7 +232,7 @@
         <!-- Employee Portal Heading -->
         <h1>Employee Portal</h1>
 
-        <!-- Updated Buttons -->
+        <!-- Buttons -->
         <a href="apply.html" class="btn apply-position">Apply for a Position at The European</a>
         <a href="employee-handbook-signin.html" class="btn employee-handbook">Employee Handbook Confirmation</a>
         <a href="admin.html" class="btn admin">The European Administration</a>
