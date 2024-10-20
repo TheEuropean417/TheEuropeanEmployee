@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Portal</title>
+    <title>Admin Portal Login</title>
     <style>
         /* Body and Background */
         body, html {
@@ -21,55 +21,13 @@
             position: relative;
         }
 
-        /* Glowing light burst intro */
-        .light-burst {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 70%);
-            border-radius: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            animation: burstExpand 2.5s ease forwards;
-            z-index: 10;
-        }
-
-        @keyframes burstExpand {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-            70% { transform: translate(-50%, -50%) scale(5); opacity: 0.7; }
-            100% { transform: translate(-50%, -50%) scale(8); opacity: 0; }
-        }
-
+        /* Keyframes for animated gradient background */
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* Main container for content */
-        .container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0px 0px 50px rgba(255, 255, 255, 0.5);
-            max-width: 500px;
-            width: 100%;
-            backdrop-filter: blur(10px);
-            opacity: 0;
-            transform: scale(0.8);
-            animation: fadeInContainer 2s ease forwards 2.5s;
-            z-index: 20;
-            position: relative;
-        }
-
-        @keyframes fadeInContainer {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        /* Login Form Container */
         .form-container {
             background-color: rgba(255, 255, 255, 0.7);
             padding: 40px;
@@ -125,26 +83,53 @@
     </style>
 </head>
 <body>
-    <!-- Glowing light burst intro -->
-    <div class="light-burst"></div>
-
     <div class="form-container">
         <h1>Admin Login</h1>
+
         <form id="loginForm">
             <input type="text" id="name" placeholder="Name (First and Last)" required><br>
             <input type="password" id="password" placeholder="Password" required><br>
             <button type="submit" class="btn" disabled>Login</button>
         </form>
+
         <p id="login-status">Loading employee data... Please wait!</p>
     </div>
 
     <script>
         let employees = [];
 
+        // Trigger the fetch of Square Employees when the page loads
         document.addEventListener('DOMContentLoaded', function() {
-            fetchEmployeeData();
+            console.log("Triggering fetchSquareEmployees...");
+
+            fetch('https://us-central1-the-european.cloudfunctions.net/corsProxy?url=https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=fetchSquareEmployees', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Response from fetchSquareEmployees:', data);
+                try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.success) {
+                        fetchEmployeeData();  // Proceed to fetch updated employee data
+                    } else {
+                        document.getElementById('login-status').innerText = 'Error fetching employee data.';
+                    }
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                    document.getElementById('login-status').innerText = 'Invalid response format.';
+                }
+            })
+            .catch(error => {
+                console.error('Error triggering employee data fetch:', error);
+                document.getElementById('login-status').innerText = 'Error triggering employee data fetch.';
+            });
         });
 
+        // Fetch updated employee data from the Google Sheet
         function fetchEmployeeData() {
             console.log("Fetching employee data from Google Sheet...");
 
@@ -154,67 +139,51 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.text();  // Raw text for debugging
-            })
+            .then(response => response.text())
             .then(data => {
-                console.log('Raw response data:', data);  // Log raw response
-
-                // Attempt to parse the JSON
                 try {
                     const jsonData = JSON.parse(data);
-                    console.log('Parsed JSON data:', jsonData);
-
+                    console.log('Parsed employee data:', jsonData);
                     if (jsonData.success) {
                         employees = jsonData.employees;
                         document.getElementById('login-status').innerText = 'Please enter your credentials.';
                         document.getElementById('login-status').style.color = 'green';
-                        document.querySelector('.btn').disabled = false;
+                        document.querySelector('.btn').disabled = false;  // Enable login button
                     } else {
                         document.getElementById('login-status').innerText = 'Error loading employee data.';
                     }
                 } catch (error) {
-                    console.error('Error parsing JSON:', error);  // Log JSON parsing errors
-                    document.getElementById('login-status').innerText = 'Error parsing employee data.';
+                    console.error('Error parsing JSON:', error);
+                    document.getElementById('login-status').innerText = 'Invalid response format.';
                 }
             })
             .catch(error => {
-                console.error('Error fetching employee data:', error);  // Log any fetch errors
+                console.error('Error fetching employee data:', error);
                 document.getElementById('login-status').innerText = 'Error fetching employee data.';
             });
         }
 
-
+        // Handle login form submission
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = document.getElementById('name').value;
-            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value.toLowerCase().trim();  // Normalize name input
+            const password = document.getElementById('password').value.trim();  // Normalize password input
 
-            const employee = employees.find(emp => 
-                emp.firstName.toLowerCase() + ' ' + emp.lastName.toLowerCase() === name.toLowerCase()
-                && emp.employeeId === password
+            // Allowed users: Uliana Komodi and Khrystyna Savva
+            const allowedUsers = ["uliana komodi", "khrystyna savva"];
+
+            // Check if the entered name matches one of the allowed users
+            const employee = employees.find(emp =>
+                allowedUsers.includes(name) && emp.firstName.toLowerCase() + ' ' + emp.lastName.toLowerCase() === name && emp.employeeId === password
             );
 
-            // Only allow login for Uliana Komodi and Khrystyna Savva
-            if (employee && (employee.firstName === 'Uliana' || employee.firstName === 'Khrystyna')) {
-                document.querySelector('.form-container').style.display = 'none'; // Hide login form
-                document.querySelector('.container').style.display = 'block'; // Show admin portal content
+            if (employee) {
+                const encodedName = encodeURIComponent(name);
+                window.location.href = `https://TheEuropean417.github.io/TheEuropeanEmployee/employee-handbook.html?name=${encodedName}`;
             } else {
                 document.getElementById('login-status').innerText = 'Invalid credentials or unauthorized user.';
             }
         });
-
-        // Initially hide the portal content
-        document.querySelector('.container').style.display = 'none';
     </script>
-
-    <div class="container">
-        <!-- Admin Buttons block will be added later -->
-        <h2>Welcome to the Admin Portal</h2>
-        <p>Here you will find the administrative tools and resources you need.</p>
-    </div>
 </body>
 </html>
