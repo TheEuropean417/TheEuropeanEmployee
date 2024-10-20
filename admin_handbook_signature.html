@@ -154,12 +154,18 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.text())  // Log the raw response as text for debugging
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();  // Raw text for debugging
+            })
             .then(data => {
-                console.log('Raw response data:', data);  // Log the raw response data
+                console.log('Raw response data:', data);  // Log raw response
 
+                // Attempt to parse the JSON
                 try {
-                    const jsonData = JSON.parse(data);  // Try parsing the data as JSON
+                    const jsonData = JSON.parse(data);
                     console.log('Parsed JSON data:', jsonData);
 
                     if (jsonData.success) {
@@ -171,15 +177,16 @@
                         document.getElementById('login-status').innerText = 'Error loading employee data.';
                     }
                 } catch (error) {
-                    console.error('Error parsing JSON:', error);  // Catch and log JSON parsing errors
-                    document.getElementById('login-status').innerText = 'Error parsing JSON response.';
+                    console.error('Error parsing JSON:', error);  // Log JSON parsing errors
+                    document.getElementById('login-status').innerText = 'Error parsing employee data.';
                 }
             })
             .catch(error => {
-                console.error('Error fetching employee data:', error);  // Catch and log any fetch errors
+                console.error('Error fetching employee data:', error);  // Log any fetch errors
                 document.getElementById('login-status').innerText = 'Error fetching employee data.';
             });
         }
+
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
