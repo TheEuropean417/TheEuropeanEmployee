@@ -102,13 +102,19 @@ function runGoogleScript() {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => response.json())
+    .then(response => response.text()) // Use .text() instead of .json() to handle non-JSON responses
     .then(data => {
-        if (data.success) {
-            console.log("Google Apps Script executed successfully.");
-            // Optionally display a success message or take further actions here
-        } else {
-            console.error("Google Apps Script execution failed:", data.message);
+        try {
+            const jsonData = JSON.parse(data); // Try parsing JSON
+            if (jsonData.success) {
+                console.log("Google Apps Script executed successfully.");
+                // Optionally display a success message or take further actions here
+            } else {
+                console.error("Google Apps Script execution failed:", jsonData.message);
+            }
+        } catch (error) {
+            // If parsing fails, log the raw response for debugging
+            console.error("Invalid JSON response:", data);
         }
     })
     .catch(error => {
