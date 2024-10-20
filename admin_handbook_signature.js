@@ -1,5 +1,3 @@
-// admin_handbook_signature.js
-
 let employees = [];
 
 // Trigger the fetch of Square Employees when the page loads
@@ -88,12 +86,12 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         // Hide the login form
         document.getElementById('loginForm').style.display = 'none';
 
-        // Show "successful login" message or proceed with loading the rest of the page
+        // Display success message inside the form container
         const successMessage = document.createElement('div');
-        successMessage.innerHTML = "<h2>Successful login</h2>";
-        document.body.appendChild(successMessage);
+        successMessage.innerHTML = "<h2>Welcome, you have successfully logged in!</h2>";
+        successMessage.style.color = "green";
+        document.querySelector('.form-container').appendChild(successMessage);
 
-        // Additional actions for starting the rest of the page will go here in the future.
     } else {
         document.getElementById('login-status').style.color = 'red';
         document.getElementById('login-status').innerText = 'INCORRECT USER NAME OR PASSWORD';
