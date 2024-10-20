@@ -148,7 +148,7 @@
         function fetchEmployeeData() {
             console.log("Fetching employee data from Google Sheet...");
 
-            fetch('https://us-central1-the-european.cloudfunctions.net/corsProxy?url=https://script.google.com/macros/s/YOUR_GOOGLE_SCRIPT_URL/exec?action=fetchSquareEmployees', {
+            fetch('https://us-central1-the-european.cloudfunctions.net/corsProxy?url=https://script.google.com/macros/s/AKfycbzMK0Jardx4ivA8N_HmOwUQnALkjXda1eheZEH3dFOZPoLz52kJy2JahoxkGlzmp3VMdw/exec?action=getEmployeeData', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
