@@ -14,9 +14,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, rgb(82, 113, 255), rgb(221, 196, 213)); /* Background gradient */
+            background: linear-gradient(135deg, rgb(82, 113, 255), rgb(221, 196, 213));
             background-size: 300% 300%;
-            animation: gradientShift 15s ease infinite; /* Background gradient animation */
+            animation: gradientShift 15s ease infinite;
             overflow: hidden;
             position: relative;
         }
@@ -35,33 +35,16 @@
             z-index: 10;
         }
 
-        /* Burst animation */
         @keyframes burstExpand {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 1;
-            }
-            70% {
-                transform: translate(-50%, -50%) scale(5);
-                opacity: 0.7;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(8);
-                opacity: 0;
-            }
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(5); opacity: 0.7; }
+            100% { transform: translate(-50%, -50%) scale(8); opacity: 0; }
         }
 
-        /* Keyframes for animated gradient background */
         @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* Main container for content */
@@ -70,45 +53,157 @@
             background: rgba(255, 255, 255, 0.2);
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0px 0px 50px rgba(255, 255, 255, 0.5); /* Glowing shadow */
+            box-shadow: 0px 0px 50px rgba(255, 255, 255, 0.5);
             max-width: 500px;
             width: 100%;
-            backdrop-filter: blur(10px); /* Slight blur for futuristic effect */
+            backdrop-filter: blur(10px);
             opacity: 0;
             transform: scale(0.8);
-            animation: fadeInContainer 2s ease forwards 2.5s; /* Delayed intro */
-            z-index: 20; /* Ensure buttons are clickable */
-            position: relative; /* Ensure the container's z-index applies */
+            animation: fadeInContainer 2s ease forwards 2.5s;
+            z-index: 20;
+            position: relative;
         }
 
-        /* Container fade-in build */
         @keyframes fadeInContainer {
-            0% {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
-        /* Responsive design */
-        @media screen and (max-width: 768px) {
-            .container {
-                padding: 30px;
-            }
+        /* Login Form Container */
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
         }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            color: rgb(82, 113, 255);
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid;
+            border-image: linear-gradient(to right, rgb(253, 240, 249), rgb(221, 196, 213)) 1;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .btn {
+            padding: 13px;
+            background-color: rgb(82, 113, 255);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            width: 80%;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: rgb(66, 90, 204);
+        }
+
+        #login-status {
+            margin-top: 20px;
+            color: red;
+        }
+
     </style>
 </head>
 <body>
-
     <!-- Glowing light burst intro -->
     <div class="light-burst"></div>
 
-    <div class="container">
-        <!-- Admin Buttons block will be added later -->
+    <div class="form-container">
+        <h1>Admin Login</h1>
+        <form id="loginForm">
+            <input type="text" id="name" placeholder="Name (First and Last)" required><br>
+            <input type="password" id="password" placeholder="Password" required><br>
+            <button type="submit" class="btn" disabled>Login</button>
+        </form>
+        <p id="login-status">Loading employee data... Please wait!</p>
     </div>
 
+    <script>
+        let employees = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchEmployeeData();
+        });
+
+        function fetchEmployeeData() {
+            console.log("Fetching employee data from Google Sheet...");
+
+            fetch('https://us-central1-the-european.cloudfunctions.net/corsProxy?url=https://script.google.com/macros/s/YOUR_GOOGLE_SCRIPT_URL/exec?action=fetchSquareEmployees', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.success) {
+                        employees = jsonData.employees;
+                        document.getElementById('login-status').innerText = 'Please enter your credentials.';
+                        document.getElementById('login-status').style.color = 'green';
+                        document.querySelector('.btn').disabled = false;
+                    } else {
+                        document.getElementById('login-status').innerText = 'Error loading employee data.';
+                    }
+                } catch (error) {
+                    document.getElementById('login-status').innerText = 'Error parsing employee data.';
+                    console.error('Error parsing JSON:', error);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching employee data:', error);
+                document.getElementById('login-status').innerText = 'Error loading employee data.';
+            });
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const password = document.getElementById('password').value;
+
+            const employee = employees.find(emp => 
+                emp.firstName.toLowerCase() + ' ' + emp.lastName.toLowerCase() === name.toLowerCase()
+                && emp.employeeId === password
+            );
+
+            // Only allow login for Uliana Komodi and Khrystyna Savva
+            if (employee && (employee.firstName === 'Uliana' || employee.firstName === 'Khrystyna')) {
+                document.querySelector('.form-container').style.display = 'none'; // Hide login form
+                document.querySelector('.container').style.display = 'block'; // Show admin portal content
+            } else {
+                document.getElementById('login-status').innerText = 'Invalid credentials or unauthorized user.';
+            }
+        });
+
+        // Initially hide the portal content
+        document.querySelector('.container').style.display = 'none';
+    </script>
+
+    <div class="container">
+        <!-- Admin Buttons block will be added later -->
+        <h2>Welcome to the Admin Portal</h2>
+        <p>Here you will find the administrative tools and resources you need.</p>
+    </div>
 </body>
 </html>
