@@ -86,14 +86,32 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         // Hide the login form
         document.getElementById('loginForm').style.display = 'none';
 
-        // Display success message inside the form container
-        // const successMessage = document.createElement('div');
-        // successMessage.innerHTML = "<h2>Welcome, you have successfully logged in!</h2>";
-        // successMessage.style.color = "green";
-        // document.querySelector('.form-container').appendChild(successMessage);
-
+        // Trigger the Google Apps Script after successful login
+        runGoogleScript();
     } else {
         document.getElementById('login-status').style.color = 'red';
         document.getElementById('login-status').innerText = 'INCORRECT USER NAME OR PASSWORD';
     }
 });
+
+// Function to trigger Google Apps Script after successful login
+function runGoogleScript() {
+    fetch('https://script.google.com/macros/s/AKfycby4yIz6BXBym2QjoXvUJFt821ZYaqj-BHQKmZ35_gMJQ3zIA8xbWBZN5G9ZyNJK2yYCwQ/exec', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Google Apps Script executed successfully.");
+            // Optionally display a success message or take further actions here
+        } else {
+            console.error("Google Apps Script execution failed:", data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error triggering Google Apps Script:", error);
+    });
+}
