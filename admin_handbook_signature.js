@@ -87,10 +87,10 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         document.getElementById('loginForm').style.display = 'none';
 
         // Display success message inside the form container
-        const successMessage = document.createElement('div');
-        successMessage.innerHTML = "<h2>Welcome, you have successfully logged in!</h2>";
-        successMessage.style.color = "green";
-        document.querySelector('.form-container').appendChild(successMessage);
+        // const successMessage = document.createElement('div');
+        // successMessage.innerHTML = "<h2>Welcome, you have successfully logged in!</h2>";
+        // successMessage.style.color = "green";
+        // document.querySelector('.form-container').appendChild(successMessage);
 
     } else {
         document.getElementById('login-status').style.color = 'red';
