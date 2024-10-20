@@ -154,10 +154,14 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.text())
+            .then(response => response.text())  // Log the raw response as text for debugging
             .then(data => {
+                console.log('Raw response data:', data);  // Log the raw response data
+
                 try {
-                    const jsonData = JSON.parse(data);
+                    const jsonData = JSON.parse(data);  // Try parsing the data as JSON
+                    console.log('Parsed JSON data:', jsonData);
+
                     if (jsonData.success) {
                         employees = jsonData.employees;
                         document.getElementById('login-status').innerText = 'Please enter your credentials.';
@@ -167,13 +171,13 @@
                         document.getElementById('login-status').innerText = 'Error loading employee data.';
                     }
                 } catch (error) {
-                    document.getElementById('login-status').innerText = 'Error parsing employee data.';
-                    console.error('Error parsing JSON:', error);
+                    console.error('Error parsing JSON:', error);  // Catch and log JSON parsing errors
+                    document.getElementById('login-status').innerText = 'Error parsing JSON response.';
                 }
             })
             .catch(error => {
-                console.error('Error fetching employee data:', error);
-                document.getElementById('login-status').innerText = 'Error loading employee data.';
+                console.error('Error fetching employee data:', error);  // Catch and log any fetch errors
+                document.getElementById('login-status').innerText = 'Error fetching employee data.';
             });
         }
 
