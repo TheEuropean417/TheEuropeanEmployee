@@ -118,6 +118,7 @@ function runGoogleScript() {
     })
     .catch(error => {
         console.error("Error triggering Google Apps Script:", error);
+        displayEmployeeData(data.data);  // Display the data on the page
     });
 }
 
