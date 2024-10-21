@@ -86,14 +86,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         // Hide the login form
         document.getElementById('loginForm').style.display = 'none';
 
-        // Trigger the Google Apps Script before loading the handbook data
-        runGoogleScript().then(() => {
-            // After successfully running the Google Script, load employee handbook data
-            loadEmployeeHandbookData();
-        }).catch(error => {
-            console.error('Error running Google Apps Script:', error);
-            document.getElementById('login-status').innerText = 'Error running Google Apps Script.';
-        });
+        // Trigger the Google Apps Script after successful login
+        runGoogleScript();
     } else {
         document.getElementById('login-status').style.color = 'red';
         document.getElementById('login-status').innerText = 'INCORRECT USER NAME OR PASSWORD';
@@ -102,38 +96,35 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
 // Function to trigger Google Apps Script after successful login
 function runGoogleScript() {
-    return new Promise((resolve, reject) => {
-        fetch('https://us-central1-the-european.cloudfunctions.net/CorsProxy_Adminsignaturedatabase?url=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
+    fetch('https://us-central1-the-european.cloudfunctions.net/CorsProxy_Adminsignaturedatabase?url=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text(); // Handle non-JSON responses if necessary
+    })
+    .then(data => {
+        try {
+            const jsonData = JSON.parse(data);
+            if (jsonData.success) {
+                console.log("Google Apps Script executed successfully.");
+
+                // Load employee handbook data after successful script execution
+                loadEmployeeHandbookData();
+            } else {
+                console.error("Google Apps Script execution failed:", jsonData.message);
             }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text(); // Handle non-JSON responses if necessary
-        })
-        .then(data => {
-            try {
-                const jsonData = JSON.parse(data);
-                if (jsonData.success) {
-                    console.log("Google Apps Script executed successfully.");
-                    resolve();  // Google Script completed successfully
-                } else {
-                    console.error("Google Apps Script execution failed:", jsonData.message);
-                    reject(jsonData.message);  // Google Script failed
-                }
-            } catch (error) {
-                console.error("Invalid JSON response:", data);
-                reject(error);  // JSON parsing failed
-            }
-        })
-        .catch(error => {
-            console.error("Error triggering Google Apps Script:", error);
-            reject(error);  // Fetch error
-        });
+        } catch (error) {
+            console.error("Invalid JSON response:", data);
+        }
+    })
+    .catch(error => {
+        console.error("Error triggering Google Apps Script:", error);
     });
 }
 
