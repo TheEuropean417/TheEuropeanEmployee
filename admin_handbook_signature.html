@@ -106,25 +106,38 @@
         </form>
 
         <p id="login-status">Loading employee data... Please wait!</p>
+        <p id="countdown-message"></p> <!-- Added for countdown -->
     </div>
 
     <!-- Link to the external JavaScript file -->
     <script src="admin_handbook_signature.js"></script>
 
-    <!-- JavaScript to handle redirection after successful login -->
+    <!-- JavaScript to handle redirection and countdown after successful login -->
     <script>
         // Monitor changes to the login status element
         const loginStatusElement = document.getElementById('login-status');
+        const countdownMessageElement = document.getElementById('countdown-message');
 
         // Create an observer to watch for changes in the login status text
         const observer = new MutationObserver(function(mutationsList, observer) {
             mutationsList.forEach(function(mutation) {
                 // Check if the login-status text becomes 'Successful login!'
                 if (mutation.target.innerText === 'Successful login!') {
-                    // Forward to the new page after successful login
-                    setTimeout(function() {
-                        window.location.href = 'https://theeuropean417.github.io/TheEuropeanEmployee/admin_handbook_signature_pass.html';
-                    }, 1000);  // Optional: Add a slight delay of 1 second
+                    // Display the countdown message
+                    let countdown = 8;
+                    countdownMessageElement.style.color = 'red';  // Set countdown text color to red
+                    countdownMessageElement.innerHTML = `Please wait for the database to load... ${countdown} seconds`;
+
+                    // Start 8-second countdown
+                    const countdownInterval = setInterval(function() {
+                        countdown--;
+                        countdownMessageElement.innerHTML = `Please wait for the database to load... ${countdown} seconds`;
+                        if (countdown === 0) {
+                            clearInterval(countdownInterval);
+                            // Redirect to the new page after countdown finishes
+                            window.location.href = 'https://theeuropean417.github.io/TheEuropeanEmployee/admin_handbook_signature_pass.html';
+                        }
+                    }, 1000);  // Countdown updates every second
                 }
             });
         });
