@@ -81,6 +81,26 @@
             color: red;
         }
 
+        /* Table styling for displaying Google Sheets data */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
     </style>
 </head>
 <body>
@@ -95,10 +115,66 @@
         </form>
 
         <p id="login-status">Loading employee data... Please wait!</p>
+
+        <!-- This section will be used to display the loaded Google Sheets data -->
+        <div id="spreadsheet-data"></div>
+
     </div>
 
     <!-- Link to the external JavaScript file -->
     <script src="admin_handbook_signature.js"></script>
+
+    <!-- Inline script to load spreadsheet data after successful login -->
+    <script>
+        function loadSpreadsheetData() {
+            const sheetID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
+            const sheetName = 'Employee_Handbook_Sign';
+            const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    // Clean up the response to make it parsable as JSON
+                    const jsonData = JSON.parse(data.substring(47).slice(0, -2)); // Google Sheets returns wrapped JSON
+                    const rows = jsonData.table.rows;
+
+                    // Create a table dynamically to display the sheet data
+                    const table = document.createElement('table');
+                    const spreadsheetDiv = document.getElementById('spreadsheet-data');
+
+                    // Create table headers
+                    const headerRow = document.createElement('tr');
+                    jsonData.table.cols.forEach(col => {
+                        const headerCell = document.createElement('th');
+                        headerCell.textContent = col.label || 'Unnamed';
+                        headerRow.appendChild(headerCell);
+                    });
+                    table.appendChild(headerRow);
+
+                    // Add rows from the sheet data
+                    rows.forEach(row => {
+                        const tableRow = document.createElement('tr');
+                        row.c.forEach(cell => {
+                            const tableCell = document.createElement('td');
+                            tableCell.textContent = cell ? cell.v : ''; // Display cell value, or empty string if null
+                            tableRow.appendChild(tableCell);
+                        });
+                        table.appendChild(tableRow);
+                    });
+
+                    // Clear any previous data and append the new table
+                    spreadsheetDiv.innerHTML = '';
+                    spreadsheetDiv.appendChild(table);
+                })
+                .catch(error => {
+                    console.error('Error fetching or displaying employee handbook data:', error);
+                    document.getElementById('login-status').innerText = 'Error loading employee handbook data.';
+                });
+        }
+
+        // Make the function available globally so it can be called after successful login
+        window.loadSpreadsheetData = loadSpreadsheetData;
+    </script>
 
 </body>
 </html>

@@ -113,9 +113,6 @@ function runGoogleScript() {
             const jsonData = JSON.parse(data);
             if (jsonData.success) {
                 console.log("Google Apps Script executed successfully.");
-
-                // Load employee handbook data after successful script execution
-                loadEmployeeHandbookData();
             } else {
                 console.error("Google Apps Script execution failed:", jsonData.message);
             }
@@ -126,49 +123,6 @@ function runGoogleScript() {
     .catch(error => {
         console.error("Error triggering Google Apps Script:", error);
     });
-}
 
-// Function to load employee handbook data from the specified Google Sheet
-function loadEmployeeHandbookData() {
-    const sheetID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
-    const sheetName = 'Employee_Handbook_Sign';
-    
-    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
-
-    fetch(url)
-        .then(response => response.text())
-        .then(data => {
-            // Clean up the response to make it parsable as JSON
-            const jsonData = JSON.parse(data.substring(47).slice(0, -2)); // Google Sheets returns wrapped JSON
-            const rows = jsonData.table.rows;
-
-            // Clear any previous content in the form container
-            const formContainer = document.querySelector('.form-container');
-            formContainer.innerHTML = '';
-
-            // Create a table dynamically to display the sheet data
-            const table = document.createElement('table');
-            table.style.width = '100%';
-            table.style.borderCollapse = 'collapse';
-
-            // Add rows from the sheet data
-            rows.forEach(row => {
-                const tableRow = document.createElement('tr');
-                row.c.forEach(cell => {
-                    const tableCell = document.createElement('td');
-                    tableCell.style.border = '1px solid #ddd';
-                    tableCell.style.padding = '8px';
-                    tableCell.textContent = cell ? cell.v : ''; // Display cell value, or empty string if null
-                    tableRow.appendChild(tableCell);
-                });
-                table.appendChild(tableRow);
-            });
-
-            // Add the table to the form container
-            formContainer.appendChild(table);
-        })
-        .catch(error => {
-            console.error('Error fetching or displaying employee handbook data:', error);
-            document.getElementById('login-status').innerText = 'Error loading employee handbook data.';
-        });
+    loadSpreadsheetData();
 }
