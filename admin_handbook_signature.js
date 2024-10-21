@@ -123,12 +123,4 @@ function runGoogleScript() {
     .catch(error => {
         console.error("Error triggering Google Apps Script:", error);
     });
-
-    if (jsonData.success) {
-        console.log("Google Apps Script executed successfully.");
-            
-        // Call this after the Google Apps Script has run successfully
-        loadSpreadsheetData();
-    }
-    
 }
