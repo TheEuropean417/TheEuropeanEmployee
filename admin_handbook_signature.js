@@ -130,24 +130,34 @@ function runGoogleScript() {
 
 // Function to display the employee handbook data in a table
 function displayEmployeeData(employeeData) {
-    const table = document.createElement('table');
-    table.setAttribute('border', '1'); // Simple border for the table
+    try {
+        const dataContainer = document.getElementById('employee-data');
 
-    // Iterate through the employee data (assuming the first row contains headers)
-    employeeData.forEach((row, rowIndex) => {
-        const tr = document.createElement('tr');
+        // Check if the element exists
+        if (!dataContainer) {
+            throw new Error("Element with ID 'employee-data' not found.");
+        }
 
-        row.forEach(cellData => {
-            const cell = document.createElement(rowIndex === 0 ? 'th' : 'td');  // Use <th> for headers
-            cell.textContent = cellData;
-            tr.appendChild(cell);
+        const table = document.createElement('table');
+        table.setAttribute('border', '1'); // Simple border for the table
+
+        // Iterate through the employee data (assuming the first row contains headers)
+        employeeData.forEach((row, rowIndex) => {
+            const tr = document.createElement('tr');
+
+            row.forEach(cellData => {
+                const cell = document.createElement(rowIndex === 0 ? 'th' : 'td');  // Use <th> for headers
+                cell.textContent = cellData;
+                tr.appendChild(cell);
+            });
+
+            table.appendChild(tr);
         });
 
-        table.appendChild(tr);
-    });
-
-    // Append the table to an element on your page
-    const dataContainer = document.getElementById('employee-data');
-    dataContainer.innerHTML = ''; // Clear any existing data
-    dataContainer.appendChild(table);
+        // Clear any existing data and append the table
+        dataContainer.innerHTML = ''; // Clear any existing data
+        dataContainer.appendChild(table);
+    } catch (error) {
+        console.error("Error in displayEmployeeData:", error);
+    }
 }
