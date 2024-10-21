@@ -111,5 +111,27 @@
     <!-- Link to the external JavaScript file -->
     <script src="admin_handbook_signature.js"></script>
 
+    <!-- JavaScript to handle redirection after successful login -->
+    <script>
+        // Monitor changes to the login status element
+        const loginStatusElement = document.getElementById('login-status');
+
+        // Create an observer to watch for changes in the login status text
+        const observer = new MutationObserver(function(mutationsList, observer) {
+            mutationsList.forEach(function(mutation) {
+                // Check if the login-status text becomes 'Successful login!'
+                if (mutation.target.innerText === 'Successful login!') {
+                    // Forward to the new page after successful login
+                    setTimeout(function() {
+                        window.location.href = 'https://theeuropean417.github.io/TheEuropeanEmployee/admin_handbook_signature_pass.html';
+                    }, 1000);  // Optional: Add a slight delay of 1 second
+                }
+            });
+        });
+
+        // Configure the observer to watch for changes in the text content of the login-status element
+        observer.observe(loginStatusElement, { childList: true, subtree: true });
+    </script>
+
 </body>
 </html>
