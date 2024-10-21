@@ -121,6 +121,6 @@ function runGoogleScript() {
         }
     })
     .catch(error => {
-        console.error("***Error triggering Google Apps Script:", error);
+        console.error("Error triggering Google Apps Script:", error);
     });
 }
