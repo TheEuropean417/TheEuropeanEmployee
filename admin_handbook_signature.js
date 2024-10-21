@@ -96,7 +96,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
 // Function to trigger Google Apps Script after successful login
 function runGoogleScript() {
-    fetch('https://us-central1-the-european.cloudfunctions.net/CorsProxy_Adminsignaturedatabase?url=https://script.google.com/macros/s/AKfycby4yIz6BXBym2QjoXvUJFt821ZYaqj-BHQKmZ35_gMJQ3zIA8xbWBZN5G9ZyNJK2yYCwQ/exec', {
+    fetch('https://us-central1-the-european.cloudfunctions.net/CorsProxy_Adminsignaturedatabase?url=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -106,24 +106,23 @@ function runGoogleScript() {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.text(); // We use text to handle both JSON and non-JSON responses
+        return response.text(); // Handle non-JSON responses if necessary
     })
     .then(data => {
         try {
-            const jsonData = JSON.parse(data); // Attempt to parse JSON
+            const jsonData = JSON.parse(data);
             if (jsonData.success) {
                 console.log("Google Apps Script executed successfully.");
-                // Optionally, take further actions here
             } else {
                 console.error("Google Apps Script execution failed:", jsonData.message);
             }
         } catch (error) {
-            // If it's not valid JSON, we log the raw response for debugging
-            console.error("Response is not valid JSON:", data);
+            console.error("Invalid JSON response:", data);
         }
     })
     .catch(error => {
         console.error("Error triggering Google Apps Script:", error);
     });
 }
+
 
