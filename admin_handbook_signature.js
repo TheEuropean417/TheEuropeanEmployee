@@ -83,8 +83,27 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         document.getElementById('login-status').innerText = 'Successful login!';
         document.getElementById('login-status').style.color = 'green';
 
+        // Display the "Please wait for the database to load..." message in red
+        const waitMessage = document.createElement('p');
+        waitMessage.id = 'wait-message';
+        waitMessage.style.color = 'red';
+        waitMessage.innerHTML = 'Please wait for the database to load... <span id="countdown">8</span> seconds';
+        document.getElementById('login-status').appendChild(waitMessage);
+
         // Hide the login form
         document.getElementById('loginForm').style.display = 'none';
+
+        // Start 8-second countdown
+        let countdown = 8;
+        const countdownInterval = setInterval(function() {
+            countdown--;
+            document.getElementById('countdown').innerText = countdown;
+            if (countdown === 0) {
+                clearInterval(countdownInterval);
+                // Redirect to the new page after countdown finishes
+                window.location.href = 'https://theeuropean417.github.io/TheEuropeanEmployee/admin_handbook_signature_pass.html';
+            }
+        }, 1000);
 
         // Trigger the Google Apps Script after successful login
         runGoogleScript();
@@ -93,6 +112,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         document.getElementById('login-status').innerText = 'INCORRECT USER NAME OR PASSWORD';
     }
 });
+
 
 // Function to trigger Google Apps Script after successful login
 function runGoogleScript() {
