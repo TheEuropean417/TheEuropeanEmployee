@@ -96,7 +96,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
 // Function to trigger Google Apps Script after successful login
 function runGoogleScript() {
-    fetch('https://us-central1-the-european.cloudfunctions.net/CorsProxy_Adminsignaturedatabase?url=https://script.google.com/macros/s/AKfycby4yIz6BXBym2QjoXvUJFt821ZYaqj-BHQKmZ35_gMJQ3zIA8xbWBZN5G9ZyNJK2yYCwQ/exec', {
+    fetch('https://us-central1-the-european.cloudfunctions.net/CorsProxy_Adminsignaturedatabase?url=https://script.google.com/macros/s/AKfycby4yIz6BXBym2QjoXvUJFt821ZYaqj-BHQKmZ35_gMJQ3zIA8xbWBZN5G9ZyNJK2yYCwQ/exec?action=getEmployeeHandbookData', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -106,21 +106,41 @@ function runGoogleScript() {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.text(); // Handle non-JSON responses if necessary
+        return response.json(); // Expect JSON response
     })
     .then(data => {
-        try {
-            const jsonData = JSON.parse(data);  // Parse JSON safely
-            if (jsonData.success) {
-                console.log("Google Apps Script executed successfully.");
-            } else {
-                console.error("Google Apps Script execution failed:", jsonData.message);
-            }
-        } catch (error) {
-            console.error("Invalid JSON response:", data);  // Handle non-JSON responses
+        if (data.success) {
+            console.log("Employee Handbook Data:", data.data);
+            displayEmployeeData(data.data);  // Display the data on the page
+        } else {
+            console.error("Error fetching Employee Handbook Data:", data.message);
         }
     })
     .catch(error => {
         console.error("Error triggering Google Apps Script:", error);
     });
+}
+
+// Function to display the employee handbook data in a table
+function displayEmployeeData(employeeData) {
+    const table = document.createElement('table');
+    table.setAttribute('border', '1'); // Simple border for the table
+
+    // Iterate through the employee data (assuming the first row contains headers)
+    employeeData.forEach((row, rowIndex) => {
+        const tr = document.createElement('tr');
+
+        row.forEach(cellData => {
+            const cell = document.createElement(rowIndex === 0 ? 'th' : 'td');  // Use <th> for headers
+            cell.textContent = cellData;
+            tr.appendChild(cell);
+        });
+
+        table.appendChild(tr);
+    });
+
+    // Append the table to an element on your page
+    const dataContainer = document.getElementById('employee-data');
+    dataContainer.innerHTML = ''; // Clear any existing data
+    dataContainer.appendChild(table);
 }
