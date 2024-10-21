@@ -96,7 +96,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
 // Function to trigger Google Apps Script after successful login
 function runGoogleScript() {
-    fetch('https://us-central1-the-european.cloudfunctions.net/CorsProxy_Adminsignaturedatabase?url=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec', {
+    fetch('https://us-central1-the-european.cloudfunctions.net/CorsProxy_Adminsignaturedatabase?url=https://script.google.com/macros/s/AKfycby4yIz6BXBym2QjoXvUJFt821ZYaqj-BHQKmZ35_gMJQ3zIA8xbWBZN5G9ZyNJK2yYCwQ/exec', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -110,14 +110,14 @@ function runGoogleScript() {
     })
     .then(data => {
         try {
-            const jsonData = JSON.parse(data);
+            const jsonData = JSON.parse(data);  // Parse JSON safely
             if (jsonData.success) {
                 console.log("Google Apps Script executed successfully.");
             } else {
                 console.error("Google Apps Script execution failed:", jsonData.message);
             }
         } catch (error) {
-            console.error("Invalid JSON response:", data);
+            console.error("Invalid JSON response:", data);  // Handle non-JSON responses
         }
     })
     .catch(error => {
