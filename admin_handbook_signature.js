@@ -86,43 +86,55 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         // Hide the login form
         document.getElementById('loginForm').style.display = 'none';
 
-        // Trigger the Google Apps Script after successful login
-        runGoogleScript();
+        // Load and display the employee handbook data
+        loadEmployeeHandbookData();
     } else {
         document.getElementById('login-status').style.color = 'red';
         document.getElementById('login-status').innerText = 'INCORRECT USER NAME OR PASSWORD';
     }
 });
 
-// Function to trigger Google Apps Script after successful login
-function runGoogleScript() {
-    fetch('https://us-central1-the-european.cloudfunctions.net/CorsProxy_Adminsignaturedatabase?url=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text(); // Handle non-JSON responses if necessary
-    })
-    .then(data => {
-        try {
-            const jsonData = JSON.parse(data);
-            if (jsonData.success) {
-                console.log("Google Apps Script executed successfully.");
-            } else {
-                console.error("Google Apps Script execution failed:", jsonData.message);
-            }
-        } catch (error) {
-            console.error("Invalid JSON response:", data);
-        }
-    })
-    .catch(error => {
-        console.error("Error triggering Google Apps Script:", error);
-    });
+// Function to load employee handbook data from the specified Google Sheet
+function loadEmployeeHandbookData() {
+    const sheetID = '1IQuJehvj16Pi1toOxuNoNZmLf_yKNFnBtdwEZhuClvQ';
+    const sheetName = 'Employee_Handbook_Sign';
+    
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+    fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            // Clean up the response to make it parsable as JSON
+            const jsonData = JSON.parse(data.substring(47).slice(0, -2)); // Google Sheets returns wrapped JSON
+            const rows = jsonData.table.rows;
+
+            // Clear any previous content in the form container
+            const formContainer = document.querySelector('.form-container');
+            formContainer.innerHTML = '';
+
+            // Create a table dynamically to display the sheet data
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+
+            // Add rows from the sheet data
+            rows.forEach(row => {
+                const tableRow = document.createElement('tr');
+                row.c.forEach(cell => {
+                    const tableCell = document.createElement('td');
+                    tableCell.style.border = '1px solid #ddd';
+                    tableCell.style.padding = '8px';
+                    tableCell.textContent = cell ? cell.v : ''; // Display cell value, or empty string if null
+                    tableRow.appendChild(tableCell);
+                });
+                table.appendChild(tableRow);
+            });
+
+            // Add the table to the form container
+            formContainer.appendChild(table);
+        })
+        .catch(error => {
+            console.error('Error fetching or displaying employee handbook data:', error);
+            document.getElementById('login-status').innerText = 'Error loading employee handbook data.';
+        });
 }
-
-
