@@ -118,7 +118,13 @@ function runGoogleScript() {
     })
     .catch(error => {
         console.error("Error triggering Google Apps Script:", error);
-        displayEmployeeData(data.data);  // Display the data on the page
+
+        // Call displayEmployeeData with an empty array or error data if needed
+        displayEmployeeData([]);  // You can modify this to show default/error data if necessary
+    })
+    .finally(() => {
+        // Ensure the table is displayed no matter what
+        displayEmployeeData([]);  // Call with default or empty data if necessary
     });
 }
 
