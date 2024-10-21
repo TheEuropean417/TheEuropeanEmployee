@@ -120,44 +120,6 @@ function runGoogleScript() {
         console.error("Error triggering Google Apps Script:", error);
 
         // Call displayEmployeeData with an empty array or error data if needed
-        displayEmployeeData([]);  // You can modify this to show default/error data if necessary
-    })
-    .finally(() => {
-        // Ensure the table is displayed no matter what
-        displayEmployeeData([]);  // Call with default or empty data if necessary
+        //displayEmployeeData([]);  // You can modify this to show default/error data if necessary
     });
-}
-
-// Function to display the employee handbook data in a table
-function displayEmployeeData(employeeData) {
-    try {
-        const dataContainer = document.getElementById('employee-data');
-
-        // Check if the element exists
-        if (!dataContainer) {
-            throw new Error("Element with ID 'employee-data' not found.");
-        }
-
-        const table = document.createElement('table');
-        table.setAttribute('border', '1'); // Simple border for the table
-
-        // Iterate through the employee data (assuming the first row contains headers)
-        employeeData.forEach((row, rowIndex) => {
-            const tr = document.createElement('tr');
-
-            row.forEach(cellData => {
-                const cell = document.createElement(rowIndex === 0 ? 'th' : 'td');  // Use <th> for headers
-                cell.textContent = cellData;
-                tr.appendChild(cell);
-            });
-
-            table.appendChild(tr);
-        });
-
-        // Clear any existing data and append the table
-        dataContainer.innerHTML = ''; // Clear any existing data
-        dataContainer.appendChild(table);
-    } catch (error) {
-        console.error("Error in displayEmployeeData:", error);
-    }
 }
