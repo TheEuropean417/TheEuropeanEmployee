@@ -5,97 +5,152 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee Signature Dashboard</title>
   <style>
+    /* Global Style */
     body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f4f4f4;
-      color: #333;
+      font-family: 'Roboto', sans-serif;
+      background-color: #121212;  /* Dark background for futuristic look */
+      color: #e0e0e0; /* Light text for contrast */
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: linear-gradient(135deg, #1a73e8, #0b556f);
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* Futuristic gradient */
     }
+
+    /* Container */
     .container {
-      width: 80%;
-      background-color: #fff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      width: 85%;
+      background-color: #1a1a1a;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);  /* Sleek shadow for 3D effect */
+      border: 1px solid rgba(255, 255, 255, 0.1);  /* Slight border for definition */
+      backdrop-filter: blur(10px); /* Add futuristic blur effect */
     }
+
+    /* Title */
     h1 {
       text-align: center;
-      color: #0b556f;
+      font-size: 28px;
+      color: #00e5ff; /* Neon blue */
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
     }
+
+    /* Sort options */
     .sort-options {
       text-align: right;
       margin-bottom: 10px;
     }
-    .section {
-      margin: 20px 0;
-      border: 1px solid #ccc;
+    .sort-options select {
+      padding: 8px 12px;
+      background-color: #121212;
+      color: #00e5ff;
+      border: 1px solid #00e5ff;
       border-radius: 5px;
-      overflow: hidden;
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 229, 255, 0.3);
     }
-    .section-header {
-      background-color: #1a73e8;
-      color: #fff;
-      padding: 10px;
-      cursor: pointer;
-      font-size: 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .section-header:hover {
-      background-color: #0b556f;
-    }
-    .section-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.5s ease-in-out;
-      padding: 0 10px;
-    }
-    .expanded .section-content {
-      padding: 10px;
-    }
-    .column-headers, .row {
-      display: grid;
-      grid-template-columns: 1.5fr 1.5fr 1.5fr 3fr 1fr 1fr; /* Adjust column widths */
-      gap: 10px;
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-    .column-headers {
-      font-weight: bold;
-      background-color: #f0f0f0;
-    }
-    .row {
-      text-align: left;
-      font-size: 9px; /* Set font size for spreadsheet data to 9px */
-    }
-    .row > div {
-      overflow: hidden; /* Hide overflow */
-      text-overflow: ellipsis; /* Truncate text with ellipsis */
-      white-space: nowrap; /* Prevent wrapping by default */
-    }
-    .row .email {
-      white-space: normal; /* Allow email column to wrap */
-      word-wrap: break-word; /* Break long email addresses */
-    }
+
+    /* Loading Text */
     .loading {
       text-align: center;
       font-size: 20px;
-      color: red; /* Red loading text */
+      color: #ff1744; /* Futuristic red */
       padding: 20px 0;
+      animation: pulse 1s infinite; /* Pulse animation for futuristic effect */
     }
+
+    @keyframes pulse {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* Section Headers */
+    .section-header {
+      background-color: #1a1a1a;
+      color: #00e5ff;
+      padding: 15px;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 10px;
+      margin-bottom: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section-header:hover {
+      background-color: #00e5ff;
+      color: #121212;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.8);
+    }
+
     .icon {
       transform: rotate(90deg);
       transition: transform 0.3s ease;
     }
     .expanded .icon {
       transform: rotate(-90deg);
+    }
+
+    /* Section Content */
+    .section-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-in-out;
+      padding: 0 15px;
+      background-color: #121212;
+      border-radius: 10px;
+    }
+    .expanded .section-content {
+      padding: 15px;
+    }
+
+    /* Column Headers and Rows */
+    .column-headers, .row {
+      display: grid;
+      grid-template-columns: 1.5fr 1.5fr 1.5fr 3fr 1fr 1fr;
+      gap: 15px;
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #bdbdbd; /* Lighter gray for data text */
+    }
+    .column-headers {
+      font-weight: bold;
+      text-transform: uppercase;
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 5px;
+      color: #00e5ff;
+    }
+    .row {
+      font-size: 9px;
+      padding: 10px;
+    }
+
+    /* Glow Effects */
+    .section-content, .column-headers, .row > div {
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+    }
+
+    /* Email Column Wrapping */
+    .row .email {
+      white-space: normal;
+      word-wrap: break-word;
     }
   </style>
 </head>
@@ -172,13 +227,13 @@
       fetch('https://script.google.com/macros/s/AKfycbxhQfX_h-pIQxGZKhQC9Fga5P-YtwuSOj9kyoxhelbve8fswosUeMn8r4AdB7Gl1oaq/exec')
         .then(response => response.json())
         .then(data => {
-          const withoutSignatures = sortData(data.withSignatures, 1, sortOrder); // For Employees without signature completion
-          const withSignatures = sortData(data.withoutSignatures, 1, sortOrder); // For Employees with completed signatures
+          const withoutSignatures = sortData(data.withSignatures, 1, sortOrder);
+          const withSignatures = sortData(data.withoutSignatures, 1, sortOrder);
 
-          populateList('withoutSignatureList', withoutSignatures); // Populate without signature list
-          populateList('withSignatureList', withSignatures); // Populate with signature list
+          populateList('withoutSignatureList', withoutSignatures);
+          populateList('withSignatureList', withSignatures);
 
-          document.getElementById('loadingMessage').style.display = 'none'; // Hide loading message
+          document.getElementById('loadingMessage').style.display = 'none';
         })
         .catch(error => {
           console.error('Error fetching data:', error);
