@@ -18,7 +18,7 @@
       background: linear-gradient(135deg, #1a73e8, #0b556f);
     }
     .container {
-      width: 80%;
+      width: 90%;
       background-color: #fff;
       border-radius: 10px;
       padding: 20px;
@@ -28,37 +28,29 @@
       text-align: center;
       color: #0b556f;
     }
-    .section {
-      margin: 20px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      overflow: hidden;
+    .sort-options {
+      text-align: right;
+      margin-bottom: 10px;
     }
-    .section-header {
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
       background-color: #1a73e8;
       color: #fff;
-      padding: 10px;
       cursor: pointer;
-      font-size: 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
-    .section-header:hover {
+    th:hover {
       background-color: #0b556f;
-    }
-    .section-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.5s ease-in-out;
-    }
-    .section-content ul {
-      list-style-type: none;
-      padding: 10px;
-    }
-    .section-content li {
-      padding: 8px 0;
-      border-bottom: 1px solid #ddd;
     }
     .loading {
       text-align: center;
@@ -66,16 +58,11 @@
       color: #666;
       padding: 20px 0;
     }
-    .icon {
-      transform: rotate(90deg);
-      transition: transform 0.3s ease;
-    }
-    .expanded .icon {
-      transform: rotate(-90deg);
-    }
-    .sort-options {
-      text-align: right;
-      margin-bottom: 10px;
+    .section-title {
+      margin-top: 30px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
     }
   </style>
 </head>
@@ -91,62 +78,59 @@
         <option value="desc">Z-A</option>
       </select>
     </div>
-    
-    <div class="section" id="withoutSignatureSection">
-      <div class="section-header" onclick="toggleSection('withoutSignatureSection')">
-        <span>Employees without signature completion</span>
-        <span class="icon">➤</span>
-      </div>
-      <div class="section-content">
-        <ul id="withoutSignatureList">
-          <!-- Data will be dynamically populated here -->
-        </ul>
-      </div>
+
+    <div class="section">
+      <h2 class="section-title">Employees without Signature Completion</h2>
+      <table id="withoutSignatureTable">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Employee ID</th>
+            <th>Email</th>
+            <th>Invitation Sent</th>
+            <th>Completed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Data will be populated here -->
+        </tbody>
+      </table>
     </div>
-    
-    <div class="section" id="withSignatureSection">
-      <div class="section-header" onclick="toggleSection('withSignatureSection')">
-        <span>Employees with completed signatures</span>
-        <span class="icon">➤</span>
-      </div>
-      <div class="section-content">
-        <ul id="withSignatureList">
-          <!-- Data will be dynamically populated here -->
-        </ul>
-      </div>
+
+    <div class="section">
+      <h2 class="section-title">Employees with Completed Signatures</h2>
+      <table id="withSignatureTable">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Employee ID</th>
+            <th>Email</th>
+            <th>Invitation Sent</th>
+            <th>Completed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Data will be populated here -->
+        </tbody>
+      </table>
     </div>
   </div>
 
   <script>
-    function toggleSection(sectionId) {
-      const section = document.getElementById(sectionId);
-      const content = section.querySelector('.section-content');
-      const icon = section.querySelector('.icon');
-      
-      if (content.style.maxHeight) {
-        content.style.maxHeight = null;
-        section.classList.remove('expanded');
-      } else {
-        content.style.maxHeight = content.scrollHeight + "px";
-        section.classList.add('expanded');
-      }
-    }
-
     function loadData() {
       const sortOrder = document.getElementById('sortOrder').value;
 
       fetch('https://script.google.com/macros/s/AKfycbxhQfX_h-pIQxGZKhQC9Fga5P-YtwuSOj9kyoxhelbve8fswosUeMn8r4AdB7Gl1oaq/exec')
         .then(response => response.json())
         .then(data => {
-          // Sort the data based on the last name (column 2)
           const withoutSignatures = sortData(data.withoutSignatures, 2, sortOrder);
           const withSignatures = sortData(data.withSignatures, 2, sortOrder);
 
-          // Populate the lists
-          populateList('withoutSignatureList', withoutSignatures);
-          populateList('withSignatureList', withSignatures);
+          populateTable('withoutSignatureTable', withoutSignatures);
+          populateTable('withSignatureTable', withSignatures);
 
-          // Hide the loading message
           document.getElementById('loadingMessage').style.display = 'none';
         })
         .catch(error => {
@@ -164,18 +148,24 @@
       });
     }
 
-    function populateList(elementId, data) {
-      const listElement = document.getElementById(elementId);
-      listElement.innerHTML = '';
+    function populateTable(tableId, data) {
+      const tableBody = document.getElementById(tableId).querySelector('tbody');
+      tableBody.innerHTML = '';  // Clear any existing data
 
       data.forEach(row => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `First Name: ${row[1]}, Last Name: ${row[2]}, Employee ID: ${row[0]}, Email: ${row[3]}, Invitation Sent: ${row[4]}, Completed: ${row[5]}`;
-        listElement.appendChild(listItem);
+        const tableRow = document.createElement('tr');
+        tableRow.innerHTML = `
+          <td>${row[1]}</td>  <!-- First Name -->
+          <td>${row[2]}</td>  <!-- Last Name -->
+          <td>${row[0]}</td>  <!-- Employee ID -->
+          <td>${row[3]}</td>  <!-- Email -->
+          <td>${row[4]}</td>  <!-- Invitation Sent -->
+          <td>${row[5]}</td>  <!-- Completed -->
+        `;
+        tableBody.appendChild(tableRow);
       });
     }
 
-    // Load data when the page is ready
     document.addEventListener('DOMContentLoaded', loadData);
   </script>
 </body>
