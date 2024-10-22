@@ -60,27 +60,19 @@
     .expanded .section-content {
       padding: 10px;
     }
-    .column-headers {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
+    .column-headers, .row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr); /* Create 6 equal-width columns */
+      gap: 10px;
       padding: 10px;
       border-bottom: 1px solid #ddd;
-      text-align: left;
+    }
+    .column-headers {
+      font-weight: bold;
+      background-color: #f0f0f0;
     }
     .row {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #ddd;
       text-align: left;
-      width: 100%;
-    }
-    .row > div {
-      flex: 1;
-      text-align: left;  /* Ensures left alignment for all columns */
-      padding-left: 5px;
-      white-space: nowrap; /* Prevents text from wrapping */
     }
     .loading {
       text-align: center;
