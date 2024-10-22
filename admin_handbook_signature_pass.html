@@ -66,12 +66,14 @@
       font-weight: bold;
       padding: 10px;
       border-bottom: 1px solid #ddd;
+      text-align: left;
     }
     .row {
       display: flex;
       justify-content: space-between;
       padding: 8px 0;
       border-bottom: 1px solid #ddd;
+      text-align: left;
     }
     .loading {
       text-align: center;
@@ -161,9 +163,11 @@
       fetch('https://script.google.com/macros/s/AKfycbxhQfX_h-pIQxGZKhQC9Fga5P-YtwuSOj9kyoxhelbve8fswosUeMn8r4AdB7Gl1oaq/exec')
         .then(response => response.json())
         .then(data => {
-          const withoutSignatures = sortData(data.withoutSignatures, 2, sortOrder);
-          const withSignatures = sortData(data.withSignatures, 2, sortOrder);
+          // Sort the data by last name (B column in the spreadsheet, which is index 1 in the array)
+          const withoutSignatures = sortData(data.withoutSignatures, 1, sortOrder);
+          const withSignatures = sortData(data.withSignatures, 1, sortOrder);
 
+          // Populate the lists under the correct headers
           populateList('withoutSignatureList', withoutSignatures);
           populateList('withSignatureList', withSignatures);
 
@@ -192,12 +196,12 @@
         const rowElement = document.createElement('div');
         rowElement.classList.add('row');
         rowElement.innerHTML = `
-          <div>${row[1]}</div>  <!-- First Name -->
-          <div>${row[2]}</div>  <!-- Last Name -->
-          <div>${row[0]}</div>  <!-- Employee ID -->
-          <div>${row[3]}</div>  <!-- Email -->
-          <div>${row[4]}</div>  <!-- Invitation Sent -->
-          <div>${row[5]}</div>  <!-- Completed -->
+          <div>${row[0]}</div>  <!-- First Name (Column A) -->
+          <div>${row[1]}</div>  <!-- Last Name (Column B) -->
+          <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
+          <div>${row[3]}</div>  <!-- Email (Column D) -->
+          <div>${row[4]}</div>  <!-- Invitation Sent (Column E) -->
+          <div>${row[5]}</div>  <!-- Completed (Column F) -->
         `;
         listElement.appendChild(rowElement);
       });
