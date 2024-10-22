@@ -62,7 +62,7 @@
     }
     .column-headers, .row {
       display: grid;
-      grid-template-columns: repeat(6, 1fr); /* Create 6 equal-width columns */
+      grid-template-columns: 1.5fr 1.5fr 1.5fr 3fr 1fr 1fr; /* Adjust column widths */
       gap: 10px;
       padding: 10px;
       border-bottom: 1px solid #ddd;
@@ -73,6 +73,15 @@
     }
     .row {
       text-align: left;
+    }
+    .row > div {
+      overflow: hidden; /* Hide overflow */
+      text-overflow: ellipsis; /* Truncate text with ellipsis */
+      white-space: nowrap; /* Prevent wrapping by default */
+    }
+    .row .email {
+      white-space: normal; /* Allow email column to wrap */
+      word-wrap: break-word; /* Break long email addresses */
     }
     .loading {
       text-align: center;
@@ -196,7 +205,7 @@
           <div>${row[0]}</div>  <!-- First Name (Column A) -->
           <div>${row[1]}</div>  <!-- Last Name (Column B) -->
           <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
-          <div>${row[3]}</div>  <!-- Email (Column D) -->
+          <div class="email">${row[3]}</div>  <!-- Email (Column D) -->
           <div>${row[4]}</div>  <!-- Invitation Sent (Column E) -->
           <div>${row[5]}</div>  <!-- Completed (Column F) -->
         `;
