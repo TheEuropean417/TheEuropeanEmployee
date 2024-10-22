@@ -18,7 +18,7 @@
       background: linear-gradient(135deg, #1a73e8, #0b556f);
     }
     .container {
-      width: 90%;
+      width: 80%;
       background-color: #fff;
       border-radius: 10px;
       padding: 20px;
@@ -32,25 +32,46 @@
       text-align: right;
       margin-bottom: 10px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table, th, td {
+    .section {
+      margin: 20px 0;
       border: 1px solid #ccc;
+      border-radius: 5px;
+      overflow: hidden;
     }
-    th, td {
-      padding: 10px;
-      text-align: left;
-    }
-    th {
+    .section-header {
       background-color: #1a73e8;
       color: #fff;
+      padding: 10px;
       cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    th:hover {
+    .section-header:hover {
       background-color: #0b556f;
+    }
+    .section-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-in-out;
+      padding: 0 10px;
+    }
+    .expanded .section-content {
+      padding: 10px;
+    }
+    .column-headers {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #ddd;
     }
     .loading {
       text-align: center;
@@ -58,11 +79,12 @@
       color: #666;
       padding: 20px 0;
     }
-    .section-title {
-      margin-top: 30px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
+    .icon {
+      transform: rotate(90deg);
+      transition: transform 0.3s ease;
+    }
+    .expanded .icon {
+      transform: rotate(-90deg);
     }
   </style>
 </head>
@@ -79,46 +101,60 @@
       </select>
     </div>
 
-    <div class="section">
-      <h2 class="section-title">Employees without Signature Completion</h2>
-      <table id="withoutSignatureTable">
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Employee ID</th>
-            <th>Email</th>
-            <th>Invitation Sent</th>
-            <th>Completed</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Data will be populated here -->
-        </tbody>
-      </table>
+    <!-- Employees without Signature Completion Section -->
+    <div class="section" id="withoutSignatureSection">
+      <div class="section-header" onclick="toggleSection('withoutSignatureSection')">
+        <span>Employees without Signature Completion</span>
+        <span class="icon">➤</span>
+      </div>
+      <div class="section-content">
+        <div class="column-headers">
+          <div>First Name</div>
+          <div>Last Name</div>
+          <div>Employee ID</div>
+          <div>Email</div>
+          <div>Invitation Sent</div>
+          <div>Completed</div>
+        </div>
+        <div id="withoutSignatureList"></div>
+      </div>
     </div>
 
-    <div class="section">
-      <h2 class="section-title">Employees with Completed Signatures</h2>
-      <table id="withSignatureTable">
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Employee ID</th>
-            <th>Email</th>
-            <th>Invitation Sent</th>
-            <th>Completed</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Data will be populated here -->
-        </tbody>
-      </table>
+    <!-- Employees with Completed Signatures Section -->
+    <div class="section" id="withSignatureSection">
+      <div class="section-header" onclick="toggleSection('withSignatureSection')">
+        <span>Employees with Completed Signatures</span>
+        <span class="icon">➤</span>
+      </div>
+      <div class="section-content">
+        <div class="column-headers">
+          <div>First Name</div>
+          <div>Last Name</div>
+          <div>Employee ID</div>
+          <div>Email</div>
+          <div>Invitation Sent</div>
+          <div>Completed</div>
+        </div>
+        <div id="withSignatureList"></div>
+      </div>
     </div>
   </div>
 
   <script>
+    function toggleSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      const content = section.querySelector('.section-content');
+      const icon = section.querySelector('.icon');
+      
+      if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+        section.classList.remove('expanded');
+      } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+        section.classList.add('expanded');
+      }
+    }
+
     function loadData() {
       const sortOrder = document.getElementById('sortOrder').value;
 
@@ -128,8 +164,8 @@
           const withoutSignatures = sortData(data.withoutSignatures, 2, sortOrder);
           const withSignatures = sortData(data.withSignatures, 2, sortOrder);
 
-          populateTable('withoutSignatureTable', withoutSignatures);
-          populateTable('withSignatureTable', withSignatures);
+          populateList('withoutSignatureList', withoutSignatures);
+          populateList('withSignatureList', withSignatures);
 
           document.getElementById('loadingMessage').style.display = 'none';
         })
@@ -148,21 +184,22 @@
       });
     }
 
-    function populateTable(tableId, data) {
-      const tableBody = document.getElementById(tableId).querySelector('tbody');
-      tableBody.innerHTML = '';  // Clear any existing data
+    function populateList(elementId, data) {
+      const listElement = document.getElementById(elementId);
+      listElement.innerHTML = '';  // Clear any existing data
 
       data.forEach(row => {
-        const tableRow = document.createElement('tr');
-        tableRow.innerHTML = `
-          <td>${row[1]}</td>  <!-- First Name -->
-          <td>${row[2]}</td>  <!-- Last Name -->
-          <td>${row[0]}</td>  <!-- Employee ID -->
-          <td>${row[3]}</td>  <!-- Email -->
-          <td>${row[4]}</td>  <!-- Invitation Sent -->
-          <td>${row[5]}</td>  <!-- Completed -->
+        const rowElement = document.createElement('div');
+        rowElement.classList.add('row');
+        rowElement.innerHTML = `
+          <div>${row[1]}</div>  <!-- First Name -->
+          <div>${row[2]}</div>  <!-- Last Name -->
+          <div>${row[0]}</div>  <!-- Employee ID -->
+          <div>${row[3]}</div>  <!-- Email -->
+          <div>${row[4]}</div>  <!-- Invitation Sent -->
+          <div>${row[5]}</div>  <!-- Completed -->
         `;
-        tableBody.appendChild(tableRow);
+        listElement.appendChild(rowElement);
       });
     }
 
