@@ -73,7 +73,7 @@
     }
     .row {
       text-align: left;
-      font-size: 11px; /* Set font size for spreadsheet data to 9px */
+      font-size: 9px; /* Set font size for spreadsheet data to 9px */
     }
     .row > div {
       overflow: hidden; /* Hide overflow */
@@ -87,7 +87,7 @@
     .loading {
       text-align: center;
       font-size: 20px;
-      color: #ff0000;
+      color: red; /* Red loading text */
       padding: 20px 0;
     }
     .icon {
@@ -112,25 +112,6 @@
       </select>
     </div>
 
-    <!-- Employees with Completed Signatures Section -->
-    <div class="section" id="withSignatureSection">
-      <div class="section-header" onclick="toggleSection('withSignatureSection')">
-        <span>Employees with Completed Signatures</span>
-        <span class="icon">➤</span>
-      </div>
-      <div class="section-content">
-        <div class="column-headers">
-          <div>First Name</div>
-          <div>Last Name</div>
-          <div>Employee ID</div>
-          <div>Email</div>
-          <div>Invitation Sent</div>
-          <div>Completed</div>
-        </div>
-        <div id="withSignatureList"></div>
-      </div>
-    </div>
-
     <!-- Employees without Signature Completion Section -->
     <div class="section" id="withoutSignatureSection">
       <div class="section-header" onclick="toggleSection('withoutSignatureSection')">
@@ -147,6 +128,25 @@
           <div>Completed</div>
         </div>
         <div id="withoutSignatureList"></div>
+      </div>
+    </div>
+
+    <!-- Employees with Completed Signatures Section -->
+    <div class="section" id="withSignatureSection">
+      <div class="section-header" onclick="toggleSection('withSignatureSection')">
+        <span>Employees with Completed Signatures</span>
+        <span class="icon">➤</span>
+      </div>
+      <div class="section-content">
+        <div class="column-headers">
+          <div>First Name</div>
+          <div>Last Name</div>
+          <div>Employee ID</div>
+          <div>Email</div>
+          <div>Invitation Sent</div>
+          <div>Completed</div>
+        </div>
+        <div id="withSignatureList"></div>
       </div>
     </div>
   </div>
@@ -172,13 +172,13 @@
       fetch('https://script.google.com/macros/s/AKfycbxhQfX_h-pIQxGZKhQC9Fga5P-YtwuSOj9kyoxhelbve8fswosUeMn8r4AdB7Gl1oaq/exec')
         .then(response => response.json())
         .then(data => {
-          const withSignatures = sortData(data.withoutSignatures, 1, sortOrder);
-          const withoutSignatures = sortData(data.withSignatures, 1, sortOrder);
+          const withoutSignatures = sortData(data.withSignatures, 1, sortOrder); // For Employees without signature completion
+          const withSignatures = sortData(data.withoutSignatures, 1, sortOrder); // For Employees with completed signatures
 
-          populateList('withSignatureList', withSignatures);
-          populateList('withoutSignatureList', withoutSignatures);
+          populateList('withoutSignatureList', withoutSignatures); // Populate without signature list
+          populateList('withSignatureList', withSignatures); // Populate with signature list
 
-          document.getElementById('loadingMessage').style.display = 'none';
+          document.getElementById('loadingMessage').style.display = 'none'; // Hide loading message
         })
         .catch(error => {
           console.error('Error fetching data:', error);
