@@ -78,8 +78,9 @@
     }
     .row > div {
       flex: 1;
-      text-align: left;  /* Ensures left alignment for each cell */
+      text-align: left;  /* Ensures left alignment for all columns */
       padding-left: 5px;
+      white-space: nowrap; /* Prevents text from wrapping */
     }
     .loading {
       text-align: center;
@@ -169,7 +170,6 @@
       fetch('https://script.google.com/macros/s/AKfycbxhQfX_h-pIQxGZKhQC9Fga5P-YtwuSOj9kyoxhelbve8fswosUeMn8r4AdB7Gl1oaq/exec')
         .then(response => response.json())
         .then(data => {
-          // Flip the data as requested: Completed Signatures shows data meant for without signatures and vice versa
           const withSignatures = sortData(data.withoutSignatures, 1, sortOrder);
           const withoutSignatures = sortData(data.withSignatures, 1, sortOrder);
 
