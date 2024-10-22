@@ -5,7 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee Signature Dashboard</title>
   <style>
-    /* Add the same styles from the previous example */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #1a73e8, #0b556f);
+    }
+    .container {
+      width: 60%;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #0b556f;
+    }
+    .section {
+      margin: 20px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .section-header {
+      background-color: #1a73e8;
+      color: #fff;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-header:hover {
+      background-color: #0b556f;
+    }
+    .section-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-in-out;
+    }
+    .section-content ul {
+      list-style-type: none;
+      padding: 10px;
+    }
+    .section-content li {
+      padding: 8px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .loading {
+      text-align: center;
+      font-size: 20px;
+      color: #666;
+      padding: 20px 0;
+    }
+    .icon {
+      transform: rotate(90deg);
+      transition: transform 0.3s ease;
+    }
+    .expanded .icon {
+      transform: rotate(-90deg);
+    }
   </style>
 </head>
 <body>
@@ -54,7 +121,7 @@
     }
 
     function loadData() {
-      fetch('/employees')
+      fetch('https://script.google.com/macros/s/AKfycbxhQfX_h-pIQxGZKhQC9Fga5P-YtwuSOj9kyoxhelbve8fswosUeMn8r4AdB7Gl1oaq/exec')
         .then(response => response.json())
         .then(data => {
           populateList('withoutSignatureList', data.withoutSignatures);
