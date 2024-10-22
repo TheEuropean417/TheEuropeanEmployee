@@ -74,6 +74,12 @@
       padding: 8px 0;
       border-bottom: 1px solid #ddd;
       text-align: left;
+      width: 100%;
+    }
+    .row > div {
+      flex: 1;
+      text-align: left;  /* Ensures left alignment for each cell */
+      padding-left: 5px;
     }
     .loading {
       text-align: center;
@@ -103,25 +109,6 @@
       </select>
     </div>
 
-    <!-- Employees without Signature Completion Section -->
-    <div class="section" id="withoutSignatureSection">
-      <div class="section-header" onclick="toggleSection('withoutSignatureSection')">
-        <span>Employees without Signature Completion</span>
-        <span class="icon">➤</span>
-      </div>
-      <div class="section-content">
-        <div class="column-headers">
-          <div>First Name</div>
-          <div>Last Name</div>
-          <div>Employee ID</div>
-          <div>Email</div>
-          <div>Invitation Sent</div>
-          <div>Completed</div>
-        </div>
-        <div id="withoutSignatureList"></div>
-      </div>
-    </div>
-
     <!-- Employees with Completed Signatures Section -->
     <div class="section" id="withSignatureSection">
       <div class="section-header" onclick="toggleSection('withSignatureSection')">
@@ -138,6 +125,25 @@
           <div>Completed</div>
         </div>
         <div id="withSignatureList"></div>
+      </div>
+    </div>
+
+    <!-- Employees without Signature Completion Section -->
+    <div class="section" id="withoutSignatureSection">
+      <div class="section-header" onclick="toggleSection('withoutSignatureSection')">
+        <span>Employees without Signature Completion</span>
+        <span class="icon">➤</span>
+      </div>
+      <div class="section-content">
+        <div class="column-headers">
+          <div>First Name</div>
+          <div>Last Name</div>
+          <div>Employee ID</div>
+          <div>Email</div>
+          <div>Invitation Sent</div>
+          <div>Completed</div>
+        </div>
+        <div id="withoutSignatureList"></div>
       </div>
     </div>
   </div>
@@ -163,13 +169,12 @@
       fetch('https://script.google.com/macros/s/AKfycbxhQfX_h-pIQxGZKhQC9Fga5P-YtwuSOj9kyoxhelbve8fswosUeMn8r4AdB7Gl1oaq/exec')
         .then(response => response.json())
         .then(data => {
-          // Sort the data by last name (B column in the spreadsheet, which is index 1 in the array)
-          const withoutSignatures = sortData(data.withoutSignatures, 1, sortOrder);
-          const withSignatures = sortData(data.withSignatures, 1, sortOrder);
+          // Flip the data as requested: Completed Signatures shows data meant for without signatures and vice versa
+          const withSignatures = sortData(data.withoutSignatures, 1, sortOrder);
+          const withoutSignatures = sortData(data.withSignatures, 1, sortOrder);
 
-          // Populate the lists under the correct headers
-          populateList('withoutSignatureList', withoutSignatures);
           populateList('withSignatureList', withSignatures);
+          populateList('withoutSignatureList', withoutSignatures);
 
           document.getElementById('loadingMessage').style.display = 'none';
         })
