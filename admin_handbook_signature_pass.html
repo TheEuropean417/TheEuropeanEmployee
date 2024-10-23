@@ -288,6 +288,18 @@
             <div>${sendInviteButton}</div>  <!-- Invitation Sent (Column E) -->
             <div>${row[5]}</div>  <!-- Completed (Column F) -->
           `;
+        } else if (completed === 'yes') {
+          const resendInviteButton = email
+            ? `<button class="btn-send-invite" onclick="sendInvitation('${row[0]}', '${row[1]}', '${row[3]}', '${row[2]}')">RESEND INVITATION</button>`
+            : '';
+          rowElement.innerHTML = `
+            <div>${row[0]}</div>  <!-- First Name (Column A) -->
+            <div>${row[1]}</div>  <!-- Last Name (Column B) -->
+            <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
+            <div class="email">${email}</div>  <!-- Email (Column D) -->
+            <div>${resendInviteButton}</div>  <!-- Invitation Sent (Column E) -->
+            <div>${row[5]}</div>  <!-- Completed (Column F) -->
+          `;
         } else {
           rowElement.innerHTML = `
             <div>${row[0]}</div>  <!-- First Name (Column A) -->
