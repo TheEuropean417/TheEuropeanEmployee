@@ -276,43 +276,60 @@
         rowElement.classList.add('row');
 
         // If "Invitation Sent" or "Completed" have any value, no button is added
-        if (!invitationSent && !completed) {
-          const sendInviteButton = email
-            ? `<button class="btn-send-invite" onclick="sendInvitation('${row[0]}', '${row[1]}', '${row[3]}', '${row[2]}')">SEND INVITATION</button>`
-            : '';
-          rowElement.innerHTML = `
-            <div>${row[0]}</div>  <!-- First Name (Column A) -->
-            <div>${row[1]}</div>  <!-- Last Name (Column B) -->
-            <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
-            <div class="email">${email}</div>  <!-- Email (Column D) -->
-            <div>${sendInviteButton}</div>  <!-- Invitation Sent (Column E) -->
-            <div>${row[5]}</div>  <!-- Completed (Column F) -->
-          `;
-        } else if (completed === 'yes') {
-          const resendInviteButton = email
-            ? `<button class="btn-send-invite" onclick="sendInvitation('${row[0]}', '${row[1]}', '${row[3]}', '${row[2]}')">RESEND INVITATION</button>`
-            : '';
-          rowElement.innerHTML = `
-            <div>${row[0]}</div>  <!-- First Name (Column A) -->
-            <div>${row[1]}</div>  <!-- Last Name (Column B) -->
-            <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
-            <div class="email">${email}</div>  <!-- Email (Column D) -->
-            <div>${resendInviteButton}</div>  <!-- Invitation Sent (Column E) -->
-            <div>${row[5]}</div>  <!-- Completed (Column F) -->
-          `;
-        } else {
-          rowElement.innerHTML = `
-            <div>${row[0]}</div>  <!-- First Name (Column A) -->
-            <div>${row[1]}</div>  <!-- Last Name (Column B) -->
-            <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
-            <div class="email">${email}</div>  <!-- Email (Column D) -->
-            <div>${invitationSent}</div>  <!-- Invitation Sent (Column E) -->
-            <div>${completed}</div>  <!-- Completed (Column F) -->
-          `;
+        if (elementId === 'withoutSignatureList') {
+          // Employees without Signature Completion Section logic
+          if (!invitationSent && !completed) {
+            const sendInviteButton = email
+              ? `<button class="btn-send-invite" onclick="sendInvitation('${row[0]}', '${row[1]}', '${row[3]}', '${row[2]}')">SEND INVITATION</button>`
+              : '';
+            rowElement.innerHTML = `
+              <div>${row[0]}</div>  <!-- First Name (Column A) -->
+              <div>${row[1]}</div>  <!-- Last Name (Column B) -->
+              <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
+              <div class="email">${email}</div>  <!-- Email (Column D) -->
+              <div>${sendInviteButton}</div>  <!-- Invitation Sent (Column E) -->
+              <div>${row[5]}</div>  <!-- Completed (Column F) -->
+            `;
+          } else {
+            rowElement.innerHTML = `
+              <div>${row[0]}</div>  <!-- First Name (Column A) -->
+              <div>${row[1]}</div>  <!-- Last Name (Column B) -->
+              <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
+              <div class="email">${email}</div>  <!-- Email (Column D) -->
+              <div>${invitationSent}</div>  <!-- Invitation Sent (Column E) -->
+              <div>${completed}</div>  <!-- Completed (Column F) -->
+            `;
+          }
+        } else if (elementId === 'withSignatureList') {
+          // Employees with Completed Signatures Section logic
+          if (invitationSent === 'yes') {
+            const resendInviteButton = email
+              ? `<button class="btn-send-invite" onclick="sendInvitation('${row[0]}', '${row[1]}', '${row[3]}', '${row[2]}')">RESEND INVITATION</button>`
+              : '';
+            rowElement.innerHTML = `
+              <div>${row[0]}</div>  <!-- First Name (Column A) -->
+              <div>${row[1]}</div>  <!-- Last Name (Column B) -->
+              <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
+              <div class="email">${email}</div>  <!-- Email (Column D) -->
+              <div>${resendInviteButton}</div>  <!-- Invitation Sent (Column E) -->
+              <div>${row[5]}</div>  <!-- Completed (Column F) -->
+            `;
+          } else {
+            rowElement.innerHTML = `
+              <div>${row[0]}</div>  <!-- First Name (Column A) -->
+              <div>${row[1]}</div>  <!-- Last Name (Column B) -->
+              <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
+              <div class="email">${email}</div>  <!-- Email (Column D) -->
+              <div>${invitationSent}</div>  <!-- Invitation Sent (Column E) -->
+              <div>${completed}</div>  <!-- Completed (Column F) -->
+            `;
+          }
         }
+
         listElement.appendChild(rowElement);
       });
     }
+
 
     function sendInvitation(firstName, lastName, email, employeeId) {
       const proxyURL = 'https://us-central1-the-european.cloudfunctions.net/CorsProxyAdminHandbookSignaturePass';  // Google Cloud Function URL
