@@ -138,16 +138,17 @@
       word-wrap: break-word;
     }
 
-    /* Button styling for the "SEND INVITATION" button */
+    /* Refined Button styling for the "SEND INVITATION" button */
     .btn-send-invite {
-      padding: 6px 12px;
-      font-size: 12px;
+      padding: 4px 10px;
+      font-size: 11px;
       background-color: #6e4c1e;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 4px;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      font-family: 'Merriweather', serif;
     }
 
     .btn-send-invite:hover {
@@ -173,26 +174,7 @@
       </select>
     </div>
 
-    <!-- Employees with Completed Signatures Section (FLIPPED) -->
-    <div class="section" id="withSignatureSection">
-      <div class="section-header" onclick="toggleSection('withSignatureSection')">
-        <span>Employees with Completed Signatures</span>
-        <span class="icon">➤</span>
-      </div>
-      <div class="section-content">
-        <div class="column-headers">
-          <div>First Name</div>
-          <div>Last Name</div>
-          <div>Employee ID</div>
-          <div>Email</div>
-          <div>Invitation Sent</div>
-          <div>Completed</div>
-        </div>
-        <div id="withSignatureList"></div>
-      </div>
-    </div>
-
-    <!-- Employees without Signature Completion Section (FLIPPED) -->
+    <!-- Employees without Signature Completion Section (FIRST) -->
     <div class="section" id="withoutSignatureSection">
       <div class="section-header" onclick="toggleSection('withoutSignatureSection')">
         <span>Employees without Signature Completion</span>
@@ -208,6 +190,25 @@
           <div>Completed</div>
         </div>
         <div id="withoutSignatureList"></div>
+      </div>
+    </div>
+
+    <!-- Employees with Completed Signatures Section (SECOND) -->
+    <div class="section" id="withSignatureSection">
+      <div class="section-header" onclick="toggleSection('withSignatureSection')">
+        <span>Employees with Completed Signatures</span>
+        <span class="icon">➤</span>
+      </div>
+      <div class="section-content">
+        <div class="column-headers">
+          <div>First Name</div>
+          <div>Last Name</div>
+          <div>Employee ID</div>
+          <div>Email</div>
+          <div>Invitation Sent</div>
+          <div>Completed</div>
+        </div>
+        <div id="withSignatureList"></div>
       </div>
     </div>
   </div>
@@ -238,12 +239,12 @@
       fetch('https://script.google.com/macros/s/AKfycbxhQfX_h-pIQxGZKhQC9Fga5P-YtwuSOj9kyoxhelbve8fswosUeMn8r4AdB7Gl1oaq/exec')
         .then(response => response.json())
         .then(data => {
-          // Flip the data population to match the new order
+          // Flip the data population to match the correct lists
           const withSignatures = sortData(data.withoutSignatures, 1, sortOrder);  // Employees WITH signatures
           const withoutSignatures = sortData(data.withSignatures, 1, sortOrder);  // Employees WITHOUT signatures
 
-          populateList('withSignatureList', withSignatures);
           populateList('withoutSignatureList', withoutSignatures);
+          populateList('withSignatureList', withSignatures);
 
           document.getElementById('loadingMessage').style.display = 'none'; // Hide loading message
         })
