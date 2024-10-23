@@ -369,6 +369,7 @@
         console.log('Result from proxy:', result);
         if (result.success) {
           alert('Invitation sent successfully!');
+          location.reload();  // Refresh the page after successful invitation
         } else {
           console.error('Failed to send invitation:', result);
           alert('Failed to send invitation.');
@@ -379,6 +380,7 @@
         alert('Error sending invitation.');
       });
     }
+
 
 
 
