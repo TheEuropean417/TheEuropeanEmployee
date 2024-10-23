@@ -303,9 +303,10 @@
     }
 
     function sendInvitation(firstName, lastName, email, employeeId) {
-      const proxyURL = 'https://us-central1-the-european.cloudfunctions.net/CorsProxyAdminHandbookSignaturePass';  // Your Google Cloud Function URL
-      const targetURL = 'https://script.google.com/macros/s/AKfycbxkDH0hASdOUTBwO5_8-XbuWXEdy61OYaTX4HGEjPZ1F79XzQp9NYLues1VSLLmwwTU/exec';  // Your Google Apps Script URL
+      const proxyURL = 'https://us-central1-the-european.cloudfunctions.net/CorsProxyAdminHandbookSignaturePass';  // Google Cloud Function URL
+      const targetURL = 'https://script.google.com/macros/s/AKfycbxkDH0hASdOUTBwO5_8-XbuWXEdy61OYaTX4HGEjPZ1F79XzQp9NYLues1VSLLmwwTU/exec';  // Google Apps Script URL
 
+      // Prepare the payload
       const data = {
         targetUrl: targetURL,
         payload: {
@@ -316,24 +317,40 @@
         }
       };
 
+      // Log data for debugging
+      console.log('Preparing to send POST request to proxy:', proxyURL);
+      console.log('Payload to be sent:', JSON.stringify(data));
+
       fetch(proxyURL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data)  // Ensure the data is stringified JSON
       })
-      .then(response => response.json())
+      .then(response => {
+        console.log('Response status from proxy:', response.status);
+        
+        // Check if the response status is not OK
+        if (!response.ok) {
+          console.error('Error response from proxy:', response.status, response.statusText);
+        }
+        
+        return response.json();  // Attempt to parse the response as JSON
+      })
       .then(result => {
+        console.log('Result from proxy:', result);
         if (result.success) {
           alert('Invitation sent successfully!');
         } else {
+          console.error('Failed to send invitation:', result);
           alert('Failed to send invitation.');
         }
       })
       .catch(error => {
-        console.error('Error sending invitation:', error);
+        console.error('Error during the invitation process:', error);
         alert('Error sending invitation.');
       });
     }
+
 
 
     document.addEventListener('DOMContentLoaded', loadData);
