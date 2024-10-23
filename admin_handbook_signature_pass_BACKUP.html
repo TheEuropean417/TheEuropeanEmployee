@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Signature Dashboard</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Merriweather', serif;
+      background-color: #f7f5f2; /* Warm, cafe-like background */
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; /* Start from the top for better scrolling */
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e3d5ca, #c9b2a4); /* Elegant gradient */
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for elegance */
+      margin: 40px 0;
+      border: 1px solid #ddd;
+    }
+
+    /* Title */
+    h1 {
+      text-align: center;
+      font-size: 32px;
+      color: #6e4c1e; /* Rich coffee-like color */
+      margin-bottom: 20px;
+      font-family: 'Merriweather', serif;
+      letter-spacing: 2px;
+    }
+
+    /* Sort Options */
+    .sort-options {
+      text-align: right;
+      margin-bottom: 15px;
+    }
+
+    .sort-options select {
+      padding: 10px;
+      font-size: 14px;
+      color: #6e4c1e;
+      border: 1px solid #c7a897;
+      border-radius: 5px;
+      outline: none;
+      background-color: #f0eae2;
+      transition: border-color 0.3s ease;
+    }
+
+    .sort-options select:hover {
+      border-color: #6e4c1e;
+    }
+
+    /* Section Headers */
+    .section-header {
+      background-color: #f5f0eb; /* Soft background */
+      color: #6e4c1e; /* Accent color */
+      padding: 15px;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 5px;
+      border: 1px solid #d8c4b0;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section-header:hover {
+      background-color: #e9dfd5;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon {
+      transform: rotate(90deg);
+      transition: transform 0.3s ease;
+    }
+    .expanded .icon {
+      transform: rotate(-90deg);
+    }
+
+    /* Section Content */
+    .section-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-in-out;
+      padding: 0 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .expanded .section-content {
+      padding: 15px;
+    }
+
+    /* Column Headers and Rows */
+    .column-headers, .row {
+      display: grid;
+      grid-template-columns: 1.5fr 1.5fr 1.5fr 3fr 1fr 1fr;
+      gap: 15px;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .column-headers {
+      font-weight: bold;
+      background-color: #f0eae2;
+      border-radius: 5px;
+      color: #6e4c1e;
+      text-transform: uppercase;
+    }
+
+    .row {
+      font-size: 14px;
+      padding: 10px;
+      color: #333;
+    }
+
+    .row:nth-child(even) {
+      background-color: #f9f5f0; /* Alternating background for rows */
+    }
+
+    /* Email Wrapping */
+    .row .email {
+      white-space: normal;
+      word-wrap: break-word;
+    }
+
+    /* Smooth Scrolling for Dropdowns */
+    html, body {
+      scroll-behavior: smooth; /* Smooth scroll for elegance */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Employee Signature Dashboard</h1>
+    <div id="loadingMessage" class="loading">Waiting for employee signature database to load...</div>
+
+    <div class="sort-options">
+      <label for="sortOrder">Sort by Last Name:</label>
+      <select id="sortOrder" onchange="loadData()">
+        <option value="asc">A-Z</option>
+        <option value="desc">Z-A</option>
+      </select>
+    </div>
+
+    <!-- Employees without Signature Completion Section -->
+    <div class="section" id="withoutSignatureSection">
+      <div class="section-header" onclick="toggleSection('withoutSignatureSection')">
+        <span>Employees without Signature Completion</span>
+        <span class="icon">➤</span>
+      </div>
+      <div class="section-content">
+        <div class="column-headers">
+          <div>First Name</div>
+          <div>Last Name</div>
+          <div>Employee ID</div>
+          <div>Email</div>
+          <div>Invitation Sent</div>
+          <div>Completed</div>
+        </div>
+        <div id="withoutSignatureList"></div>
+      </div>
+    </div>
+
+    <!-- Employees with Completed Signatures Section -->
+    <div class="section" id="withSignatureSection">
+      <div class="section-header" onclick="toggleSection('withSignatureSection')">
+        <span>Employees with Completed Signatures</span>
+        <span class="icon">➤</span>
+      </div>
+      <div class="section-content">
+        <div class="column-headers">
+          <div>First Name</div>
+          <div>Last Name</div>
+          <div>Employee ID</div>
+          <div>Email</div>
+          <div>Invitation Sent</div>
+          <div>Completed</div>
+        </div>
+        <div id="withSignatureList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      const content = section.querySelector('.section-content');
+      const icon = section.querySelector('.icon');
+      
+      if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+        section.classList.remove('expanded');
+      } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+        section.classList.add('expanded');
+      }
+
+      // Smooth scroll to the top of the expanded section for visibility
+      setTimeout(() => {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
+
+    function loadData() {
+      const sortOrder = document.getElementById('sortOrder').value;
+
+      fetch('https://script.google.com/macros/s/AKfycbxhQfX_h-pIQxGZKhQC9Fga5P-YtwuSOj9kyoxhelbve8fswosUeMn8r4AdB7Gl1oaq/exec')
+        .then(response => response.json())
+        .then(data => {
+          const withoutSignatures = sortData(data.withSignatures, 1, sortOrder);
+          const withSignatures = sortData(data.withoutSignatures, 1, sortOrder);
+
+          populateList('withoutSignatureList', withoutSignatures);
+          populateList('withSignatureList', withSignatures);
+
+          document.getElementById('loadingMessage').style.display = 'none'; // Hide loading message
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    }
+
+    function sortData(data, columnIndex, sortOrder) {
+      return data.sort((a, b) => {
+        const nameA = a[columnIndex].toLowerCase();
+        const nameB = b[columnIndex].toLowerCase();
+        if (nameA < nameB) return sortOrder === 'asc' ? -1 : 1;
+        if (nameA > nameB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    function populateList(elementId, data) {
+      const listElement = document.getElementById(elementId);
+      listElement.innerHTML = '';  // Clear any existing data
+
+      data.forEach(row => {
+        const rowElement = document.createElement('div');
+        rowElement.classList.add('row');
+        rowElement.innerHTML = `
+          <div>${row[0]}</div>  <!-- First Name (Column A) -->
+          <div>${row[1]}</div>  <!-- Last Name (Column B) -->
+          <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
+          <div class="email">${row[3]}</div>  <!-- Email (Column D) -->
+          <div>${row[4]}</div>  <!-- Invitation Sent (Column E) -->
+          <div>${row[5]}</div>  <!-- Completed (Column F) -->
+        `;
+        listElement.appendChild(rowElement);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>
