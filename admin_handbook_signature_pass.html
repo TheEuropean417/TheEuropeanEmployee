@@ -302,20 +302,24 @@
       });
     }
 
-    // Send Invitation Function
     function sendInvitation(firstName, lastName, email, employeeId) {
-      const scriptURL = 'https://script.google.com/macros/s/AKfycbxkDH0hASdOUTBwO5_8-XbuWXEdy61OYaTX4HGEjPZ1F79XzQp9NYLues1VSLLmwwTU/exec';
+      const proxyURL = 'https://us-central1-the-european.cloudfunctions.net/CorsProxyAdminHandbookSignaturePass';  // Your Google Cloud Function URL
+      const targetURL = 'https://script.google.com/macros/s/AKfycbxkDH0hASdOUTBwO5_8-XbuWXEdy61OYaTX4HGEjPZ1F79XzQp9NYLues1VSLLmwwTU/exec';  // Your Google Apps Script URL
+
       const data = {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        employeeId: employeeId,
+        targetUrl: targetURL,
+        payload: {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          employeeId: employeeId
+        }
       };
 
-      fetch(scriptURL, {
+      fetch(proxyURL, {
         method: 'POST',
-        body: JSON.stringify(data),
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
       })
       .then(response => response.json())
       .then(result => {
@@ -330,6 +334,7 @@
         alert('Error sending invitation.');
       });
     }
+
 
     document.addEventListener('DOMContentLoaded', loadData);
   </script>
