@@ -251,22 +251,35 @@
 
       data.forEach(row => {
         const email = row[3]; // Email column
+        const invitationSent = row[4]; // Column E (Invitation Sent)
+        const completed = row[5]; // Column F (Completed)
+
         const rowElement = document.createElement('div');
         rowElement.classList.add('row');
 
-        // Add SEND INVITATION button if email exists
-        const sendInviteButton = email 
-          ? `<button onclick="sendInvitation('${row[0]}', '${row[1]}', '${row[3]}', '${row[2]}')">SEND INVITATION</button>`
-          : '';
-
-        rowElement.innerHTML = `
-          <div>${row[0]}</div>  <!-- First Name (Column A) -->
-          <div>${row[1]}</div>  <!-- Last Name (Column B) -->
-          <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
-          <div class="email">${email}</div>  <!-- Email (Column D) -->
-          <div>${sendInviteButton}</div>  <!-- Invitation Sent (Column E) -->
-          <div>${row[5]}</div>  <!-- Completed (Column F) -->
-        `;
+        // If "Invitation Sent" or "Completed" have any value, no button is added
+        if (!invitationSent && !completed) {
+          const sendInviteButton = email
+            ? `<button onclick="sendInvitation('${row[0]}', '${row[1]}', '${row[3]}', '${row[2]}')">SEND INVITATION</button>`
+            : '';
+          rowElement.innerHTML = `
+            <div>${row[0]}</div>  <!-- First Name (Column A) -->
+            <div>${row[1]}</div>  <!-- Last Name (Column B) -->
+            <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
+            <div class="email">${email}</div>  <!-- Email (Column D) -->
+            <div>${sendInviteButton}</div>  <!-- Invitation Sent (Column E) -->
+            <div>${row[5]}</div>  <!-- Completed (Column F) -->
+          `;
+        } else {
+          rowElement.innerHTML = `
+            <div>${row[0]}</div>  <!-- First Name (Column A) -->
+            <div>${row[1]}</div>  <!-- Last Name (Column B) -->
+            <div>${row[2]}</div>  <!-- Employee ID (Column C) -->
+            <div class="email">${email}</div>  <!-- Email (Column D) -->
+            <div>${invitationSent}</div>  <!-- Invitation Sent (Column E) -->
+            <div>${completed}</div>  <!-- Completed (Column F) -->
+          `;
+        }
         listElement.appendChild(rowElement);
       });
     }
