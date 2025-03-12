@@ -209,41 +209,56 @@ The European’s Paid Sick Leave Policy
 Missouri's "EPST" Law (effective May 1st, 2025)
 
 Objective:
-The European maintains strict standards for attendance to ensure the highest level of operational 
-efficiency. This policy is designed to comply with Missouri’s Prop A requirements while giving 
-The European maximum discretion and control over the verification of employees’ 
-paid sick leave (PSL) usage. Employees are expected to adhere closely to these standards.
+Employees will accrue EPST at a rate of one hour for every 30 hours worked starting 
+May 1, 2025, or upon hire—whichever is later. Employers can calculate exempt employees’ 
+accrual based on a 40-hour workweek (even if employees generally work more than that) or 
+their usual number of hours if they regularly work less than 40 hours. Instead of using an 
+hour-by-hour accrual system, employers can frontload the full amount of EPST that an employee 
+is expected to accrue for immediate use at the beginning of each year.
 
-1. Paid Sick Leave (PSL) effective May 1st, 2025.
+Up to 80 hours of unused accrued EPST may be carried over from year to year. Frontloading 
+EPST does not eliminate the carryover requirement. Rather, employers can only avoid carryover 
+if they pay employees for their accrued but unused EPST (up to a maximum of 80 hours) at 
+year-end and provide a lump sum of their full amount of EPST for immediate use at the beginning 
+of the new benefit year.
 
-A. Accrual and Use Limits:
-Employees accrue one (1) hour of PSL for every thirty (30) hours worked.
-As The European employs more than 15 employees, each eligible employee may use up to fifty-six 
-(56) hours of PSL per year as required by law.
-PSL may be used for legitimate health-related reasons only, as permitted by law. The European 
-will strictly enforce all requirements to confirm the legitimacy of any PSL usage.
+Employers with 14 or fewer employees can cap employees’ use at 40 hours of EPST per year, while 
+those with 15 or more employees can cap employees’ use at 56 hours per year.
 
-B. Documentation Requirements (Employer’s Discretion):
-Mandatory Verification for Any PSL Absence: The European will require verifiable medical 
-documentation for any PSL absence, regardless of the absence’s length or reason. This may 
-include, but is not limited to, a doctor’s note, a completed medical certification form, or other 
-acceptable proof of illness or medical necessity.
-Refusal to Provide Documentation: If an employee fails, refuses, or otherwise does not provide 
-adequate documentation promptly upon request, The European may deny PSL pay for that absence and 
-classify it as unexcused. Repeated failure to provide required documentation may result in 
-disciplinary action, up to and including termination.
+Employees can use EPST as soon as it’s accrued for the following reasons:
 
-C. Carryover and Payment for Unused PSL:
-Up to eighty (80) hours of unused PSL may carry over to the following year; however, The European 
-is under no obligation to allow usage above the annual statutory limit.
+-Their own or their family member’s mental or physical illness, injury, or health condition, 
+including preventive medical care.
 
-2. Recordkeeping and Compliance
-Employer Control over Records: The European will maintain detailed attendance and PSL records 
-for a minimum of three (3) years. Employees must cooperate fully with any verification efforts. 
-Records will be available to the Missouri Department of Labor.
-Ongoing Compliance: If any conflict arises between this policy and the law, the law shall govern. 
-However, unless mandated otherwise, The European will enforce the strictest allowable standards 
-to ensure PSL is used only as intended.
+-The closure of their workplace or their child’s school or place of care because of a public 
+health emergency.
+
+-To care for themselves or a family member because of a determination of exposure to a 
+communicable disease.
+
+-Certain covered reasons related to domestic abuse, sexual assault, or stalking of the employee 
+or their family member.
+
+EPST needs to be provided in the smallest increment of time tracked by the employer’s payroll 
+system (but not more than one hour) and paid at the employee’s hourly rate of pay or minimum 
+wage, whichever is greater. For exempt employees, the hourly rate of pay is calculated by 
+dividing the wages they earned by the number of hours worked in the previous pay period.
+
+As is standard with sick leave laws, employers can’t require that employees find their own 
+coverage or deny them use of EPST if a replacement worker can’t be found.
+
+When employees use EPST for three or more consecutive workdays, employers can request reasonable 
+documentation that the leave was used for a covered purpose.
+
+MISSOURI REQUIREMENT OF EMPLOYEE NOTICE:
+
+-Beginning May 1, 2025, employees are entitled to accrue EPST at the rate of one hour for every 
+30 hours of work and may use EPST subject to the limits and terms of the law
+
+-Employers can’t take retaliatory action against employees who request or use EPST
+
+-Employees’ rights to bring a civil action in certain circumstances
+Contact the Missouri Department of Labor and Industrial Relations (DOL)
 
 - I have read and understand the above policy and agree to abide by its guidelines. - 
 
